@@ -5,13 +5,13 @@ namespace TrainingCertificationPlatform.Models
     public class Balance
     {
         public int Id { get; set; }
-        public int TraineeId { get; set; }
 
-        // The amount the Trainee currently owes to the platform
+        public int EnrollmentId { get; set; }
+
         public int AmountDue { get; set; }
         public DateTime DueDate { get; set; }
 
-        [ForeignKey("TraineeId")]
-        public User Trainee;
+        [ForeignKey("EnrollmentId")]
+        public Enrollment Enrollment { get; set; }
     }
 }

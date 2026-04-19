@@ -2,7 +2,8 @@
 {
     public enum NotificationStatus
     {
-        NOOP // TODO
+        UNREAD,
+        READ
     }
 
     public class Notification

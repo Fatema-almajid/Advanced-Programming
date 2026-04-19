@@ -18,8 +18,8 @@ namespace TrainingCertificationPlatform.Models
         public int InstructorId { get; set; }
         public Day DayStart { get; set; }
         public Day DayEnd { get; set; }
-        public TimeOnly StartTime;
-        public TimeOnly EndTime;
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
 
         [ForeignKey("InstructorId")]
         public User Instructor { get; set; }

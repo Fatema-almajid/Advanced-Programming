@@ -15,6 +15,8 @@ namespace TrainingCertificationPlatform
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Balance> Balances { get; set; }
+
+        public DbSet<Payment> Payments { get; set; }
         public DbSet<InstructorAvailability> InstructorAvailabilities { get; set; }
         public DbSet<TraineeCertification> TraineeCertifications { get; set; }
         public DbSet<Track> Tracks { get; set; }

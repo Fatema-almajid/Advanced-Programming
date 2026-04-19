@@ -4,9 +4,11 @@ namespace TrainingCertificationPlatform.Models
 {
     public enum EnrollmentStatus
     {
-        PENDING,
-        APPROVED,
-        REJECTED
+        ENROLLED,
+        CONFIRMED,
+        ATTENDING,
+        COMPLETED,
+        DROPPED
     }
     public class Enrollment
     {
@@ -14,12 +16,13 @@ namespace TrainingCertificationPlatform.Models
         public int TraineeId { get; set; }
         public int SessionId { get; set; }
         public EnrollmentStatus Status { get; set; }
-        public DateTime EnrollmentDate;
-        public DateTime? CompletionDate;
-        public DateTime? PaymentDueDate;
+        public DateTime EnrollmentDate { get; set; }
+
+        public DateTime? CompletionDate { get; set; }
+        public DateTime? PaymentDueDate { get; set; }
 
         [ForeignKey("TraineeId")]
         public User Trainee;
-        public Session Session;
+        public Session Session { get; set; }
     }
 }

@@ -11,7 +11,8 @@
         public CourseCategory Category { get; set; }
         public string Title { get; set; } = String.Empty;
         public string Description { get; set; } = String.Empty;
-        public Course? Prerequisite { get; set; } // optional single-level prerequisite
+        public int? PrerequisiteId { get; set; }
+        public Course? Prerequisite { get; set; }
         public int Duration { get; set; } // credits?
         public int Capacity { get; set; }
         public double Fee { get; set; }

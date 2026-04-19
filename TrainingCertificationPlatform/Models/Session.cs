@@ -6,6 +6,9 @@ namespace TrainingCertificationPlatform.Models
     {
         public int Id { get; set; }
         public int CourseId { get; set; }
+
+        [ForeignKey("CourseId")]
+        public Course Course { get; set; }
         public int InstructorId { get; set; }
 
         public int ClassroomId { get; set; }

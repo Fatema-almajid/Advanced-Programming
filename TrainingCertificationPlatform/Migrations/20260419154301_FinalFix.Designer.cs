@@ -12,8 +12,8 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260409143351_AddTracks")]
-    partial class AddTracks
+    [Migration("20260419154301_FinalFix")]
+    partial class FinalFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,6 +40,48 @@ namespace TrainingCertificationPlatform.Migrations
                     b.ToTable("ClassroomEquipment");
                 });
 
+            modelBuilder.Entity("CourseTrack", b =>
+                {
+                    b.Property<int>("CoursesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TracksId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CoursesId", "TracksId");
+
+                    b.HasIndex("TracksId");
+
+                    b.ToTable("CourseTrack");
+                });
+
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.Assessment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CompletedBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EnrollmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnrollmentId");
+
+                    b.ToTable("Assessments");
+                });
+
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Balance", b =>
                 {
                     b.Property<int>("Id")
@@ -54,10 +96,12 @@ namespace TrainingCertificationPlatform.Migrations
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TraineeId")
+                    b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnrollmentId");
 
                     b.ToTable("Balances");
                 });
@@ -128,6 +172,15 @@ namespace TrainingCertificationPlatform.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("CompletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EnrollmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PaymentDueDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("SessionId")
                         .HasColumnType("int");
 
@@ -138,6 +191,8 @@ namespace TrainingCertificationPlatform.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
 
                     b.ToTable("Enrollments");
                 });
@@ -173,8 +228,14 @@ namespace TrainingCertificationPlatform.Migrations
                     b.Property<int>("DayStart")
                         .HasColumnType("int");
 
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("time");
+
                     b.Property<int>("InstructorId")
                         .HasColumnType("int");
+
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
@@ -211,6 +272,33 @@ namespace TrainingCertificationPlatform.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("EnrollmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnrollmentId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Session", b =>
                 {
                     b.Property<int>("Id")
@@ -240,6 +328,8 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClassroomId");
+
+                    b.HasIndex("CourseId");
 
                     b.HasIndex("InstructorId");
 
@@ -286,6 +376,10 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TrackId");
+
+                    b.HasIndex("TraineeId");
+
                     b.ToTable("TraineeCertifications");
                 });
 
@@ -301,6 +395,18 @@ namespace TrainingCertificationPlatform.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -310,10 +416,6 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -335,6 +437,43 @@ namespace TrainingCertificationPlatform.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CourseTrack", b =>
+                {
+                    b.HasOne("TrainingCertificationPlatform.Models.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CoursesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrainingCertificationPlatform.Models.Track", null)
+                        .WithMany()
+                        .HasForeignKey("TracksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.Assessment", b =>
+                {
+                    b.HasOne("TrainingCertificationPlatform.Models.Enrollment", "Enrollment")
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Enrollment");
+                });
+
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.Balance", b =>
+                {
+                    b.HasOne("TrainingCertificationPlatform.Models.Enrollment", "Enrollment")
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Enrollment");
+                });
+
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Course", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.Course", "Prerequisite")
@@ -342,6 +481,17 @@ namespace TrainingCertificationPlatform.Migrations
                         .HasForeignKey("PrerequisiteId");
 
                     b.Navigation("Prerequisite");
+                });
+
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.Enrollment", b =>
+                {
+                    b.HasOne("TrainingCertificationPlatform.Models.Session", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.InstructorAvailability", b =>
@@ -366,11 +516,28 @@ namespace TrainingCertificationPlatform.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.Payment", b =>
+                {
+                    b.HasOne("TrainingCertificationPlatform.Models.Enrollment", "Enrollment")
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Enrollment");
+                });
+
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Session", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.Classroom", "Classroom")
                         .WithMany()
                         .HasForeignKey("ClassroomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrainingCertificationPlatform.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -382,7 +549,28 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.Navigation("Classroom");
 
+                    b.Navigation("Course");
+
                     b.Navigation("Instructor");
+                });
+
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.TraineeCertification", b =>
+                {
+                    b.HasOne("TrainingCertificationPlatform.Models.Track", "Track")
+                        .WithMany()
+                        .HasForeignKey("TrackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrainingCertificationPlatform.Models.User", "Trainee")
+                        .WithMany()
+                        .HasForeignKey("TraineeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Track");
+
+                    b.Navigation("Trainee");
                 });
 #pragma warning restore 612, 618
         }
