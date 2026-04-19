@@ -3,7 +3,8 @@
     public enum AssessmentStatus
     {
         PENDING,
-        COMPLETED
+        PASS,
+        FAIL
     }
     public class Assessment
     {
