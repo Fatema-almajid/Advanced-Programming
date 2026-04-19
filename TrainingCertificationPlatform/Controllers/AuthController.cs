@@ -47,7 +47,11 @@ namespace TrainingCertificationPlatform.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok("Trainee registered successfully");
+            return Ok(new
+            {
+                message = "Trainee registered successfully",
+                userId = user.Id
+            });
         }
 
         [HttpPost("login")]
@@ -60,7 +64,12 @@ namespace TrainingCertificationPlatform.Controllers
                 return Unauthorized("Invalid username or password");
 
             string token = CreateToken(user);
-            return Ok(new { token });
+            return Ok(new
+            {
+                token,
+                userId = user.Id,
+                role = user.Role.ToString()
+            });
         }
 
         private string CreateToken(User user)
