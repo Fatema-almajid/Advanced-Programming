@@ -18,6 +18,6 @@
 
         public PaymentStatus Status { get; set; }
 
-        public Enrollment Enrollment { get; set; }
+        public Enrollment Enrollment { get; set; } = null!;
     }
 }

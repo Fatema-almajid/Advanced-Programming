@@ -14,6 +14,6 @@
         public DateTime DueDate { get; set; }
         public DateTime? CompletedBy { get; set; }
 
-        public Enrollment Enrollment { get; set; }
+        public Enrollment Enrollment { get; set; } = null!;
     }
 }

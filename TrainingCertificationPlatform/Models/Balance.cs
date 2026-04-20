@@ -12,6 +12,6 @@ namespace TrainingCertificationPlatform.Models
         public DateTime DueDate { get; set; }
 
         [ForeignKey("EnrollmentId")]
-        public Enrollment Enrollment { get; set; }
+        public Enrollment Enrollment { get; set; } = null!;
     }
 }

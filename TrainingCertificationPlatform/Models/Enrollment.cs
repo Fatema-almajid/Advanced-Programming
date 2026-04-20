@@ -22,7 +22,9 @@ namespace TrainingCertificationPlatform.Models
         public DateTime? PaymentDueDate { get; set; }
 
         [ForeignKey("TraineeId")]
-        public User Trainee;
-        public Session Session { get; set; }
+        public User Trainee { get; set; } = null!;
+
+        [ForeignKey("SessionId")]
+        public Session Session { get; set; } = null!;
     }
 }

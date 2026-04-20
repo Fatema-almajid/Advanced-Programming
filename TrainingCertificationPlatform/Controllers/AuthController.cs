@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using TrainingCertificationPlatform.Models.Dto;
 using TrainingCertificationPlatform.Models;
-using Microsoft.OpenApi.Extensions;
+//using Microsoft.OpenApi.Extensions;
 
 namespace TrainingCertificationPlatform.Controllers
 {
@@ -77,7 +77,7 @@ namespace TrainingCertificationPlatform.Controllers
             var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role.GetDisplayName())
+            new Claim(ClaimTypes.Role, user.Role.ToString())
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));

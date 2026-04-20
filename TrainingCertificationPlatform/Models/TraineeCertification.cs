@@ -1,4 +1,6 @@
-﻿namespace TrainingCertificationPlatform.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TrainingCertificationPlatform.Models
 {
     public enum TraineeCertificationStatus
     {
@@ -12,7 +14,10 @@
         public int TrackId { get; set; }
         public TraineeCertificationStatus Status { get; set; }
 
-        public Track Track { get; set; }
-        public User Trainee { get; set; }
+        [ForeignKey("TraineeId")]
+        public User Trainee { get; set; } = null!;
+
+        [ForeignKey("TrackId")]
+        public Track Track { get; set; } = null!;
     }
 }

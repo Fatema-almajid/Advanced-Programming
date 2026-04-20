@@ -29,6 +29,15 @@ CREATE TABLE Course (
     FOREIGN KEY (PrerequisiteId) REFERENCES Course(Id)
 );
 
+-- InstructorExpertise 
+CREATE TABLE InstructorExpertise (
+    InstructorId INT,
+    CourseId INT,
+    PRIMARY KEY (InstructorId, CourseId),
+    FOREIGN KEY (InstructorId) REFERENCES [User](Id),
+    FOREIGN KEY (CourseId) REFERENCES Course(Id)
+);
+
 -- TRACK
 CREATE TABLE Track (
     Id INT PRIMARY KEY IDENTITY,
@@ -136,7 +145,7 @@ CREATE TABLE TraineeCertification (
     FOREIGN KEY (TrackId) REFERENCES Track(Id)
 );
 
--- M:N TABLES LAST
+-- M:N TABLES
 
 CREATE TABLE CourseTrack (
     CoursesId INT,
@@ -154,52 +163,49 @@ CREATE TABLE ClassroomEquipment (
     FOREIGN KEY (EquipmentsId) REFERENCES Equipment(Id)
 );
 
--- USERS
-INSERT INTO [User] VALUES
+-- INSERT DATA (FIXED)
+
+INSERT INTO [User] (FirstName, LastName, Password, Role, Email, Phone, RegistrationDate) VALUES
 ('Ali','Ahmad','123',0,'ali@mail.com','99999999',GETDATE()),
 ('Sara','Mohamed','123',1,'sara@mail.com','88888888',GETDATE());
 
--- COURSE
-INSERT INTO Course VALUES
-(1,'C# Basics','Intro',NULL,10,30,100),
-(1,'Advanced C#','Advanced',1,15,25,150);
+INSERT INTO Course (Category, Title, Description, PrerequisiteId, Duration, Capacity, Fee) VALUES
+(0,'C# Basics','Intro',NULL,10,30,100),
+(0,'Advanced C#','Advanced',1,15,25,150);
 
--- TRACK
-INSERT INTO Track VALUES
+INSERT INTO InstructorExpertise VALUES (2,1),(2,2);
+
+INSERT INTO Track (Name, Description) VALUES
 ('Backend','Programming');
 
--- COURSE TRACK
 INSERT INTO CourseTrack VALUES (1,1),(2,1);
 
--- CLASSROOM
-INSERT INTO Classroom VALUES ('Room A',30);
+INSERT INTO Classroom (Name, Seats) VALUES ('Room A',30);
 
--- EQUIPMENT
-INSERT INTO Equipment VALUES ('Projector');
+INSERT INTO Equipment (Name) VALUES ('Projector');
 
--- CLASSROOM EQUIPMENT
 INSERT INTO ClassroomEquipment VALUES (1,1);
 
--- SESSION
-INSERT INTO Session VALUES (1,2,1,GETDATE(),'10:00','12:00');
+INSERT INTO Session (CourseId, InstructorId, ClassroomId, SessionDate, StartTime, EndTime)
+VALUES (1,2,1,GETDATE(),'10:00','12:00');
 
--- ENROLLMENT
-INSERT INTO Enrollment VALUES (1,1,0,GETDATE(),NULL,NULL);
+INSERT INTO Enrollment (TraineeId, SessionId, Status, EnrollmentDate)
+VALUES (1,1,0,GETDATE());
 
--- PAYMENT
-INSERT INTO Payment VALUES (1,100,GETDATE(),1);
+INSERT INTO Payment (EnrollmentId, Amount, PaymentDate, Status)
+VALUES (1,100,GETDATE(),1);
 
--- BALANCE
-INSERT INTO Balance VALUES (1,50,GETDATE());
+INSERT INTO Balance (EnrollmentId, AmountDue, DueDate)
+VALUES (1,50,GETDATE());
 
--- ASSESSMENT
-INSERT INTO Assessment VALUES (1,0,GETDATE(),NULL);
+INSERT INTO Assessment (EnrollmentId, Status, DueDate)
+VALUES (1,0,GETDATE());
 
--- NOTIFICATION
-INSERT INTO Notification VALUES (1,'Welcome',GETDATE(),0);
+INSERT INTO Notification (UserId, Message, CreatedDate, Status)
+VALUES (1,'Welcome',GETDATE(),0);
 
--- AVAILABILITY
-INSERT INTO InstructorAvailability VALUES (2,0,4,'09:00','17:00');
+INSERT INTO InstructorAvailability (InstructorId, DayStart, DayEnd, StartTime, EndTime)
+VALUES (2,0,4,'09:00','17:00');
 
--- CERTIFICATION
-INSERT INTO TraineeCertification VALUES (1,1,1);
+INSERT INTO TraineeCertification (TraineeId, TrackId, Status)
+VALUES (1,1,1);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrainingCertificationPlatform;
 
@@ -11,9 +12,11 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260420203856_AddInstructorExpertise")]
+    partial class AddInstructorExpertise
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,13 +38,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("EquipmentsId");
 
                     b.ToTable("ClassroomEquipment");
-
-                    b.HasData(
-                        new
-                        {
-                            ClassroomsId = 1,
-                            EquipmentsId = 1
-                        });
                 });
 
             modelBuilder.Entity("CourseTrack", b =>
@@ -57,18 +53,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("TracksId");
 
                     b.ToTable("CourseTrack");
-
-                    b.HasData(
-                        new
-                        {
-                            CoursesId = 1,
-                            TracksId = 1
-                        },
-                        new
-                        {
-                            CoursesId = 2,
-                            TracksId = 1
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Assessment", b =>
@@ -93,19 +77,9 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EnrollmentId")
-                        .IsUnique();
+                    b.HasIndex("EnrollmentId");
 
                     b.ToTable("Assessments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DueDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EnrollmentId = 1,
-                            Status = 0
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Balance", b =>
@@ -127,19 +101,9 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EnrollmentId")
-                        .IsUnique();
+                    b.HasIndex("EnrollmentId");
 
                     b.ToTable("Balances");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AmountDue = 50,
-                            DueDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EnrollmentId = 1
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Classroom", b =>
@@ -160,14 +124,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Classrooms");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Room A",
-                            Seats = 30
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Course", b =>
@@ -206,29 +162,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("PrerequisiteId");
 
                     b.ToTable("Courses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Capacity = 30,
-                            Category = 0,
-                            Description = "Intro",
-                            Duration = 10,
-                            Fee = 100.0,
-                            Title = "C# Basics"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Capacity = 25,
-                            Category = 0,
-                            Description = "Advanced",
-                            Duration = 15,
-                            Fee = 150.0,
-                            PrerequisiteId = 1,
-                            Title = "Advanced C#"
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Enrollment", b =>
@@ -257,28 +190,11 @@ namespace TrainingCertificationPlatform.Migrations
                     b.Property<int>("TraineeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("SessionId");
 
-                    b.HasIndex("TraineeId");
-
-                    b.HasIndex("UserId");
-
                     b.ToTable("Enrollments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SessionId = 1,
-                            Status = 0,
-                            TraineeId = 1
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Equipment", b =>
@@ -296,13 +212,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Equipments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Projector"
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.InstructorAvailability", b =>
@@ -333,17 +242,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("InstructorId");
 
                     b.ToTable("InstructorAvailabilities");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DayEnd = 4,
-                            DayStart = 0,
-                            EndTime = new TimeOnly(17, 0, 0),
-                            InstructorId = 2,
-                            StartTime = new TimeOnly(9, 0, 0)
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.InstructorExpertise", b =>
@@ -359,18 +257,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("InstructorExpertises");
-
-                    b.HasData(
-                        new
-                        {
-                            InstructorId = 2,
-                            CourseId = 1
-                        },
-                        new
-                        {
-                            InstructorId = 2,
-                            CourseId = 2
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Notification", b =>
@@ -399,16 +285,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Message = "Welcome",
-                            Status = 0,
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Payment", b =>
@@ -436,16 +312,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("EnrollmentId");
 
                     b.ToTable("Payments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 100.0,
-                            EnrollmentId = 1,
-                            PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = 1
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Session", b =>
@@ -483,18 +349,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("InstructorId");
 
                     b.ToTable("Sessions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ClassroomId = 1,
-                            CourseId = 1,
-                            EndTime = new TimeOnly(12, 0, 0),
-                            InstructorId = 2,
-                            SessionDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            StartTime = new TimeOnly(10, 0, 0)
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Track", b =>
@@ -516,14 +370,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tracks");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Programming Track",
-                            Name = "Backend"
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.TraineeCertification", b =>
@@ -550,15 +396,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("TraineeId");
 
                     b.ToTable("TraineeCertifications");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Status = 1,
-                            TrackId = 1,
-                            TraineeId = 1
-                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.User", b =>
@@ -598,30 +435,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "ali@mail.com",
-                            FirstName = "Ali",
-                            LastName = "Ahmad",
-                            Password = "$2a$11$examplehash...",
-                            Phone = "99999999",
-                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Role = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Email = "sara@mail.com",
-                            FirstName = "Sara",
-                            LastName = "Mohamed",
-                            Password = "$2a$11$examplehash...",
-                            Phone = "88888888",
-                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Role = 1
-                        });
                 });
 
             modelBuilder.Entity("ClassroomEquipment", b =>
@@ -657,8 +470,8 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Assessment", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.Enrollment", "Enrollment")
-                        .WithOne()
-                        .HasForeignKey("TrainingCertificationPlatform.Models.Assessment", "EnrollmentId")
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -668,8 +481,8 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Balance", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.Enrollment", "Enrollment")
-                        .WithOne()
-                        .HasForeignKey("TrainingCertificationPlatform.Models.Balance", "EnrollmentId")
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -693,19 +506,7 @@ namespace TrainingCertificationPlatform.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TrainingCertificationPlatform.Models.User", "Trainee")
-                        .WithMany()
-                        .HasForeignKey("TraineeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("TrainingCertificationPlatform.Models.User", null)
-                        .WithMany("Enrollments")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Session");
-
-                    b.Navigation("Trainee");
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.InstructorAvailability", b =>
@@ -730,7 +531,7 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasOne("TrainingCertificationPlatform.Models.User", "Instructor")
                         .WithMany("InstructorExpertises")
                         .HasForeignKey("InstructorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Course");
@@ -741,7 +542,7 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Notification", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.User", "User")
-                        .WithMany("Notifications")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -777,7 +578,7 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasOne("TrainingCertificationPlatform.Models.User", "Instructor")
                         .WithMany()
                         .HasForeignKey("InstructorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Classroom");
@@ -813,11 +614,7 @@ namespace TrainingCertificationPlatform.Migrations
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.User", b =>
                 {
-                    b.Navigation("Enrollments");
-
                     b.Navigation("InstructorExpertises");
-
-                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }

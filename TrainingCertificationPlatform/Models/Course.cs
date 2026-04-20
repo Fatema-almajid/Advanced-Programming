@@ -17,6 +17,8 @@
         public int Capacity { get; set; }
         public double Fee { get; set; }
 
-        public List<Track> Tracks { get; set; }
+        public List<Track> Tracks { get; set; } = new();
+        public List<InstructorExpertise> InstructorExpertises { get; set; } = new();
+
     }
 }

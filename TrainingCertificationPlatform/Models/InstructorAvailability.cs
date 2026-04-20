@@ -22,7 +22,7 @@ namespace TrainingCertificationPlatform.Models
         public TimeOnly EndTime { get; set; }
 
         [ForeignKey("InstructorId")]
-        public User Instructor { get; set; }
+        public User Instructor { get; set; } = null!;
 
         // Instructor available from DayStart - DayEnd during times StartTime - EndTime
     }

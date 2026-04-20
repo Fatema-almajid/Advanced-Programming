@@ -8,7 +8,7 @@ namespace TrainingCertificationPlatform.Models
         public int CourseId { get; set; }
 
         [ForeignKey("CourseId")]
-        public Course Course { get; set; }
+        public Course Course { get; set; } = null!;
         public int InstructorId { get; set; }
 
         public int ClassroomId { get; set; }
@@ -18,8 +18,9 @@ namespace TrainingCertificationPlatform.Models
         public TimeOnly EndTime { get; set; }
 
         [ForeignKey("InstructorId")]
-        public User Instructor { get; set; }
+        public User Instructor { get; set; } = null!;
 
-        public Classroom Classroom { get; set; }
+        [ForeignKey("ClassroomId")]
+        public Classroom Classroom { get; set; } = null!;
     }
 }
