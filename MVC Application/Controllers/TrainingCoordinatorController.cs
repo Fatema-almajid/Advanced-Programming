@@ -3,7 +3,7 @@ using MVC_Application.Models.ViewModels; // ViewModels for dashboard data
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainingCertificationPlatform;              // Shared DbContext from API project
-using MVC_Application.Models;      // Shared domain models
+using TrainingCertificationPlatform.Models;      // Shared domain models
 
 namespace MVC_Application.Controllers
 {
