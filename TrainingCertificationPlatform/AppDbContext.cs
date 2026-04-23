@@ -81,8 +81,8 @@ namespace TrainingCertificationPlatform
 
             // COURSE
             modelBuilder.Entity<Course>().HasData(
-                new Course { Id = 1, Category = CourseCategory.None, Title = "C# Basics", Description = "Intro", Duration = 10, Capacity = 30, Fee = 100 },
-                new Course { Id = 2, Category = CourseCategory.None, Title = "Advanced C#", Description = "Advanced", Duration = 15, Capacity = 25, Fee = 150, PrerequisiteId = 1 }
+                new Course { Id = 1, Category = CourseCategory.Database, Title = "C# Basics", Description = "Intro", Duration = 10, Capacity = 30, Fee = 100 },
+                new Course { Id = 2, Category = CourseCategory.Programming, Title = "Advanced C#", Description = "Advanced", Duration = 15, Capacity = 25, Fee = 150, PrerequisiteId = 1 }
             );
 
             // TRACK

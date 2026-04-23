@@ -212,7 +212,7 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             Id = 1,
                             Capacity = 30,
-                            Category = 0,
+                            Category = 2,
                             Description = "Intro",
                             Duration = 10,
                             Fee = 100.0,
@@ -222,7 +222,7 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             Id = 2,
                             Capacity = 25,
-                            Category = 0,
+                            Category = 1,
                             Description = "Advanced",
                             Duration = 15,
                             Fee = 150.0,

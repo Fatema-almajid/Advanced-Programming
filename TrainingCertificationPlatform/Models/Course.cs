@@ -2,7 +2,13 @@
 {
     public enum CourseCategory
     {
-        None = 0 // TODO
+        None = 0,
+        Programming = 1,
+        Database = 2,
+        WebDevelopment = 3,
+        Networking = 4,
+        Cybersecurity = 5,
+        CloudComputing = 6
     }
 
     public class Course
