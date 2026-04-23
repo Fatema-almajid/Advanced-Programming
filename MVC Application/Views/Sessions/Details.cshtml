@@ -1,0 +1,50 @@
+﻿@model TrainingCertificationPlatform.Models.Session
+
+@{
+    ViewData["Title"] = "Session Details";
+}
+
+<h2 class="mb-4">
+    <i class="bi bi-eye"></i> Session Details
+</h2>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">@Model.Course.Title</h4>
+
+                <hr />
+
+                <dl class="row">
+                    <dt class="col-sm-4">Course</dt>
+                    <dd class="col-sm-8">@Model.Course.Title</dd>
+
+                    <dt class="col-sm-4">Instructor</dt>
+                    <dd class="col-sm-8">@Model.Instructor.FirstName @Model.Instructor.LastName</dd>
+
+                    <dt class="col-sm-4">Room</dt>
+                    <dd class="col-sm-8">@Model.Classroom.Name</dd>
+
+                    <dt class="col-sm-4">Date</dt>
+                    <dd class="col-sm-8">@Model.SessionDate.ToString("dd MMM yyyy")</dd>
+
+                    <dt class="col-sm-4">Start Time</dt>
+                    <dd class="col-sm-8">@Model.StartTime</dd>
+
+                    <dt class="col-sm-4">End Time</dt>
+                    <dd class="col-sm-8">@Model.EndTime</dd>
+                </dl>
+
+                <div class="d-flex gap-2 mt-3">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

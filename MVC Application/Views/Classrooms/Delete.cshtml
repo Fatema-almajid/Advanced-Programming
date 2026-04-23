@@ -1,0 +1,43 @@
+﻿@model TrainingCertificationPlatform.Models.Classroom
+
+@{
+    ViewData["Title"] = "Delete Room";
+}
+
+<h2 class="mb-4 text-danger">
+    <i class="bi bi-trash"></i> Delete Room
+</h2>
+
+<div class="card shadow-sm border-danger">
+    <div class="card-body">
+        <p class="fs-5">Are you sure you want to delete this room?</p>
+
+        <dl class="row">
+            <dt class="col-sm-3">Room Name</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Seating Capacity</dt>
+            <dd class="col-sm-9">@Model.Seats</dd>
+
+            <dt class="col-sm-3">Assigned Equipment</dt>
+            <dd class="col-sm-9">
+                @(Model.Equipments.Any()
+                                ? string.Join(", ", Model.Equipments.OrderBy(e => e.Name).Select(e => e.Name))
+                                : "None")
+            </dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger"
+                        onclick="return confirm('Are you sure you want to delete this room?');">
+                    <i class="bi bi-trash"></i> Confirm Delete
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
