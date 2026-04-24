@@ -1,0 +1,125 @@
+﻿@model IEnumerable<TrainingCertificationPlatform.Models.Track>
+
+@{
+    ViewData["Title"] = "Certification Tracks";
+}
+
+<partial name="_TrainingCoordinatorNav" />
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0">
+        <i class="bi bi-award"></i> Certification Tracks
+    </h2>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Track
+        </a>
+
+        <a asp-action="CardIndex"
+           asp-route-searchString="@ViewData["CurrentFilter"]"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-grid-3x3-gap"></i> Card View
+        </a>
+
+        <a asp-action="Index"
+           asp-route-searchString="@ViewData["CurrentFilter"]"
+           class="btn btn-outline-secondary active">
+            <i class="bi bi-table"></i> Table View
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<form asp-action="Index" method="get" class="row g-2 mb-4">
+    <div class="col-md-9">
+        <input name="searchString"
+               value="@ViewData["CurrentFilter"]"
+               class="form-control"
+               placeholder="Search certification tracks..." />
+    </div>
+
+    <div class="col-md-3 d-flex gap-2">
+        <button class="btn btn-outline-primary w-100">
+            <i class="bi bi-search"></i> Search
+        </button>
+
+        <a asp-action="Index" class="btn btn-outline-secondary w-100">
+            Clear
+        </a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Track Name</th>
+                <th>Description</th>
+                <th>Required Courses</th>
+                <th>Courses</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var track in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@track.Name</td>
+
+                    <td>@track.Description</td>
+
+                    <td>
+                        <span class="badge bg-primary">
+                            @track.Courses.Count courses
+                        </span>
+                    </td>
+
+                    <td>
+                        @foreach (var course in track.Courses.Take(3))
+                        {
+                            <span class="badge bg-light text-dark border me-1">
+                                @course.Title
+                            </span>
+                        }
+
+                        @if (track.Courses.Count > 3)
+                        {
+                            <span class="badge bg-secondary">
+                                +@(track.Courses.Count - 3) more
+                            </span>
+                        }
+                    </td>
+
+                    <td class="text-center">
+                        <a asp-action="Details"
+                           asp-route-id="@track.Id"
+                           class="btn btn-sm btn-outline-info">
+                            <i class="bi bi-eye"></i> Details
+                        </a>
+
+                        <a asp-action="Edit"
+                           asp-route-id="@track.Id"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@track.Id"
+                           class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

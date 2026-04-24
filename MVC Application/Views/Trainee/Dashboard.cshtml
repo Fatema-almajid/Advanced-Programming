@@ -1,0 +1,140 @@
+﻿@model MVC_Application.Models.ViewModels.TraineeDashboardViewModel
+
+@{
+    ViewData["Title"] = "Trainee Dashboard";
+}
+
+<partial name="_TraineeNav" />
+
+<div class="container-fluid py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </h2>
+            <p class="text-muted mb-0">
+                Overview of your enrolled courses, completed courses, and certification progress.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Courses Enrolled</p>
+                            <h3 class="mb-0">@Model.CoursesEnrolled</h3>
+                        </div>
+                        <i class="bi bi-journal-bookmark fs-2 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Courses Completed</p>
+                            <h3 class="mb-0">@Model.CoursesCompleted</h3>
+                        </div>
+                        <i class="bi bi-mortarboard fs-2 text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Passed Assessments</p>
+                            <h3 class="mb-0">@Model.ActivitiesCompleted</h3>
+                        </div>
+                        <i class="bi bi-clipboard-check fs-2 text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">Pending Assessments</p>
+                            <h3 class="mb-0">@Model.ActivitiesDue</h3>
+                        </div>
+                        <i class="bi bi-hourglass-split fs-2 text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm dashboard-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-book"></i> My Courses
+            </h5>
+
+            <a asp-action="MyCourses" class="btn btn-sm btn-outline-primary">
+                View All
+            </a>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                @if (Model.MyCourses.Any())
+                {
+                    @foreach (var course in Model.MyCourses)
+                    {
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm course-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@course.Title</h5>
+
+                                    <p class="card-text text-muted">
+                                        @(course.Description.Length > 100
+                                                                        ? course.Description.Substring(0, 100) + "..."
+                                                                        : course.Description)
+                            </p>
+
+                                    <div class="mb-2">
+                                        <span class="badge bg-primary">@course.Category</span>
+                                        <span class="badge bg-secondary">@course.Status</span>
+                                    </div>
+
+                                    <ul class="list-unstyled small mb-0">
+                                        <li><strong>Session:</strong> @course.SessionDate.ToString("dd MMM yyyy")</li>
+                                        <li><strong>Time:</strong> @course.StartTime - @course.EndTime</li>
+                                    </ul>
+                                </div>
+
+                                <div class="card-footer text-center">
+                                    <a asp-action="CourseDetails"
+                                       asp-route-id="@course.CourseId"
+                                       class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-eye"></i> View Course
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                                }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <div class="alert alert-light border text-center text-muted">
+                            You are not enrolled in any courses yet.
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

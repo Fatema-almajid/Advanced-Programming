@@ -1,0 +1,103 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+/*for card view*/
+
+.course-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: none;
+    border-radius: 12px;
+}
+
+    .course-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    }
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
+
+.card-footer {
+    background-color: transparent;
+}
+
+.badge {
+    font-size: 0.85rem;
+}
+
+/*for the trainee pages*/
+.course-card {
+    border: none;
+    border-radius: 12px;
+    transition: 0.2s ease-in-out;
+}
+
+    .course-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .course-card .card-title {
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .course-card .card-text {
+        font-size: 0.95rem;
+    }
+
+    .course-card .card-footer {
+        background-color: #ffffff;
+        border-top: 1px solid #e9ecef;
+    }
+
+.dashboard-card {
+    border: none;
+    border-radius: 12px;
+    transition: 0.2s ease-in-out;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-2px);
+    }
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
+.btn-info.w-100 {
+    border-radius: 8px;
+    padding: 5px;
+    font-weight: 400;
+}

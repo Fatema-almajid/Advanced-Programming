@@ -1,0 +1,153 @@
+﻿@model IEnumerable<MVC_Application.Models.ViewModels.InstructorSessionViewModel>
+
+@{
+    ViewData["Title"] = "My Courses";
+    var viewMode = ViewData["ViewMode"]?.ToString() ?? "card";
+    var sessionFilter = ViewData["SessionFilter"]?.ToString() ?? "all";
+}
+
+<partial name="_InstructorNav" />
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h2 class="mb-0">
+            <i class="bi bi-book"></i> My Courses
+        </h2>
+
+        <div class="d-flex gap-2">
+            <a asp-action="MyCourses"
+               asp-route-viewMode="card"
+               asp-route-sessionFilter="@sessionFilter"
+               asp-route-searchString="@ViewData["CurrentFilter"]"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-grid-3x3-gap"></i> Card View
+            </a>
+
+            <a asp-action="MyCourses"
+               asp-route-viewMode="table"
+               asp-route-sessionFilter="@sessionFilter"
+               asp-route-searchString="@ViewData["CurrentFilter"]"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-table"></i> Table View
+            </a>
+        </div>
+    </div>
+
+    <form asp-action="MyCourses" method="get" class="row g-2 mb-4">
+        <input type="hidden" name="viewMode" value="@viewMode" />
+
+        <div class="col-md-5">
+            <input name="searchString"
+                   value="@ViewData["CurrentFilter"]"
+                   class="form-control"
+                   placeholder="Search courses, descriptions, or classrooms..." />
+        </div>
+
+        <div class="col-md-4">
+            <select name="sessionFilter" class="form-select">
+                <option value="all" selected="@(sessionFilter == "all")">All Sessions</option>
+                <option value="upcoming" selected="@(sessionFilter == "upcoming")">Upcoming Sessions</option>
+                <option value="past" selected="@(sessionFilter == "past")">Past Sessions</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex gap-2">
+            <button class="btn btn-outline-primary w-100">
+                <i class="bi bi-search"></i> Search
+            </button>
+
+            <a asp-action="MyCourses" class="btn btn-outline-secondary w-100">
+                Clear
+            </a>
+        </div>
+    </form>
+
+    @if (viewMode == "table")
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle shadow-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Course</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Classroom</th>
+                        <th>Enrolled</th>
+                        <th>Status</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var session in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@session.CourseTitle</td>
+                            <td>@session.Category</td>
+                            <td>@session.SessionDate.ToString("dd MMM yyyy")</td>
+                            <td>@session.StartTime - @session.EndTime</td>
+                            <td>@session.ClassroomName</td>
+                            <td>@session.EnrolledCount / @session.Capacity</td>
+                            <td>
+                                <span class="badge @(session.SessionType == "Upcoming" ? "bg-success" : "bg-secondary")">
+                                    @session.SessionType
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="CourseDetails"
+                                   asp-route-id="@session.SessionId"
+                                   class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-eye"></i> View Details
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var session in Model)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm course-card">
+                        <div class="card-body">
+                            <h5 class="card-title">@session.CourseTitle</h5>
+
+                            <p class="card-text text-muted">
+                                @(session.CourseDescription.Length > 100
+                                                        ? session.CourseDescription.Substring(0, 100) + "..."
+                                                        : session.CourseDescription)
+                    </p>
+
+                            <div class="mb-2">
+                                <span class="badge bg-primary">@session.Category</span>
+                                <span class="badge @(session.SessionType == "Upcoming" ? "bg-success" : "bg-secondary")">
+                                    @session.SessionType
+                                </span>
+                            </div>
+
+                            <ul class="list-unstyled small mb-0">
+                                <li><strong>Date:</strong> @session.SessionDate.ToString("dd MMM yyyy")</li>
+                                <li><strong>Time:</strong> @session.StartTime - @session.EndTime</li>
+                                <li><strong>Room:</strong> @session.ClassroomName</li>
+                                <li><strong>Enrolled:</strong> @session.EnrolledCount / @session.Capacity</li>
+                            </ul>
+                        </div>
+
+                        <div class="card-footer bg-white border-top-0 px-4 pb-4">
+                            <a asp-action="CourseDetails"
+                               asp-route-id="@session.SessionId"
+                               class="btn btn-info w-100 fw-semibold">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                }
+        </div>
+    }
+</div>

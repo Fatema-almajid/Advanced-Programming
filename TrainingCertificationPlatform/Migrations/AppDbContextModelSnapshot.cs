@@ -212,7 +212,7 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             Id = 1,
                             Capacity = 30,
-                            Category = 0,
+                            Category = 2,
                             Description = "Intro",
                             Duration = 10,
                             Fee = 100.0,
@@ -222,7 +222,7 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             Id = 2,
                             Capacity = 25,
-                            Category = 0,
+                            Category = 1,
                             Description = "Advanced",
                             Duration = 15,
                             Fee = 150.0,
@@ -621,6 +621,17 @@ namespace TrainingCertificationPlatform.Migrations
                             Phone = "88888888",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "admin123@gmail.com",
+                            FirstName = "admin",
+                            LastName = "1",
+                            Password = "123456",
+                            Phone = "33908675",
+                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 2
                         });
                 });
 

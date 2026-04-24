@@ -1,0 +1,60 @@
+﻿@model TrainingCertificationPlatform.Models.Course
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<partial name="_TrainingCoordinatorNav" />
+
+<h2 class="mb-4">
+    <i class="bi bi-eye"></i> Course Details
+</h2>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <h4 class="mb-3">@Model.Title</h4>
+
+                <p class="text-muted">@Model.Description</p>
+
+                <hr />
+
+                <dl class="row">
+                    <dt class="col-sm-4">Category</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-primary">@Model.Category</span>
+                    </dd>
+
+                    <dt class="col-sm-4">Duration</dt>
+                    <dd class="col-sm-8">@Model.Duration hours</dd>
+
+                    <dt class="col-sm-4">Capacity</dt>
+                    <dd class="col-sm-8">@Model.Capacity</dd>
+
+                    <dt class="col-sm-4">Fee</dt>
+                    <dd class="col-sm-8">@Model.Fee.ToString("C")</dd>
+
+                    <dt class="col-sm-4">Prerequisite</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Prerequisite?.Title ?? "None")
+                    </dd>
+                </dl>
+
+                <div class="d-flex gap-2 mt-3">
+                    <a asp-action="Edit" asp-route-id="@Model.Id"
+                       class="btn btn-primary">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Back to List
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

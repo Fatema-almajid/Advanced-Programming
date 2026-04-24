@@ -1,0 +1,52 @@
+﻿@model TrainingCertificationPlatform.Models.Course
+
+@{
+    ViewData["Title"] = "Delete Course";
+}
+
+<h2 class="mb-4 text-danger">
+    <i class="bi bi-trash"></i> Delete Course
+</h2>
+
+<div class="card shadow-sm border-danger">
+    <div class="card-body">
+        <p class="fs-5">
+            Are you sure you want to delete this course?
+        </p>
+
+        <dl class="row">
+            <dt class="col-sm-3">Title</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+
+            <dt class="col-sm-3">Category</dt>
+            <dd class="col-sm-9">@Model.Category</dd>
+
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9">@Model.Description</dd>
+
+            <dt class="col-sm-3">Duration</dt>
+            <dd class="col-sm-9">@Model.Duration hours</dd>
+
+            <dt class="col-sm-3">Capacity</dt>
+            <dd class="col-sm-9">@Model.Capacity</dd>
+
+            <dt class="col-sm-3">Fee</dt>
+            <dd class="col-sm-9">@Model.Fee.ToString("C")</dd>
+
+            <dt class="col-sm-3">Prerequisite</dt>
+            <dd class="col-sm-9">@Model.Prerequisite?.Title ?? "None"</dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Confirm Delete
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

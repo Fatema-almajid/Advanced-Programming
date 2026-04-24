@@ -1,0 +1,47 @@
+﻿@model TrainingCertificationPlatform.Models.Classroom
+
+@{
+    ViewData["Title"] = "Room Details";
+}
+
+<partial name="_TrainingCoordinatorNav" />
+
+<h2 class="mb-4">
+    <i class="bi bi-eye"></i> Room Details
+</h2>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">@Model.Name</h4>
+
+                <hr />
+
+                <dl class="row">
+                    <dt class="col-sm-4">Room Name</dt>
+                    <dd class="col-sm-8">@Model.Name</dd>
+
+                    <dt class="col-sm-4">Seating Capacity</dt>
+                    <dd class="col-sm-8">@Model.Seats</dd>
+
+                    <dt class="col-sm-4">Assigned Equipment</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Equipments.Any()
+                                                ? string.Join(", ", Model.Equipments.OrderBy(e => e.Name).Select(e => e.Name))
+                                                : "None")
+                    </dd>
+                </dl>
+
+                <div class="d-flex gap-2 mt-3">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

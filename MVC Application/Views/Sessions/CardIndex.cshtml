@@ -1,0 +1,114 @@
+﻿@model IEnumerable<TrainingCertificationPlatform.Models.Session>
+
+@{
+    ViewData["Title"] = "Course Scheduling - Card View";
+}
+
+<partial name="_TrainingCoordinatorNav" />
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0">
+        <i class="bi bi-calendar-event"></i> Course Scheduling
+    </h2>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Index"
+           asp-route-searchString="@ViewData["CurrentFilter"]"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-table"></i> Table View
+        </a>
+
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Session
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<form asp-action="CardIndex" method="get" class="row g-2 mb-4">
+    <div class="col-md-9">
+        <input type="text"
+               name="searchString"
+               value="@ViewData["CurrentFilter"]"
+               class="form-control"
+               placeholder="Search by course, instructor, or room..." />
+    </div>
+
+    <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-outline-primary w-100">
+            <i class="bi bi-search"></i> Search
+        </button>
+        <a asp-action="CardIndex" class="btn btn-outline-secondary w-100">
+            Clear
+        </a>
+    </div>
+</form>
+
+<div class="row g-4">
+    @if (Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">@item.Course.Title</h5>
+                            <span class="badge bg-primary">@item.SessionDate.ToString("dd MMM")</span>
+                        </div>
+
+                        <p class="mb-2 text-muted">
+                            <i class="bi bi-person"></i>
+                            @item.Instructor.FirstName @item.Instructor.LastName
+                        </p>
+
+                        <p class="mb-2 text-muted">
+                            <i class="bi bi-door-open"></i>
+                            @item.Classroom.Name
+                        </p>
+
+                        <p class="mb-3">
+                            <i class="bi bi-clock"></i>
+                            @item.StartTime - @item.EndTime
+                        </p>
+
+                        <div class="d-flex gap-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info w-100">
+                                Details
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary w-100">
+                                Edit
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger w-100">
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-light border text-center text-muted">
+                No scheduled sessions found.
+            </div>
+        </div>
+    }
+</div>

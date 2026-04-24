@@ -1,0 +1,45 @@
+﻿@model TrainingCertificationPlatform.Models.Session
+
+@{
+    ViewData["Title"] = "Delete Session";
+}
+
+<h2 class="mb-4 text-danger">
+    <i class="bi bi-trash"></i> Delete Session
+</h2>
+
+<div class="card shadow-sm border-danger">
+    <div class="card-body">
+        <p class="fs-5">Are you sure you want to delete this scheduled session?</p>
+
+        <dl class="row">
+            <dt class="col-sm-3">Course</dt>
+            <dd class="col-sm-9">@Model.Course.Title</dd>
+
+            <dt class="col-sm-3">Instructor</dt>
+            <dd class="col-sm-9">@Model.Instructor.FirstName @Model.Instructor.LastName</dd>
+
+            <dt class="col-sm-3">Room</dt>
+            <dd class="col-sm-9">@Model.Classroom.Name</dd>
+
+            <dt class="col-sm-3">Date</dt>
+            <dd class="col-sm-9">@Model.SessionDate.ToString("dd MMM yyyy")</dd>
+
+            <dt class="col-sm-3">Time</dt>
+            <dd class="col-sm-9">@Model.StartTime - @Model.EndTime</dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger"
+                        onclick="return confirm('Are you sure you want to delete this scheduled session?');">
+                    <i class="bi bi-trash"></i> Confirm Delete
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
