@@ -40,6 +40,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Payment</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="CertificationTracks" asp-action="Index">Tracks</a>
+                        </li>
                     </ul>
                     <ul class="navbar-nav ms-auto"> <!--to be reviewed. might be chaneged-->
                         @if (User.Identity != null && User.Identity.IsAuthenticated)

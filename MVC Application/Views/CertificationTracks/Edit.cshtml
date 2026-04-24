@@ -1,0 +1,58 @@
+﻿@model MVC_Application.Models.ViewModels.CertificationTrackFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Certification Track";
+}
+
+<h2 class="mb-4">
+    <i class="bi bi-pencil-square"></i> Edit Certification Track
+</h2>
+
+<form asp-action="Edit" method="post" class="card shadow-sm">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="card-body">
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description"
+                      class="form-control"
+                      rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="SelectedCourseIds" class="form-label"></label>
+
+            <select asp-for="SelectedCourseIds"
+                    asp-items="Model.CourseOptions"
+                    class="form-select"
+                    multiple
+                    size="8">
+            </select>
+
+            <small class="text-muted">
+                Hold Ctrl to select multiple required courses.
+            </small>
+        </div>
+    </div>
+
+    <div class="card-footer d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> Update Track
+        </button>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Cancel
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

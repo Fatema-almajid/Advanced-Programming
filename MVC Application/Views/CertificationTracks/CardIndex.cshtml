@@ -1,0 +1,121 @@
+﻿@model IEnumerable<TrainingCertificationPlatform.Models.Track>
+
+@{
+    ViewData["Title"] = "Certification Tracks";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0">
+        <i class="bi bi-award"></i> Certification Tracks
+    </h2>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Track
+        </a>
+
+        <a asp-action="CardIndex"
+           asp-route-searchString="@ViewData["CurrentFilter"]"
+           class="btn btn-outline-secondary active">
+            <i class="bi bi-grid-3x3-gap"></i> Card View
+        </a>
+
+        <a asp-action="Index"
+           asp-route-searchString="@ViewData["CurrentFilter"]"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-table"></i> Table View
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<form asp-action="CardIndex" method="get" class="row g-2 mb-4">
+    <div class="col-md-9">
+        <input name="searchString"
+               value="@ViewData["CurrentFilter"]"
+               class="form-control"
+               placeholder="Search certification tracks..." />
+    </div>
+
+    <div class="col-md-3 d-flex gap-2">
+        <button class="btn btn-outline-primary w-100">
+            <i class="bi bi-search"></i> Search
+        </button>
+
+        <a asp-action="CardIndex" class="btn btn-outline-secondary w-100">
+            Clear
+        </a>
+    </div>
+</form>
+
+<div class="row">
+    @foreach (var track in Model)
+    {
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 shadow-sm course-card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="badge bg-primary">
+                            Certification Track
+                        </span>
+                    </div>
+
+                    <h5 class="card-title">@track.Name</h5>
+
+                    <p class="text-muted">
+                        @track.Description
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Required Courses:</strong>
+                        @track.Courses.Count
+                    </p>
+
+                    <ul class="list-unstyled small">
+                        @foreach (var course in track.Courses.Take(5))
+                        {
+                            <li class="mb-1">
+                                <i class="bi bi-check-circle text-success"></i>
+                                @course.Title
+                            </li>
+                        }
+
+                        @if (track.Courses.Count > 5)
+                        {
+                            <li class="text-muted">
+                                +@(track.Courses.Count - 5) more courses
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="card-footer bg-white d-flex justify-content-center gap-2 flex-wrap">
+                    <a asp-action="Details"
+                       asp-route-id="@track.Id"
+                       class="btn btn-sm btn-outline-info">
+                        <i class="bi bi-eye"></i> Details
+                    </a>
+
+                    <a asp-action="Edit"
+                       asp-route-id="@track.Id"
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@track.Id"
+                       class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
