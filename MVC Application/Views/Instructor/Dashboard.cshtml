@@ -1,10 +1,129 @@
-﻿@{
+﻿@model MVC_Application.Models.ViewModels.InstructorDashboardViewModel
+
+@{
     ViewData["Title"] = "Instructor Dashboard";
 }
 
-<div class="container mt-4">
-    <div class="alert alert-info">
-        <h3>Instructor Dashboard</h3>
-        <p>This page is ready. Instructor features will be added next.</p>
+<partial name="_InstructorNav" />
+
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h2 class="mb-1">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </h2>
+        <p class="text-muted mb-0">
+            Overview of your assigned courses, sessions, and pending assessments.
+        </p>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card h-100 shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Assigned Courses</p>
+                        <h3 class="mb-0">@Model.AssignedCourses</h3>
+                    </div>
+                    <i class="bi bi-journal-bookmark fs-2 text-primary"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card h-100 shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Upcoming Sessions</p>
+                        <h3 class="mb-0">@Model.UpcomingSessions</h3>
+                    </div>
+                    <i class="bi bi-calendar-event fs-2 text-success"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card h-100 shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Past Sessions</p>
+                        <h3 class="mb-0">@Model.PastSessions</h3>
+                    </div>
+                    <i class="bi bi-clock-history fs-2 text-secondary"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card h-100 shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Pending Assessments</p>
+                        <h3 class="mb-0">@Model.PendingAssessments</h3>
+                    </div>
+                    <i class="bi bi-clipboard-check fs-2 text-warning"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm dashboard-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-calendar-week"></i> Upcoming Sessions
+            </h5>
+
+            <a asp-action="Schedule" class="btn btn-sm btn-outline-primary">
+                View Schedule
+            </a>
+        </div>
+
+        <div class="card-body">
+            @if (Model.UpcomingSessionList.Any())
+            {
+                <div class="row">
+                    @foreach (var session in Model.UpcomingSessionList)
+                    {
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm course-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@session.CourseTitle</h5>
+
+                                    <p class="card-text text-muted">
+                                        @(session.CourseDescription.Length > 100
+                                                                        ? session.CourseDescription.Substring(0, 100) + "..."
+                                                                        : session.CourseDescription)
+                            </p>
+
+                                    <div class="mb-2">
+                                        <span class="badge bg-primary">@session.Category</span>
+                                        <span class="badge bg-secondary">@session.EnrolledCount / @session.Capacity enrolled</span>
+                                    </div>
+
+                                    <ul class="list-unstyled small mb-0">
+                                        <li><strong>Date:</strong> @session.SessionDate.ToString("dd MMM yyyy")</li>
+                                        <li><strong>Time:</strong> @session.StartTime - @session.EndTime</li>
+                                        <li><strong>Room:</strong> @session.ClassroomName</li>
+                                    </ul>
+                                </div>
+
+                                <div class="card-footer bg-white border-top-0 px-4 pb-4">
+                                    <a asp-action="CourseDetails"
+                                       asp-route-id="@session.SessionId"
+                                       class="btn btn-info w-100 fw-semibold">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                                }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-light border text-center text-muted">
+                    No upcoming sessions found.
+                </div>
+            }
+        </div>
     </div>
 </div>

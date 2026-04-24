@@ -1,0 +1,140 @@
+﻿@model MVC_Application.Models.ViewModels.InstructorCourseDetailsViewModel
+@using TrainingCertificationPlatform.Models
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<partial name="_InstructorNav" />
+
+<div class="container-fluid py-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <span class="badge bg-primary mb-3">@Model.Category</span>
+
+            <h2>@Model.CourseTitle</h2>
+
+            <p class="text-muted">@Model.CourseDescription</p>
+
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <strong>Date</strong>
+                    <p>@Model.SessionDate.ToString("dd MMM yyyy")</p>
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Time</strong>
+                    <p>@Model.StartTime - @Model.EndTime</p>
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Classroom</strong>
+                    <p>@Model.ClassroomName</p>
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Trainees</strong>
+                    <p>@Model.Trainees.Count</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-people"></i> Trainees and Assessments
+            </h5>
+        </div>
+
+        <div class="card-body">
+            @if (Model.Trainees.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Trainee</th>
+                                <th>Email</th>
+                                <th>Enrollment Status</th>
+                                <th>Assessment Status</th>
+                                <th class="text-center">Update Result</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var trainee in Model.Trainees)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@trainee.TraineeName</td>
+                                    <td>@trainee.TraineeEmail</td>
+
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            @trainee.EnrollmentStatus
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @if (trainee.AssessmentStatus == AssessmentStatus.PASS)
+                                        {
+                                            <span class="badge bg-success">PASS</span>
+                                        }
+                                        else if (trainee.AssessmentStatus == AssessmentStatus.FAIL)
+                                        {
+                                            <span class="badge bg-danger">FAIL</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">PENDING</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-center">
+                                        <form asp-action="UpdateAssessment" method="post" class="d-inline">
+                                            <input type="hidden" name="enrollmentId" value="@trainee.EnrollmentId" />
+                                            <input type="hidden" name="status" value="@AssessmentStatus.PASS" />
+
+                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                <i class="bi bi-check-circle"></i> Pass
+                                            </button>
+                                        </form>
+
+                                        <form asp-action="UpdateAssessment" method="post" class="d-inline">
+                                            <input type="hidden" name="enrollmentId" value="@trainee.EnrollmentId" />
+                                            <input type="hidden" name="status" value="@AssessmentStatus.FAIL" />
+
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-x-circle"></i> Fail
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-light border text-center text-muted">
+                    No trainees are enrolled in this session.
+                </div>
+            }
+        </div>
+
+        <div class="card-footer">
+            <a asp-action="MyCourses" class="btn btn-outline-secondary">
+                Back to My Courses
+            </a>
+        </div>
+    </div>
+</div>

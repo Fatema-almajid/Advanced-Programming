@@ -1,0 +1,170 @@
+﻿@model MVC_Application.Models.ViewModels.InstructorScheduleViewModel
+
+@{
+    ViewData["Title"] = "Schedule";
+}
+
+<partial name="_InstructorNav" />
+
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h2 class="mb-1">
+            <i class="bi bi-calendar-week"></i> Schedule
+        </h2>
+        <p class="text-muted mb-0">
+            View your availability and scheduled course sessions.
+        </p>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-clock"></i> My Availability
+            </h5>
+        </div>
+
+        <div class="card-body">
+            @if (Model.Availabilities.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Available From</th>
+                                <th>Available To</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var availability in Model.Availabilities)
+                            {
+                                <tr>
+                                    <td>@availability.DayStart</td>
+                                    <td>@availability.DayEnd</td>
+                                    <td>@availability.StartTime</td>
+                                    <td>@availability.EndTime</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-light border text-center text-muted">
+                    No availability has been recorded.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-calendar-event"></i> Upcoming Courses
+            </h5>
+        </div>
+
+        <div class="card-body">
+            @if (Model.UpcomingSessions.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Course</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Classroom</th>
+                                <th>Enrolled</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var session in Model.UpcomingSessions)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@session.CourseTitle</td>
+                                    <td>@session.SessionDate.ToString("dd MMM yyyy")</td>
+                                    <td>@session.StartTime - @session.EndTime</td>
+                                    <td>@session.ClassroomName</td>
+                                    <td>@session.EnrolledCount / @session.Capacity</td>
+                                    <td class="text-center">
+                                        <a asp-action="CourseDetails"
+                                           asp-route-id="@session.SessionId"
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-eye"></i> View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-light border text-center text-muted">
+                    No upcoming courses found.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-clock-history"></i> Past Courses
+            </h5>
+        </div>
+
+        <div class="card-body">
+            @if (Model.PastSessions.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Course</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Classroom</th>
+                                <th>Enrolled</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var session in Model.PastSessions)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@session.CourseTitle</td>
+                                    <td>@session.SessionDate.ToString("dd MMM yyyy")</td>
+                                    <td>@session.StartTime - @session.EndTime</td>
+                                    <td>@session.ClassroomName</td>
+                                    <td>@session.EnrolledCount / @session.Capacity</td>
+                                    <td class="text-center">
+                                        <a asp-action="CourseDetails"
+                                           asp-route-id="@session.SessionId"
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-eye"></i> View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-light border text-center text-muted">
+                    No past courses found.
+                </div>
+            }
+        </div>
+    </div>
+</div>
