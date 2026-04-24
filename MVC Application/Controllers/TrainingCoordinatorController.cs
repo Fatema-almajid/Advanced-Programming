@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainingCertificationPlatform;              // Shared DbContext from API project
 using TrainingCertificationPlatform.Models;      // Shared domain models
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVC_Application.Controllers
 {
+    [Authorize(Roles = "TRAINING_COORDINATOR")]
     public class TrainingCoordinatorController : Controller
     {
         private readonly AppDbContext _context;

@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using MVC_Application.Models.ViewModels;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVC_Application.Controllers
 {
+    [Authorize(Roles = "TRAINING_COORDINATOR")]
     public class InstructorsController : Controller
     {
         private readonly AppDbContext _context;

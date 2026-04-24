@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Application.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVC_Application.Controllers
 {
@@ -15,6 +16,18 @@ namespace MVC_Application.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("TRAINING_COORDINATOR"))
+                    return RedirectToAction("Dashboard", "TrainingCoordinator");
+
+                if (User.IsInRole("INSTRUCTOR"))
+                    return RedirectToAction("Dashboard", "Instructor");
+
+                if (User.IsInRole("TRAINEE"))
+                    return RedirectToAction("Dashboard", "Trainee");
+            }
+
             return View();
         }
 
