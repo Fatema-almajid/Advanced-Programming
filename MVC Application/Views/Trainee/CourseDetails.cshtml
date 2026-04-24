@@ -1,0 +1,79 @@
+﻿@model TrainingCertificationPlatform.Models.Course
+
+@{
+    ViewData["Title"] = "Course Details";
+    var session = ViewBag.NextSession as TrainingCertificationPlatform.Models.Session;
+    bool isEnrolled = ViewBag.IsEnrolled;
+}
+
+<partial name="_TraineeNav" />
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <span class="course-category">@Model.Category</span>
+        <h2 class="mt-3">@Model.Title</h2>
+
+        <p class="text-muted">@Model.Description</p>
+
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <strong>Duration</strong>
+                <p>@Model.Duration hrs</p>
+            </div>
+
+            <div class="col-md-3">
+                <strong>Capacity</strong>
+                <p>@Model.Capacity</p>
+            </div>
+
+            <div class="col-md-3">
+                <strong>Fee</strong>
+                <p>@Model.Fee.ToString("C")</p>
+            </div>
+
+            <div class="col-md-3">
+                <strong>Prerequisite</strong>
+                <p>@(Model.Prerequisite?.Title ?? "None")</p>
+            </div>
+        </div>
+
+        @if (session != null)
+        {
+            <hr />
+            <h5>Next Session</h5>
+            <p>
+                @session.SessionDate.ToString("dd MMM yyyy")
+                from @session.StartTime.ToString("hh\\:mm")
+                to @session.EndTime.ToString("hh\\:mm")
+            </p>
+            <p>Instructor: @session.Instructor.FirstName @session.Instructor.LastName</p>
+            <p>Room: @session.Classroom.Name</p>
+        }
+
+        @if (isEnrolled)
+        {
+            <button class="view-course-btn" disabled>
+                <i class="bi bi-check-circle"></i> Already Enrolled
+            </button>
+        }
+        else
+        {
+            <form asp-action="Enroll" method="post">
+                <input type="hidden" name="courseId" value="@Model.Id" />
+                <button type="submit" class="view-course-btn">
+                    <i class="bi bi-credit-card"></i> Enroll and Pay
+                </button>
+            </form>
+        }
+    </div>
+</div>
