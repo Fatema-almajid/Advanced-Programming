@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace TrainingCertificationPlatform.Models
 {
     public class Session
     {
+        [Required]
         public int Id { get; set; }
         public int CourseId { get; set; }
 

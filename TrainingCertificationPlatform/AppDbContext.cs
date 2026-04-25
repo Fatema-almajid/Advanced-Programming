@@ -54,9 +54,16 @@ namespace TrainingCertificationPlatform
                 .HasForeignKey(s => s.InstructorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Session>()
+                .HasIndex(s => new { s.InstructorId, s.SessionDate });
+
+            modelBuilder.Entity<Session>()
+                .HasIndex(s => new { s.ClassroomId, s.SessionDate });
+
+            //edited: .WithMany() to .WithMany(e => e.Payments)
             modelBuilder.Entity<Payment>()
                .HasOne(p => p.Enrollment)
-               .WithMany()
+               .WithMany(e => e.Payments)
                .HasForeignKey(p => p.EnrollmentId);
 
             modelBuilder.Entity<Balance>()

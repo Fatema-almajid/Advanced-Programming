@@ -1,0 +1,76 @@
+﻿@model IEnumerable<TrainingCertificationPlatform.Models.Enrollment>
+
+
+@{
+    ViewData["Title"] = "My Payment";
+}
+
+<partial name="~/Views/Trainee/_TraineeNav.cshtml" />
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0">
+        <i class="bi-credit-card"></i> My Payments
+    </h2>
+
+</div>
+
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Course</th>
+                <th>Total Paid</th>
+                <th>Amount Due</th>
+                <th>Due Date</th>
+                <th>Balance Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var enrollment in Model)
+                {
+                    var totalPaid = enrollment.Payments.Sum(p => p.Amount);
+                    var amountDue = enrollment.Balance?.AmountDue ?? 0;
+
+                    <tr>
+                        <td class="fw-semibold">@enrollment.Session.Course.Title</td>
+                        <td>BHD @totalPaid</td>
+                        <td>BHD @amountDue</td>
+                        <td>
+                            @(enrollment.Balance != null ? enrollment.Balance.DueDate.ToString("dd MMM yyyy") 
+                            : "No due date")
+                        </td>
+                        <td>
+                            @(enrollment.Balance != null ? enrollment.Balance.Status
+                           : "No balance")
+                        </td>
+                        <td>
+                            @if (amountDue > 0)
+                            {
+                                <a asp-action="Create" asp-route-enrollmentId="@enrollment.Id" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-cash-coin"></i>Pay
+                                </a>    
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Paid</span>
+                            }
+                        </td>
+                    </tr>
+                }
+
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No payment records found.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

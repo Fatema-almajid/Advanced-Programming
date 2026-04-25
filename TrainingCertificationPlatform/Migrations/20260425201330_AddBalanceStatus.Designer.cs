@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrainingCertificationPlatform;
 
@@ -11,9 +12,11 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260425201330_AddBalanceStatus")]
+    partial class AddBalanceStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,9 +128,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EnrollmentId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -135,10 +135,6 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("EnrollmentId")
                         .IsUnique();
-
-                    b.HasIndex("EnrollmentId1")
-                        .IsUnique()
-                        .HasFilter("[EnrollmentId1] IS NOT NULL");
 
                     b.ToTable("Balances");
 
@@ -436,9 +432,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EnrollmentId1")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
 
@@ -448,8 +441,6 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EnrollmentId");
-
-                    b.HasIndex("EnrollmentId1");
 
                     b.ToTable("Payments");
 
@@ -689,10 +680,6 @@ namespace TrainingCertificationPlatform.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TrainingCertificationPlatform.Models.Enrollment", null)
-                        .WithOne("Balance")
-                        .HasForeignKey("TrainingCertificationPlatform.Models.Balance", "EnrollmentId1");
-
                     b.Navigation("Enrollment");
                 });
 
@@ -777,10 +764,6 @@ namespace TrainingCertificationPlatform.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TrainingCertificationPlatform.Models.Enrollment", null)
-                        .WithMany("Payments")
-                        .HasForeignKey("EnrollmentId1");
-
                     b.Navigation("Enrollment");
                 });
 
@@ -833,13 +816,6 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Course", b =>
                 {
                     b.Navigation("InstructorExpertises");
-                });
-
-            modelBuilder.Entity("TrainingCertificationPlatform.Models.Enrollment", b =>
-                {
-                    b.Navigation("Balance");
-
-                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.User", b =>

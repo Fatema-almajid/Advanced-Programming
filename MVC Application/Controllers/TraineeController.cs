@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using MVC_Application.Models.ViewModels;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
+using TrainingCertificationPlatform.Services;
 
 namespace MVC_Application.Controllers
 {
@@ -13,10 +14,12 @@ namespace MVC_Application.Controllers
     public class TraineeController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly PaymentTrackingService _paymentTrackingService;
 
-        public TraineeController(AppDbContext context)
+        public TraineeController(AppDbContext context, PaymentTrackingService paymentTrackingService)
         {
             _context = context;
+            _paymentTrackingService = paymentTrackingService;
         }
 
         private int GetTraineeId()
@@ -262,6 +265,29 @@ namespace MVC_Application.Controllers
             }).ToList();
 
             return View(model);
+        }
+
+        public async Task<IActionResult> MyPayments()
+        {
+
+            int traineeId = GetTraineeId();
+
+            if (traineeId <= 0)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            await _paymentTrackingService.FlagOverdueBalancesAsync();
+
+            var enrollments = await _context.Enrollments
+                .Include(e => e.Session)
+                .ThenInclude(s => s.Course)
+                .Include(e => e.Balance)
+                .Include(e => e.Payments)
+                .Where(e => e.TraineeId == traineeId)
+                .ToListAsync();
+
+            return View(enrollments);
         }
     }
 }

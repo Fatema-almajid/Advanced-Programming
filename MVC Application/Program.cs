@@ -21,6 +21,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
+//edit: Register application services
+builder.Services.AddScoped<TrainingCertificationPlatform.Services.SessionSchedulingService>();
+builder.Services.AddScoped<TrainingCertificationPlatform.Services.PaymentTrackingService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

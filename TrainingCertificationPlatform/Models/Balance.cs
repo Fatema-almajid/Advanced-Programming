@@ -2,6 +2,12 @@
 
 namespace TrainingCertificationPlatform.Models
 {
+    public enum BalanceStatus
+    {
+        PENDIG,
+        PAID,
+        OVERRDUE
+    }
     public class Balance
     {
         public int Id { get; set; }
@@ -10,6 +16,7 @@ namespace TrainingCertificationPlatform.Models
 
         public int AmountDue { get; set; }
         public DateTime DueDate { get; set; }
+        public BalanceStatus Status { get; set; }
 
         [ForeignKey("EnrollmentId")]
         public Enrollment Enrollment { get; set; } = null!;
