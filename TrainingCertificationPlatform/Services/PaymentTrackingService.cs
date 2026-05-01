@@ -12,7 +12,7 @@ namespace TrainingCertificationPlatform.Services
             _context = context;
         }
 
-        public async Task<string?> RecordPaymentAsync(int enrollmentId, double paymentAmount) {
+        public async Task<string?> RecordPaymentAsync(int enrollmentId, decimal paymentAmount) { 
            
 
             if (paymentAmount <= 0) {
@@ -48,9 +48,9 @@ namespace TrainingCertificationPlatform.Services
                 Status = remainingBalance == 0 ? PaymentStatus.FULL :PaymentStatus.PARTIAL
             };
 
-     
-                balance.AmountDue -= (int)paymentAmount;
-                balance.Status = remainingBalance == 0 ? BalanceStatus.PAID : BalanceStatus.PENDIG;
+
+            balance.AmountDue = remainingBalance;
+            balance.Status = remainingBalance == 0 ? BalanceStatus.PAID : BalanceStatus.PENDING;
             
 
             _context.Payments.Add(payment);
@@ -63,16 +63,29 @@ namespace TrainingCertificationPlatform.Services
             var overdueBalances = await _context.Balances
                 .Where(b => 
                 b.AmountDue > 0  &&
-                b.DueDate.Date < DateTime.Now &&
-                b.Status != BalanceStatus.OVERRDUE)
+                b.DueDate < DateTime.Now &&
+                b.Status != BalanceStatus.OVERDUE)
                 .ToListAsync();
 
             foreach (var balance in overdueBalances)
             {
-                balance.Status = BalanceStatus.OVERRDUE;
+                balance.Status = BalanceStatus.OVERDUE;
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Enrollment>> GetTraineePaymentsAsync(int traineeId)
+        {
+            await FlagOverdueBalancesAsync();
+
+            return await _context.Enrollments
+                .Include(e => e.Session)
+                .ThenInclude(s => s.Course)
+                .Include(e => e.Balance)
+                .Include(e => e.Payments)
+                .Where(e => e.TraineeId == traineeId)
+                .ToListAsync();
         }
     }
 }

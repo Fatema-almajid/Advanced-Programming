@@ -269,23 +269,12 @@ namespace MVC_Application.Controllers
 
         public async Task<IActionResult> MyPayments()
         {
-
             int traineeId = GetTraineeId();
 
             if (traineeId <= 0)
-            {
                 return RedirectToAction("Login", "Account");
-            }
 
-            await _paymentTrackingService.FlagOverdueBalancesAsync();
-
-            var enrollments = await _context.Enrollments
-                .Include(e => e.Session)
-                .ThenInclude(s => s.Course)
-                .Include(e => e.Balance)
-                .Include(e => e.Payments)
-                .Where(e => e.TraineeId == traineeId)
-                .ToListAsync();
+            var enrollments = await _paymentTrackingService.GetTraineePaymentsAsync(traineeId);
 
             return View(enrollments);
         }

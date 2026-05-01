@@ -48,11 +48,18 @@
                            : "No balance")
                         </td>
                         <td>
-                            @if (amountDue > 0)
+                            @if (enrollment.Balance == null)
                             {
-                                <a asp-action="Create" asp-route-enrollmentId="@enrollment.Id" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-cash-coin"></i>Pay
-                                </a>    
+                                <span class="badge bg-secondary">No Balance</span>
+                            }
+                            else if (amountDue > 0)
+                            {
+                                <a asp-controller="Payments"
+                                       asp-action="Create"
+                                       asp-route-enrollmentId="@enrollment.Id"
+                                       class="btn btn-sm btn-primary">
+                                    <i class="bi bi-cash-coin"></i> Pay
+                                </a>
                             }
                             else
                             {

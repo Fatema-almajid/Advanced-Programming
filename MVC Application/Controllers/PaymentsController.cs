@@ -57,7 +57,7 @@ namespace MVC_Application.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( int enrollmentId, double amount)
+        public async Task<IActionResult> Create( int enrollmentId, decimal amount)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -86,7 +86,7 @@ namespace MVC_Application.Controllers
             }
 
             TempData["SuccessMessage"] = "Payment recorded syccessfully";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Create), new { enrollmentId });
         }
 
        

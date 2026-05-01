@@ -12,9 +12,26 @@
         <i class="bi-credit-card"></i> Record Payment
     </h2>
 
-    <a asp-action="Index" class="btn btn-outline-secondary">
-        Back to Payments
-    </a>
+    @{
+        var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    }
+
+    @if (role == "TRAINEE")
+    {
+        <a asp-controller="Trainee"
+               asp-action="MyPayments"
+               class="btn btn-outline-secondary">
+            Back to My Payments
+        </a>
+    }
+    else if (role == "ADMIN" || role == "COORDINATOR")
+    {
+        <a asp-controller="Payments"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+            Back to Payments
+        </a>
+    }
 
 </div>
 

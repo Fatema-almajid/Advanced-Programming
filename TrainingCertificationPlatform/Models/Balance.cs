@@ -4,9 +4,9 @@ namespace TrainingCertificationPlatform.Models
 {
     public enum BalanceStatus
     {
-        PENDIG,
+        PENDING,
         PAID,
-        OVERRDUE
+        OVERDUE
     }
     public class Balance
     {
@@ -14,7 +14,9 @@ namespace TrainingCertificationPlatform.Models
 
         public int EnrollmentId { get; set; }
 
-        public int AmountDue { get; set; }
+        //changed to decimal
+        public decimal AmountDue { get; set; }
+
         public DateTime DueDate { get; set; }
         public BalanceStatus Status { get; set; }
 

@@ -66,10 +66,15 @@ namespace TrainingCertificationPlatform
                .WithMany(e => e.Payments)
                .HasForeignKey(p => p.EnrollmentId);
 
-            modelBuilder.Entity<Balance>()
-                .HasOne(b => b.Enrollment)
-                .WithOne()
-                .HasForeignKey<Balance>(b => b.EnrollmentId);
+            //modelBuilder.Entity<Balance>()
+            //    .HasOne(b => b.Enrollment)
+            //    .WithOne()
+            //    .HasForeignKey<Balance>(b => b.EnrollmentId);
+
+            modelBuilder.Entity<Enrollment>()
+    .HasOne(e => e.Balance)
+    .WithOne(b => b.Enrollment)
+    .HasForeignKey<Balance>(b => b.EnrollmentId);
 
             modelBuilder.Entity<Assessment>()
                 .HasOne(a => a.Enrollment)
