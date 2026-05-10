@@ -1,12 +1,7 @@
-﻿@model TrainingCertificationPlatform.Models.Course
+﻿@model List<MVC_Application.Models.ViewModels.TraineeCourseViewModel>
 
 @{
-    ViewData["Title"] = "Course Details";
-    var session = ViewBag.NextSession as TrainingCertificationPlatform.Models.Session;
-    bool isEnrolled = ViewBag.IsEnrolled;
-
-    int enrolledCount = ViewBag.EnrolledCount ?? 0;
-    int remainingSeats = Model.Capacity - enrolledCount;
+    ViewData["Title"] = "My Courses";
 }
 
 <partial name="_TraineeNav" />
@@ -21,77 +16,49 @@
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
-<div class="card shadow-sm" data-course-id="@Model.Id">
-    <div class="card-body p-4">
-        <span class="course-category">@Model.Category</span>
-        <h2 class="mt-3">@Model.Title</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+        <i class="bi bi-journal-bookmark"></i> My Courses
+    </h2>
+</div>
 
-        <p class="text-muted">@Model.Description</p>
-
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <strong>Duration</strong>
-                <p>@Model.Duration hrs</p>
-            </div>
-
-            <div class="col-md-3">
-                <strong>Capacity</strong>
-                <p>@Model.Capacity</p>
-            </div>
-
-            <div class="col-md-3">
-                <strong>Available Seats</strong>
-                <p>
-                    <span data-remaining-seats-for="@Model.Id">
-                        @remainingSeats
-                    </span>
-                </p>
-            </div>
-
-            <div class="col-md-3">
-                <strong>Fee</strong>
-                <p>@Model.Fee.ToString("C")</p>
-            </div>
-
-            <div class="col-md-3">
-                <strong>Prerequisite</strong>
-                <p>@(Model.Prerequisite?.Title ?? "None")</p>
-            </div>
-        </div>
-
-        @if (session != null)
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        You are not enrolled in any courses yet.
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var course in Model)
         {
-            <hr />
-            <h5>Next Session</h5>
-            <p>
-                @session.SessionDate.ToString("dd MMM yyyy")
-                from @session.StartTime.ToString("hh\\:mm")
-                to @session.EndTime.ToString("hh\\:mm")
-            </p>
-            <p>Instructor: @session.Instructor.FirstName @session.Instructor.LastName</p>
-            <p>Room: @session.Classroom.Name</p>
-        }
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column">
+                        <span class="course-category">
+                            @course.Category
+                        </span>
 
-        @if (isEnrolled)
-        {
-            <button class="view-course-btn" disabled>
-                <i class="bi bi-check-circle"></i> Already Enrolled
-            </button>
-        }
-        else if (remainingSeats <= 0)
-        {
-            <button class="view-course-btn" disabled data-enroll-button-for="@Model.Id">
-                <i class="bi bi-x-circle"></i> Full
-            </button>
-        }
-        else
-        {
-            <form asp-action="Enroll" method="post">
-                <input type="hidden" name="courseId" value="@Model.Id" />
-                <button type="submit" class="view-course-btn" data-enroll-button-for="@Model.Id">
-                    <i class="bi bi-credit-card"></i> Enroll and Pay
-                </button>
-            </form>
+                        <h5 class="mt-3">
+                            @course.Title
+                        </h5>
+
+                        <p class="text-muted">
+                            @course.Description
+                        </p>
+
+                        <div class="mt-auto">
+                            <a asp-controller="Trainee"
+                                   asp-action="CourseDetails"
+                                   asp-route-id="@course.CourseId"
+                                   class="view-course-btn">
+                                View Course
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
     </div>
-</div>
+}

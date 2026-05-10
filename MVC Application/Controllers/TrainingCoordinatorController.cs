@@ -37,6 +37,7 @@ namespace MVC_Application.Controllers
                 .Take(5)
                 .Select(s => new UpcomingCourseViewModel
                 {
+                    SessionId = s.Id,
                     CourseName = s.Course.Title,
                     InstructorName = s.Instructor.FirstName + " " + s.Instructor.LastName,
                     RoomName = s.Classroom.Name,
