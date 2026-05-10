@@ -48,6 +48,7 @@ namespace TrainingCertificationPlatform
                 .HasForeignKey(e => e.TraineeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            //REEM: create one-to-one relationship between Enrollment and Balance
             modelBuilder.Entity<Enrollment>()
    .HasOne(e => e.Balance)
    .WithOne(b => b.Enrollment)
@@ -65,16 +66,11 @@ namespace TrainingCertificationPlatform
             modelBuilder.Entity<Session>()
                 .HasIndex(s => new { s.ClassroomId, s.SessionDate });
 
-            //edited: .WithMany() to .WithMany(e => e.Payments)
+            //REEM: .WithMany() to .WithMany(e => e.Payments)
             modelBuilder.Entity<Payment>()
                .HasOne(p => p.Enrollment)
                .WithMany(e => e.Payments)
                .HasForeignKey(p => p.EnrollmentId);
-
-            //modelBuilder.Entity<Balance>()
-            //    .HasOne(b => b.Enrollment)
-            //    .WithOne()
-            //    .HasForeignKey<Balance>(b => b.EnrollmentId);
 
             modelBuilder.Entity<Assessment>()
                 .HasOne(a => a.Enrollment)
@@ -88,8 +84,10 @@ namespace TrainingCertificationPlatform
             // USER
             modelBuilder.Entity<User>().HasData(
                 new User { Id = 1, FirstName = "Ali", LastName = "Ahmad", Password = "$2a$11$examplehash...", Role = UserRole.TRAINEE, Email = "ali@mail.com", Phone = "99999999", RegistrationDate = fixedDate },
-                new User { Id = 2, FirstName = "Sara", LastName = "Mohamed", Password = "$2a$11$examplehash...", Role = UserRole.INSTRUCTOR, Email = "sara@mail.com", Phone = "88888888", RegistrationDate = fixedDate }
-            );
+                new User { Id = 2, FirstName = "Sara", LastName = "Mohamed", Password = "$2a$11$examplehash...", Role = UserRole.INSTRUCTOR, Email = "sara@mail.com", Phone = "88888888", RegistrationDate = fixedDate },
+                //REEM: Add a training coordinator user for testing
+                new User { Id = 100, FirstName = "Mariam", LastName = "Coordinator", Password = "123456", Role = UserRole.TRAINING_COORDINATOR, Email = "coordinator@mail.com", Phone = "77777777", RegistrationDate = fixedDate}
+                );
 
             // COURSE
             modelBuilder.Entity<Course>().HasData(

@@ -12,7 +12,7 @@
 
         public int EnrollmentId { get; set; }
 
-        //Changed to decimal
+        //REEM: Changed to decimal
         public decimal Amount { get; set; }
 
         public DateTime PaymentDate { get; set; }

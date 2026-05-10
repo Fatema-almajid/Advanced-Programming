@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//SignalR for real-time updates on enrollment count
 builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -23,7 +25,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
-//edit: Register application services
+// Register application services
 builder.Services.AddScoped<TrainingCertificationPlatform.Services.SessionSchedulingService>();
 builder.Services.AddScoped<TrainingCertificationPlatform.Services.PaymentTrackingService>();
 

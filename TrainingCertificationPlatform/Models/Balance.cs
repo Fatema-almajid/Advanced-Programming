@@ -14,7 +14,7 @@ namespace TrainingCertificationPlatform.Models
 
         public int EnrollmentId { get; set; }
 
-        //changed to decimal
+        //REEM: changed to decimal
         public decimal AmountDue { get; set; }
 
         public DateTime DueDate { get; set; }

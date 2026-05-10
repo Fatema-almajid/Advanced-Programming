@@ -21,7 +21,7 @@ namespace TrainingCertificationPlatform.Models
         public DateTime? CompletionDate { get; set; }
         public DateTime? PaymentDueDate { get; set; }
 
-        //edited: added Balance and Payments
+        //REEM: added Balance and Payments
         public Balance? Balance { get; set; }
 
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();

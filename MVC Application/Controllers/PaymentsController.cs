@@ -48,26 +48,44 @@ namespace MVC_Application.Controllers
             return View(payments);
         }
 
-        public async Task<IActionResult> Create(int? enrollmentId, string? returnUrl) {
-
+        [HttpGet]
+        public async Task<IActionResult> Create(int? enrollmentId, string? returnUrl)
+        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
             if (userIdClaim == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            int traineeId = int.Parse(userIdClaim);
+            int userId = int.Parse(userIdClaim);
 
             ViewBag.ReturnUrl = returnUrl;
 
-            ViewBag.Enrollments = await _context.Enrollments
+            var enrollmentsQuery = _context.Enrollments
                 .Include(e => e.Trainee)
                 .Include(e => e.Session)
-                .ThenInclude(s => s.Course)
-                .Where(e => e.TraineeId == traineeId && e.Balance != null  && e.Balance.AmountDue > 0)
-                .ToListAsync();
+                    .ThenInclude(s => s.Course)
+                .Where(e => e.Balance != null && e.Balance.AmountDue > 0);
 
+            if (role == "TRAINEE")
+            {
+                enrollmentsQuery = enrollmentsQuery
+                    .Where(e => e.TraineeId == userId);
+            }
+            else if ( role == "TRAINING_COORDINATOR")
+            {
+                // Coordinator can see all trainees with balance due
+                enrollmentsQuery = enrollmentsQuery;
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "You are not allowed to record payments.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            ViewBag.Enrollments = await enrollmentsQuery.ToListAsync();
             ViewBag.SelectedEnrollmentId = enrollmentId;
 
             return View();
@@ -75,23 +93,34 @@ namespace MVC_Application.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( int enrollmentId, decimal amount, string? returnUrl)
+        public async Task<IActionResult> Create(int enrollmentId, decimal amount, string? returnUrl)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
             if (userIdClaim == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            int traineeId = int.Parse(userIdClaim);
+            int userId = int.Parse(userIdClaim);
 
-            var enrollmentBelongsToTrainee = await _context.Enrollments
-                .AnyAsync(e => e.Id == enrollmentId && e.TraineeId == traineeId);
+            bool isAllowedToPay = false;
 
-            if (!enrollmentBelongsToTrainee)
+            if (role == "TRAINEE")
             {
-                TempData["ErrorMessage"] = "You can only pay for your own enrollment";
+                isAllowedToPay = await _context.Enrollments
+                    .AnyAsync(e => e.Id == enrollmentId && e.TraineeId == userId);
+            }
+            else if (role == "TRAINING_COORDINATOR")
+            {
+                isAllowedToPay = await _context.Enrollments
+                    .AnyAsync(e => e.Id == enrollmentId);
+            }
+
+            if (!isAllowedToPay)
+            {
+                TempData["ErrorMessage"] = "You are not allowed to pay for this enrollment.";
                 return RedirectToAction(nameof(Create));
             }
 
@@ -100,7 +129,7 @@ namespace MVC_Application.Controllers
             if (error != null)
             {
                 TempData["ErrorMessage"] = error;
-                return RedirectToAction(nameof(Create));
+                return RedirectToAction(nameof(Create), new { enrollmentId, returnUrl });
             }
 
             TempData["SuccessMessage"] = "Payment recorded successfully";
@@ -110,20 +139,7 @@ namespace MVC_Application.Controllers
                 return Redirect(returnUrl);
             }
 
-            // Re-populate the enrollments list
-            ViewBag.Enrollments = await _context.Enrollments
-                .Include(e => e.Trainee)
-                .Include(e => e.Session)
-                .ThenInclude(s => s.Course)
-                .Where(e => e.TraineeId == traineeId && e.Balance != null && e.Balance.AmountDue > 0)
-                .ToListAsync();
-
-            ViewBag.SelectedEnrollmentId = enrollmentId;
-
-            return RedirectToAction(nameof(Create), new
-            {
-                enrollmentId
-            });
+            return RedirectToAction(nameof(Index), new { enrollmentId });
         }
     }
 }
