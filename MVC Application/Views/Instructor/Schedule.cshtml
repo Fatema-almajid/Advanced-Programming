@@ -86,12 +86,16 @@
                         <tbody>
                             @foreach (var session in Model.UpcomingSessions)
                             {
-                                <tr>
+                                <tr data-session-id="@session.SessionId">
                                     <td class="fw-semibold">@session.CourseTitle</td>
                                     <td>@session.SessionDate.ToString("dd MMM yyyy")</td>
                                     <td>@session.StartTime - @session.EndTime</td>
                                     <td>@session.ClassroomName</td>
-                                    <td>@session.EnrolledCount / @session.Capacity</td>
+                                    <td>
+                                        <span data-session-enrollment-text-for="@session.SessionId">
+                                            @session.EnrolledCount / @session.Capacity
+                                        </span>
+                                    </td>
                                     <td class="text-center">
                                         <a asp-action="CourseDetails"
                                            asp-route-id="@session.SessionId"

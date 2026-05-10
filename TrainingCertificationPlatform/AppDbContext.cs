@@ -48,6 +48,11 @@ namespace TrainingCertificationPlatform
                 .HasForeignKey(e => e.TraineeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Enrollment>()
+   .HasOne(e => e.Balance)
+   .WithOne(b => b.Enrollment)
+   .HasForeignKey<Balance>(b => b.EnrollmentId);
+
             modelBuilder.Entity<Session>()
                 .HasOne(s => s.Instructor)
                 .WithMany()
@@ -70,11 +75,6 @@ namespace TrainingCertificationPlatform
             //    .HasOne(b => b.Enrollment)
             //    .WithOne()
             //    .HasForeignKey<Balance>(b => b.EnrollmentId);
-
-            modelBuilder.Entity<Enrollment>()
-    .HasOne(e => e.Balance)
-    .WithOne(b => b.Enrollment)
-    .HasForeignKey<Balance>(b => b.EnrollmentId);
 
             modelBuilder.Entity<Assessment>()
                 .HasOne(a => a.Enrollment)

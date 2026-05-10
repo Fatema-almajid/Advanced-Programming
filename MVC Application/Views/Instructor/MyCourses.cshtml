@@ -82,13 +82,17 @@
                 <tbody>
                     @foreach (var session in Model)
                     {
-                        <tr>
+                        <tr data-session-id="@session.SessionId">
                             <td class="fw-semibold">@session.CourseTitle</td>
                             <td>@session.Category</td>
                             <td>@session.SessionDate.ToString("dd MMM yyyy")</td>
                             <td>@session.StartTime - @session.EndTime</td>
                             <td>@session.ClassroomName</td>
-                            <td>@session.EnrolledCount / @session.Capacity</td>
+                            <td>
+                                <span data-session-enrollment-text-for="@session.SessionId">
+                                    @session.EnrolledCount / @session.Capacity
+                                </span>
+                            </td>
                             <td>
                                 <span class="badge @(session.SessionType == "Upcoming" ? "bg-success" : "bg-secondary")">
                                     @session.SessionType
@@ -113,7 +117,7 @@
             @foreach (var session in Model)
             {
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100 shadow-sm course-card">
+                    <div class="card h-100 shadow-sm course-card" data-session-id="@session.SessionId">
                         <div class="card-body">
                             <h5 class="card-title">@session.CourseTitle</h5>
 
@@ -134,7 +138,12 @@
                                 <li><strong>Date:</strong> @session.SessionDate.ToString("dd MMM yyyy")</li>
                                 <li><strong>Time:</strong> @session.StartTime - @session.EndTime</li>
                                 <li><strong>Room:</strong> @session.ClassroomName</li>
-                                <li><strong>Enrolled:</strong> @session.EnrolledCount / @session.Capacity</li>
+                                <li>
+                                    <strong>Enrolled:</strong>
+                                    <span data-session-enrollment-text-for="@session.SessionId">
+                                        @session.EnrolledCount / @session.Capacity
+                                    </span>
+                                </li>
                             </ul>
                         </div>
 

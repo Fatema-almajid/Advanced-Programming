@@ -57,6 +57,7 @@
                                 <a asp-controller="Payments"
                                        asp-action="Create"
                                        asp-route-enrollmentId="@enrollment.Id"
+                                       asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)"
                                        class="btn btn-sm btn-primary">
                                     <i class="bi bi-cash-coin"></i> Pay
                                 </a>

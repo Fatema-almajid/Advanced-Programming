@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainingCertificationPlatform;
+using TrainingCertificationPlatform.Models;
 using TrainingCertificationPlatform.Services;
-using System.Security.Claims;
 
 namespace MVC_Application.Controllers
 {
@@ -17,8 +19,22 @@ namespace MVC_Application.Controllers
             _paymentTrackingService = paymentTrackingService;
         }
 
+        [Authorize(Roles = "TRAINING_COORDINATOR,INSTRUCTOR")]
         public async Task<IActionResult> Index() { 
-            await _paymentTrackingService.FlagOverdueBalancesAsync();
+
+            if (User.IsInRole(UserRole.INSTRUCTOR.ToString()))
+            {
+                ViewBag.Role = "Instructor";
+            }
+            else if (User.IsInRole(UserRole.TRAINING_COORDINATOR.ToString())) { 
+                ViewBag.Role = "TrainingCoordinator";
+            }
+            else
+            {
+                // If the user is authenticated but does not have the required role, show an error or redirect
+                return Forbid();
+            }
+                await _paymentTrackingService.FlagOverdueBalancesAsync();
 
             var payments = await _context.Payments
                 .Include(p => p.Enrollment)
@@ -32,7 +48,7 @@ namespace MVC_Application.Controllers
             return View(payments);
         }
 
-        public async Task<IActionResult> Create(int? enrollmentId) {
+        public async Task<IActionResult> Create(int? enrollmentId, string? returnUrl) {
 
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -42,6 +58,8 @@ namespace MVC_Application.Controllers
             }
 
             int traineeId = int.Parse(userIdClaim);
+
+            ViewBag.ReturnUrl = returnUrl;
 
             ViewBag.Enrollments = await _context.Enrollments
                 .Include(e => e.Trainee)
@@ -57,7 +75,7 @@ namespace MVC_Application.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( int enrollmentId, decimal amount)
+        public async Task<IActionResult> Create( int enrollmentId, decimal amount, string? returnUrl)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -85,10 +103,27 @@ namespace MVC_Application.Controllers
                 return RedirectToAction(nameof(Create));
             }
 
-            TempData["SuccessMessage"] = "Payment recorded syccessfully";
-            return RedirectToAction(nameof(Create), new { enrollmentId });
-        }
+            TempData["SuccessMessage"] = "Payment recorded successfully";
 
-       
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            // Re-populate the enrollments list
+            ViewBag.Enrollments = await _context.Enrollments
+                .Include(e => e.Trainee)
+                .Include(e => e.Session)
+                .ThenInclude(s => s.Course)
+                .Where(e => e.TraineeId == traineeId && e.Balance != null && e.Balance.AmountDue > 0)
+                .ToListAsync();
+
+            ViewBag.SelectedEnrollmentId = enrollmentId;
+
+            return RedirectToAction(nameof(Create), new
+            {
+                enrollmentId
+            });
+        }
     }
 }
