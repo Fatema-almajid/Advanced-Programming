@@ -1,0 +1,248 @@
+@{
+    ViewData["Title"] = "Login";
+}
+@model reportingApplication.Controllers.LoginViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f4f3ef;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border: 0.5px solid rgba(0,0,0,0.12);
+            border-radius: 14px;
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin: auto;
+        }
+
+        .login-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #2c2c2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .login-logo span {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'DM Mono', monospace;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 500;
+            color: #1a1a18;
+            margin-bottom: 0.35rem;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #6b6b67;
+            margin-bottom: 2rem;
+        }
+
+        .field {
+            margin-bottom: 1rem;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b6b67;
+            margin-bottom: 6px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .field input {
+            width: 100%;
+            height: 40px;
+            padding: 0 12px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            border: 0.5px solid rgba(0,0,0,0.2);
+            border-radius: 8px;
+            background: #f9f8f5;
+            color: #1a1a18;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .field input:focus {
+            border-color: rgba(0,0,0,0.4);
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+        }
+
+        .field input.input-error {
+            border-color: #c0392b;
+        }
+
+        .field-validation-error {
+            display: block;
+            font-size: 12px;
+            color: #c0392b;
+            margin-top: 5px;
+        }
+
+        .btn-login {
+            width: 100%;
+            height: 40px;
+            margin-top: 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background: #2c2c2a;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+
+        .btn-login:hover { opacity: 0.85; }
+        .btn-login:active { transform: scale(0.98); }
+
+        .btn-login.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .btn-login.loading .btn-label { display: none; }
+        .btn-login.loading .spinner { display: block; }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+
+        @@keyframes spin { to { transform: rotate(360deg); } }
+
+        .alert-error {
+            background: #fdf2f2;
+            border: 0.5px solid #f5c6c6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #a94442;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .alert-error.visible { display: block; }
+
+        hr {
+            border: none;
+            border-top: 0.5px solid rgba(0,0,0,0.08);
+            margin: 1.75rem 0 1.25rem;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            color: #9a9994;
+            text-align: center;
+        }
+
+        .footer-note a {
+            color: #444441;
+            text-decoration: none;
+        }
+
+        .footer-note a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>Welcome back</h1>
+        <p class="subtitle">Sign in to continue to your account</p>
+
+        <form id="loginForm" method="post" asp-action="Login" asp-controller="Login">
+            <div class="field">
+                <label for="Email">Email</label>
+                <input type="email"
+                       id="Email"
+                       name="Email"
+                       placeholder="you@example.com"
+                       autocomplete="email"
+                       required
+                       asp-for="Email" />
+                <span class="field-validation-error" asp-validation-for="Email"></span>
+            </div>
+
+            <div class="field">
+                <label for="Password">Password</label>
+                <input type="password"
+                       id="Password"
+                       name="Password"
+                       placeholder="••••••••"
+                       autocomplete="current-password"
+                       required
+                       asp-for="Password" />
+                <span class="field-validation-error" asp-validation-for="Password"></span>
+            </div>
+
+            <button class="btn-login" id="loginBtn" type="submit">
+                <span class="btn-label">Sign in</span>
+                <div class="spinner"></div>
+            </button>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert-error visible">
+                    @Html.ValidationSummary(true, "", new { @class = "" })
+                </div>
+            }
+        </form>
+
+        <hr />
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const btn = document.getElementById('loginBtn');
+            btn.classList.add('loading');
+        });
+    </script>
+</body>
+</html>
