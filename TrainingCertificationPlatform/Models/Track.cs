@@ -1,4 +1,6 @@
-﻿namespace TrainingCertificationPlatform.Models
+﻿// Represents training tracks that group related courses using a many-to-many relationship
+
+namespace TrainingCertificationPlatform.Models
 {
     public class Track
     {

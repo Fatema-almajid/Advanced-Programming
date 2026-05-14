@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿// Represents instructor availability schedules, including available days, time ranges, and instructor relationship
+
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrainingCertificationPlatform.Models
 {

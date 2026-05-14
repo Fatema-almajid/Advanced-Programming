@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrainingCertificationPlatform;
 
@@ -11,9 +12,11 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260514220544_FixAssessmentSeed")]
+    partial class FixAssessmentSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,8 +185,7 @@ namespace TrainingCertificationPlatform.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AmountDue")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
@@ -712,8 +714,7 @@ namespace TrainingCertificationPlatform.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
@@ -1023,7 +1024,7 @@ namespace TrainingCertificationPlatform.Migrations
                             Email = "ali@mail.com",
                             FirstName = "Ali",
                             LastName = "Ahmad",
-                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Password = "$2a$11$x4qb8776Dbr0Ltc2M/tM/O5kFl0tzNF1agUUs543BeGCMz/K/vaT.",
                             Phone = "99999991",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 0
@@ -1034,7 +1035,7 @@ namespace TrainingCertificationPlatform.Migrations
                             Email = "sara@mail.com",
                             FirstName = "Sara",
                             LastName = "Mohamed",
-                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Password = "$2a$11$wfxwG1i.WiTjstYbx6pE3ONCKTQYKSqSynJQiCuT1YI2CSjL8Jrsq",
                             Phone = "99999992",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1
@@ -1042,10 +1043,10 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 3,
-                            Email = "dana@mail.com",
-                            FirstName = "Dana",
-                            LastName = "Albanki",
-                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Email = "mariam@mail.com",
+                            FirstName = "Mariam",
+                            LastName = "Hassan",
+                            Password = "$2a$11$YvIaDgzxV1IRx9uX6cegOenui7ECXHkzuh/SjzbuYr7kut6IMXg..",
                             Phone = "99999993",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 2
@@ -1056,7 +1057,7 @@ namespace TrainingCertificationPlatform.Migrations
                             Email = "omar@mail.com",
                             FirstName = "Omar",
                             LastName = "Ali",
-                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Password = "$2a$11$SCuxvvUXWltUe7Hz3WGQN.m2LwyW4nCGeZbEmC/ioPGfb9rVA9wbm",
                             Phone = "99999994",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 0
@@ -1067,7 +1068,7 @@ namespace TrainingCertificationPlatform.Migrations
                             Email = "fatima@mail.com",
                             FirstName = "Fatima",
                             LastName = "Yousef",
-                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Password = "$2a$11$sRMBUwJ.sjwigPf16zqWIeZpuyvn.t4TBM0oSNvpbRr/w6ovF0uTO",
                             Phone = "99999995",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1

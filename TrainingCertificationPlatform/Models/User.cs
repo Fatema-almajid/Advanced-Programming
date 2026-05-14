@@ -1,4 +1,6 @@
-﻿namespace TrainingCertificationPlatform.Models
+﻿// Represents the three main user roles
+
+namespace TrainingCertificationPlatform.Models
 {
     public enum UserRole
     {

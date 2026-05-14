@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿// Represents scheduled training sessions including course, instructor, classroom, and session timing details.
+
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace TrainingCertificationPlatform.Models

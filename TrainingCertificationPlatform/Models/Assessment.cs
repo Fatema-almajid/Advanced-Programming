@@ -1,4 +1,6 @@
-﻿namespace TrainingCertificationPlatform.Models
+﻿// Represents trainee assessments, including status, due date, completion date, and relationship with enrollment
+
+namespace TrainingCertificationPlatform.Models
 {
     public enum AssessmentStatus
     {

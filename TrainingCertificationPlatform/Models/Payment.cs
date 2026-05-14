@@ -1,4 +1,6 @@
-﻿namespace TrainingCertificationPlatform.Models
+﻿// Represents trainee payment records linked to enrollments, including amount, payment date, and payment status
+
+namespace TrainingCertificationPlatform.Models
 {
     public enum PaymentStatus
     {

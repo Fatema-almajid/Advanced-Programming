@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+// Represents trainee certifications linked to training tracks, including certification status and trainee-track relationships
 
 namespace TrainingCertificationPlatform.Models
 {

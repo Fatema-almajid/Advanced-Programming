@@ -1,4 +1,6 @@
-﻿namespace TrainingCertificationPlatform.Models
+﻿// Represents classrooms and equipment with a many-to-many relationship for managing training room resources
+
+namespace TrainingCertificationPlatform.Models
 {
     public class Equipment
     {

@@ -1,4 +1,6 @@
-﻿using TrainingCertificationPlatform.Models;
+﻿// Represents the many-to-many relationship between instructors and courses based on instructor expertise
+
+using TrainingCertificationPlatform.Models;
 
 namespace TrainingCertificationPlatform.Models
 {

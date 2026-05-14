@@ -1,4 +1,6 @@
-﻿namespace TrainingCertificationPlatform.Models
+﻿// Represents training courses, including category, prerequisites, capacity, fees, and relationships with tracks and instructor expertise
+
+namespace TrainingCertificationPlatform.Models
 {
     public enum CourseCategory
     {

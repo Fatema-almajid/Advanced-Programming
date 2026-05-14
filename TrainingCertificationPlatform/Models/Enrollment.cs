@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿// Represents trainee enrollments in training sessions, including status, payment details, balances, and related payments
+
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrainingCertificationPlatform.Models
 {

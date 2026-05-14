@@ -1,4 +1,6 @@
-﻿namespace TrainingCertificationPlatform.Models
+﻿// Represents notifications sent to users, including message details, creation date, and read status
+
+namespace TrainingCertificationPlatform.Models
 {
     public enum NotificationStatus
     {

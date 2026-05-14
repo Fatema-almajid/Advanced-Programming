@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿// Represents trainee payment balances, including amount due, due date, payment status, and enrollment relationship
+
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrainingCertificationPlatform.Models
 {
