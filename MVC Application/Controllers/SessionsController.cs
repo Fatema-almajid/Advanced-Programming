@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVC_Application.Models.ViewModels;
 using TrainingCertificationPlatform;
+using TrainingCertificationPlatform.Services;
 using TrainingCertificationPlatform.Models;
 //using Microsoft.AspNetCore.Authorization;
 
@@ -12,10 +13,13 @@ namespace MVC_Application.Controllers
     public class SessionsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly SessionSchedulingService _schedulingService;
 
-        public SessionsController(AppDbContext context)
+        public SessionsController(AppDbContext context, SessionSchedulingService schedulingService  )
         {
             _context = context;
+            _schedulingService = schedulingService;
+
         }
 
         // TABLE VIEW
@@ -91,7 +95,19 @@ namespace MVC_Application.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SessionFormViewModel model)
         {
-            await ValidateSessionAsync(model);
+            //Validate session creation
+            var errors = await _schedulingService.ValidateSessionAsync(
+                model.CourseId,
+                model.InstructorId,
+                model.ClassroomId,
+                model.SessionDate,
+                model.StartTime,
+                model.EndTime);
+
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(error.Key, error.Value);
+            }
 
             if (!ModelState.IsValid)
             {
@@ -144,7 +160,19 @@ namespace MVC_Application.Controllers
         {
             if (id != model.Id) return NotFound();
 
-            await ValidateSessionAsync(model, id);
+            //Validate session editing
+            var errors = await _schedulingService.ValidateSessionAsync(
+                 model.CourseId,
+                 model.InstructorId,
+                 model.ClassroomId,
+                 model.SessionDate,
+                 model.StartTime,
+                 model.EndTime);
+
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(error.Key, error.Value);
+            }
 
             if (!ModelState.IsValid)
             {
@@ -262,135 +290,6 @@ namespace MVC_Application.Controllers
                 "Id",
                 "Name",
                 selectedClassroomId);
-        }
-
-        private async Task ValidateSessionAsync(SessionFormViewModel model, int? currentSessionId = null)
-        {
-            if (model.EndTime <= model.StartTime)
-            {
-                ModelState.AddModelError(nameof(model.EndTime), "End time must be later than start time.");
-                return;
-            }
-
-            if (model.SessionDate.Date < DateTime.Today)
-            {
-                ModelState.AddModelError(nameof(model.SessionDate), "Session date cannot be in the past.");
-            }
-
-            var course = await _context.Courses
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == model.CourseId);
-
-            if (course == null)
-            {
-                ModelState.AddModelError(nameof(model.CourseId), "Selected course is invalid.");
-            }
-
-            var instructor = await _context.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == model.InstructorId && u.Role == UserRole.INSTRUCTOR);
-
-            if (instructor == null)
-            {
-                ModelState.AddModelError(nameof(model.InstructorId), "Selected instructor is invalid.");
-            }
-
-            var classroom = await _context.Classrooms
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == model.ClassroomId);
-
-            if (classroom == null)
-            {
-                ModelState.AddModelError(nameof(model.ClassroomId), "Selected room is invalid.");
-            }
-
-            if (!ModelState.IsValid || course == null || instructor == null || classroom == null)
-            {
-                return;
-            }
-
-            // Capacity validation
-            if (classroom.Seats < course.Capacity)
-            {
-                ModelState.AddModelError(nameof(model.ClassroomId),
-                    $"This room cannot be assigned because it has only {classroom.Seats} seats while the course capacity is {course.Capacity}.");
-            }
-
-            // Instructor expertise validation
-            var instructorCanTeachCourse = await _context.InstructorExpertises
-                .AnyAsync(e => e.InstructorId == model.InstructorId && e.CourseId == model.CourseId);
-
-            if (!instructorCanTeachCourse)
-            {
-                ModelState.AddModelError(nameof(model.InstructorId),
-                    "This instructor is not assigned as an expert for the selected course.");
-            }
-
-            // Instructor availability validation
-            var availability = await _context.InstructorAvailabilities
-                .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.InstructorId == model.InstructorId);
-
-            if (availability == null)
-            {
-                ModelState.AddModelError(nameof(model.InstructorId),
-                    "This instructor does not have an availability schedule yet.");
-            }
-            else
-            {
-                var sessionDay = model.SessionDate.DayOfWeek switch
-                {
-                    DayOfWeek.Sunday => Day.SUNDAY,
-                    DayOfWeek.Monday => Day.MONDAY,
-                    DayOfWeek.Tuesday => Day.TUESDAY,
-                    DayOfWeek.Wednesday => Day.WEDNESDAY,
-                    DayOfWeek.Thursday => Day.THURSDAY,
-                    DayOfWeek.Friday => Day.FRIDAY,
-                    _ => Day.SATURDAY
-                };
-
-                if (sessionDay < availability.DayStart || sessionDay > availability.DayEnd)
-                {
-                    ModelState.AddModelError(nameof(model.SessionDate),
-                        $"The instructor is only available from {availability.DayStart} to {availability.DayEnd}.");
-                }
-
-                if (model.StartTime < availability.StartTime || model.EndTime > availability.EndTime)
-                {
-                    ModelState.AddModelError(nameof(model.StartTime),
-                        $"The instructor is only available between {availability.StartTime} and {availability.EndTime}.");
-                }
-            }
-
-            // Instructor double-booking validation
-            var instructorConflict = await _context.Sessions
-                .AnyAsync(s =>
-                    s.InstructorId == model.InstructorId &&
-                    s.SessionDate.Date == model.SessionDate.Date &&
-                    (!currentSessionId.HasValue || s.Id != currentSessionId.Value) &&
-                    model.StartTime < s.EndTime &&
-                    model.EndTime > s.StartTime);
-
-            if (instructorConflict)
-            {
-                ModelState.AddModelError(nameof(model.InstructorId),
-                    "This instructor is already booked for another session during the selected time.");
-            }
-
-            // Room double-booking validation
-            var roomConflict = await _context.Sessions
-                .AnyAsync(s =>
-                    s.ClassroomId == model.ClassroomId &&
-                    s.SessionDate.Date == model.SessionDate.Date &&
-                    (!currentSessionId.HasValue || s.Id != currentSessionId.Value) &&
-                    model.StartTime < s.EndTime &&
-                    model.EndTime > s.StartTime);
-
-            if (roomConflict)
-            {
-                ModelState.AddModelError(nameof(model.ClassroomId),
-                    "This room is already booked for another session during the selected time.");
-            }
         }
     }
 }

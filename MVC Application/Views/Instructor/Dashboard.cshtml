@@ -84,7 +84,7 @@
                     @foreach (var session in Model.UpcomingSessionList)
                     {
                         <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100 shadow-sm course-card">
+                            <div class="card h-100 shadow-sm course-card" data-session-id="@session.SessionId">
                                 <div class="card-body">
                                     <h5 class="card-title">@session.CourseTitle</h5>
 
@@ -96,7 +96,12 @@
 
                                     <div class="mb-2">
                                         <span class="badge bg-primary">@session.Category</span>
-                                        <span class="badge bg-secondary">@session.EnrolledCount / @session.Capacity enrolled</span>
+                                        <span class="badge bg-secondary">
+                                            <span data-session-enrollment-text-for="@session.SessionId">
+                                                @session.EnrolledCount / @session.Capacity
+                                            </span>
+                                            enrolled
+                                        </span>
                                     </div>
 
                                     <ul class="list-unstyled small mb-0">

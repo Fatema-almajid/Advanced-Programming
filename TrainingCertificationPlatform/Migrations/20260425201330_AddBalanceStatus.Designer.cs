@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrainingCertificationPlatform;
 
@@ -11,9 +12,11 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260425201330_AddBalanceStatus")]
+    partial class AddBalanceStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,8 +119,8 @@ namespace TrainingCertificationPlatform.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("AmountDue")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("AmountDue")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
@@ -139,7 +142,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
-                            AmountDue = 50m,
+                            AmountDue = 50,
                             DueDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 1,
                             Status = 0
@@ -423,8 +426,8 @@ namespace TrainingCertificationPlatform.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
 
                     b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
@@ -445,7 +448,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
-                            Amount = 100m,
+                            Amount = 100.0,
                             EnrollmentId = 1,
                             PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 1
@@ -625,17 +628,6 @@ namespace TrainingCertificationPlatform.Migrations
                             Phone = "88888888",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1
-                        },
-                        new
-                        {
-                            Id = 100,
-                            Email = "coordinator@mail.com",
-                            FirstName = "Mariam",
-                            LastName = "Coordinator",
-                            Password = "123456",
-                            Phone = "77777777",
-                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Role = 2
                         });
                 });
 
@@ -683,7 +675,7 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Balance", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.Enrollment", "Enrollment")
-                        .WithOne("Balance")
+                        .WithOne()
                         .HasForeignKey("TrainingCertificationPlatform.Models.Balance", "EnrollmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -767,7 +759,7 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Payment", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.Enrollment", "Enrollment")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("EnrollmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -824,13 +816,6 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Course", b =>
                 {
                     b.Navigation("InstructorExpertises");
-                });
-
-            modelBuilder.Entity("TrainingCertificationPlatform.Models.Enrollment", b =>
-                {
-                    b.Navigation("Balance");
-
-                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.User", b =>

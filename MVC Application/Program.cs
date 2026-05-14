@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using TrainingCertificationPlatform;
+using MVC_Application.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//SignalR for real-time updates on enrollment count
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -20,6 +24,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddAuthorization();
+
+// Register application services
+builder.Services.AddScoped<TrainingCertificationPlatform.Services.SessionSchedulingService>();
+builder.Services.AddScoped<TrainingCertificationPlatform.Services.PaymentTrackingService>();
 
 var app = builder.Build();
 
@@ -42,5 +50,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+app.MapHub<EnrollmentHub>("/hubs/enrollment");
 
 app.Run();

@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using MVC_Application.Models.ViewModels;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
+using TrainingCertificationPlatform.Services;
+using Microsoft.AspNetCore.SignalR;
+using MVC_Application.Hubs;
 
 namespace MVC_Application.Controllers
 {
@@ -13,10 +16,16 @@ namespace MVC_Application.Controllers
     public class TraineeController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly PaymentTrackingService _paymentTrackingService;
+        private readonly IHubContext<EnrollmentHub> _enrollmentHub;
 
-        public TraineeController(AppDbContext context)
+        public TraineeController(AppDbContext context, 
+            PaymentTrackingService paymentTrackingService, 
+            IHubContext<EnrollmentHub> enrollmentHub)
         {
             _context = context;
+            _paymentTrackingService = paymentTrackingService;
+            _enrollmentHub = enrollmentHub;
         }
 
         private int GetTraineeId()
@@ -170,6 +179,9 @@ namespace MVC_Application.Controllers
                 .OrderBy(s => s.SessionDate)
                 .FirstOrDefaultAsync();
 
+            ViewBag.EnrolledCount = await _context.Enrollments
+                .CountAsync(e => e.Session.CourseId == id);
+
             return View(course);
         }
 
@@ -219,8 +231,31 @@ namespace MVC_Application.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Enrollment successful. Payment balance has been created.";
-            return RedirectToAction(nameof(MyCourses));
+            var enrolledCount = await _context.Enrollments
+    .CountAsync(e => e.SessionId == session.Id);
+
+           
+            var capacity = session.Course?.Capacity ?? 0;
+            var remainingSeats = capacity - enrolledCount;
+
+            var payload = new
+            {
+                courseId = session.CourseId,
+                sessionId = session.Id,
+                enrolledCount = enrolledCount,
+                capacity = capacity,
+                remainingSeats = remainingSeats,
+                isFull = remainingSeats <= 0
+            };
+
+            await _enrollmentHub.Clients.Group($"course-{session.CourseId}")
+                .SendAsync("EnrollmentUpdated", payload);
+
+            await _enrollmentHub.Clients.Group($"session-{session.Id}")
+                .SendAsync("EnrollmentUpdated", payload);
+
+            TempData["SuccessMessage"] = "Enrollment successful.";
+            return RedirectToAction(nameof(CourseDetails), new { id = courseId });
         }
 
         public async Task<IActionResult> Certification()
@@ -262,6 +297,18 @@ namespace MVC_Application.Controllers
             }).ToList();
 
             return View(model);
+        }
+
+        public async Task<IActionResult> MyPayments()
+        {
+            int traineeId = GetTraineeId();
+
+            if (traineeId <= 0)
+                return RedirectToAction("Login", "Account");
+
+            var enrollments = await _paymentTrackingService.GetTraineePaymentsAsync(traineeId);
+
+            return View(enrollments);
         }
     }
 }

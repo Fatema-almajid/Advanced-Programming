@@ -2,6 +2,8 @@
 {
     public class UpcomingCourseViewModel
     {
+        //REEM: added sessionId to the view model to allow for real-time updates via SignalR
+        public int SessionId { get; set; }
         public string CourseName { get; set; }
         public string InstructorName { get; set; }
         public string RoomName { get; set; }

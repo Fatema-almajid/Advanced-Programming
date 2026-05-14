@@ -21,6 +21,11 @@ namespace TrainingCertificationPlatform.Models
         public DateTime? CompletionDate { get; set; }
         public DateTime? PaymentDueDate { get; set; }
 
+        //REEM: added Balance and Payments
+        public Balance? Balance { get; set; }
+
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
         [ForeignKey("TraineeId")]
         public User Trainee { get; set; } = null!;
 

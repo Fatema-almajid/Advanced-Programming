@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrainingCertificationPlatform;
 
@@ -11,9 +12,11 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260501011434_FixMoneyTypes")]
+    partial class FixMoneyTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -625,17 +628,6 @@ namespace TrainingCertificationPlatform.Migrations
                             Phone = "88888888",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1
-                        },
-                        new
-                        {
-                            Id = 100,
-                            Email = "coordinator@mail.com",
-                            FirstName = "Mariam",
-                            LastName = "Coordinator",
-                            Password = "123456",
-                            Phone = "77777777",
-                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Role = 2
                         });
                 });
 

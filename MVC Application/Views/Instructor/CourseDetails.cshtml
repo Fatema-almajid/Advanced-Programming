@@ -16,7 +16,7 @@
         </div>
     }
 
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow-sm mb-4" data-session-id="@Model.SessionId">
         <div class="card-body">
             <span class="badge bg-primary mb-3">@Model.Category</span>
 
@@ -42,7 +42,11 @@
 
                 <div class="col-md-3">
                     <strong>Trainees</strong>
-                    <p>@Model.Trainees.Count</p>
+                    <p>
+                        <span data-session-trainee-count-for="@Model.SessionId">
+                            @Model.Trainees.Count
+                        </span>
+                    </p>
                 </div>
             </div>
         </div>
