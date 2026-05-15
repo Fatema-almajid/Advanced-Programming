@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using MVC_Application.Hubs;
 using MVC_Application.Models.ViewModels;
+using MVC_Application.Services;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 using TrainingCertificationPlatform.Services;
-using Microsoft.AspNetCore.SignalR;
-using MVC_Application.Hubs;
 
 namespace MVC_Application.Controllers
 {
@@ -18,14 +19,17 @@ namespace MVC_Application.Controllers
         private readonly AppDbContext _context;
         private readonly PaymentTrackingService _paymentTrackingService;
         private readonly IHubContext<EnrollmentHub> _enrollmentHub;
+        private readonly NotificationService _notificationService;
 
         public TraineeController(AppDbContext context, 
             PaymentTrackingService paymentTrackingService, 
-            IHubContext<EnrollmentHub> enrollmentHub)
+            IHubContext<EnrollmentHub> enrollmentHub,
+            NotificationService notificationService)
         {
             _context = context;
             _paymentTrackingService = paymentTrackingService;
             _enrollmentHub = enrollmentHub;
+            _notificationService = notificationService;
         }
 
         private int GetTraineeId()
@@ -308,7 +312,21 @@ namespace MVC_Application.Controllers
 
             var enrollments = await _paymentTrackingService.GetTraineePaymentsAsync(traineeId);
 
+            await _notificationService.CreateOverduePaymentNotificationsForUserAsync(traineeId);
+
             return View(enrollments);
+        }
+
+        public async Task<IActionResult> MyNotifications()
+        {
+            var traineeId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var notifications = await _context.Notifications
+                .Where(n => n.UserId == traineeId)
+                .OrderByDescending(n => n.CreatedDate)
+                .ToListAsync();
+
+            return View(notifications);
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVC_Application.Models.ViewModels;
+using MVC_Application.Services;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Services;
 using TrainingCertificationPlatform.Models;
@@ -14,12 +15,13 @@ namespace MVC_Application.Controllers
     {
         private readonly AppDbContext _context;
         private readonly SessionSchedulingService _schedulingService;
+        private readonly NotificationService _notificationService;
 
-        public SessionsController(AppDbContext context, SessionSchedulingService schedulingService  )
+        public SessionsController(AppDbContext context, SessionSchedulingService schedulingService, NotificationService notificationService)
         {
             _context = context;
             _schedulingService = schedulingService;
-
+            _notificationService = notificationService;
         }
 
         // TABLE VIEW
@@ -127,6 +129,15 @@ namespace MVC_Application.Controllers
 
             _context.Sessions.Add(session);
             await _context.SaveChangesAsync();
+
+            //Send notif to instructor about new session
+            var course = await _context.Courses
+        .FirstOrDefaultAsync(c => c.Id == model.CourseId);
+            var courseTitle = course?.Title ?? "a course";
+
+            var message = $"You have been assigned to teach a new session for the course '{courseTitle}' on {session.SessionDate:MMMM dd, yyyy}.";
+
+            await _notificationService.CreateNotificationAsync(session.InstructorId, message);
 
             TempData["SuccessMessage"] = "Session scheduled successfully.";
             return RedirectToAction(nameof(Index));

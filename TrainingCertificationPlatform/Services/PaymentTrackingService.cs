@@ -40,18 +40,26 @@ namespace TrainingCertificationPlatform.Services
 
             var remainingBalance = balance.AmountDue - paymentAmount;
 
+            if (remainingBalance <= 0)
+            {
+                remainingBalance = 0;
+            }
+
             var payment = new Payment
             {
                 EnrollmentId = enrollmentId,
                 Amount = paymentAmount,
                 PaymentDate = DateTime.Now,
-                Status = remainingBalance == 0 ? PaymentStatus.FULL :PaymentStatus.PARTIAL
+                Status = remainingBalance == 0
+                    ? PaymentStatus.FULL
+                    : PaymentStatus.PARTIAL
             };
 
-
             balance.AmountDue = remainingBalance;
-            balance.Status = remainingBalance == 0 ? BalanceStatus.PAID : BalanceStatus.PENDING;
-            
+            balance.Status = remainingBalance == 0
+                ? BalanceStatus.PAID
+                : BalanceStatus.PENDING;
+
 
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
@@ -59,17 +67,27 @@ namespace TrainingCertificationPlatform.Services
             return null;
         }
 
-        public async Task FlagOverdueBalancesAsync() { 
-            var overdueBalances = await _context.Balances
-                .Where(b => 
-                b.AmountDue > 0  &&
-                b.DueDate < DateTime.Now &&
-                b.Status != BalanceStatus.OVERDUE)
-                .ToListAsync();
+        public async Task FlagOverdueBalancesAsync()
+        {
+            var today = DateTime.Today;
 
-            foreach (var balance in overdueBalances)
+            var balances = await _context.Balances.ToListAsync();
+
+            foreach (var balance in balances)
             {
-                balance.Status = BalanceStatus.OVERDUE;
+                if (balance.AmountDue <= 0)
+                {
+                    balance.AmountDue = 0;
+                    balance.Status = BalanceStatus.PAID;
+                }
+                else if (balance.DueDate.Date < today)
+                {
+                    balance.Status = BalanceStatus.OVERDUE;
+                }
+                else
+                {
+                    balance.Status = BalanceStatus.PENDING;
+                }
             }
 
             await _context.SaveChangesAsync();

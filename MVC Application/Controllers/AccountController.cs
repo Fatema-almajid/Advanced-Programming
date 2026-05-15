@@ -38,9 +38,9 @@ namespace MVC_Application.Controllers
             }
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
+                .FirstOrDefaultAsync(u => u.Email == model.Email);
 
-            if (user == null)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password.");
                 return View(model);
@@ -114,7 +114,7 @@ namespace MVC_Application.Controllers
                 LastName = model.LastName.Trim(),
                 Email = model.Email.Trim(),
                 Phone = model.Phone.Trim(),
-                Password = model.Password,
+                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 RegistrationDate = DateTime.Today,
                 Role = UserRole.TRAINEE
             };

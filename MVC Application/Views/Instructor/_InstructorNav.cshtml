@@ -23,6 +23,11 @@
             <a class="nav-link" asp-controller="Payments" asp-action="Index">
                 Payment
             </a>
+
+            <a asp-controller="Instructor" asp-action="MyNotifications" class="nav-link position-relative">
+                <i class="bi bi-bell-fill fs-5"></i>
+                <span id="notification-count" class="badge bg-danger d-none">0</span>
+            </a>
         </div>
 
         <div class="navbar-nav ms-auto">

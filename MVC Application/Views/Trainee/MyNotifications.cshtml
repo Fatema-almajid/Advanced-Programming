@@ -1,0 +1,89 @@
+﻿@model IEnumerable<TrainingCertificationPlatform.Models.Notification>
+
+@{
+    ViewData["Title"] = "My Notifications";
+}
+
+<partial name="~/Views/Trainee/_TraineeNav.cshtml" />
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0">
+        <i class="bi-bell"></i> My Notifications
+    </h2>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Message</th>
+                <th>Created Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var notif in Model)
+                {
+                    <tr id="notification-row-@notif.Id">
+                        <td>@notif.Message</td>
+                        <td>@notif.CreatedDate.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @if (notif.Status == TrainingCertificationPlatform.Models.NotificationStatus.UNREAD)
+                            {
+                                <button class="btn btn-sm btn-outline-primary mark-as-read-btn" data-id="@notif.Id">
+                                    Mark as Read
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">
+                                    Read
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-center text-muted py-4">
+                        No notifications found.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll(".mark-as-read-btn").forEach(button => {
+            button.addEventListener("click", async function () {
+                const notificationId = this.dataset.id;
+
+                const tokenInput = document.querySelector("input[name='__RequestVerificationToken']");
+                const token = tokenInput ? tokenInput.value : "";
+
+                const response = await fetch("/Notifications/MarkAsRead", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "RequestVerificationToken": token
+                    },
+                    body: `id=${encodeURIComponent(notificationId)}`
+                });
+
+                if (response.ok) {
+                    const row = document.getElementById(`notification-row-${notificationId}`);
+                    const statusCell = this.closest("td");
+
+                    statusCell.innerHTML = `<span class="badge bg-success">Read</span>`;
+                }
+            });
+        });
+    </script>
+}
