@@ -15,6 +15,25 @@ This project is a web-based system designed to manage the full training lifecycl
 
 ---
 
+# 👥 Test Users
+
+## 🎓 Trainee
+- 📧 Email: `ali@mail.com`  
+  🔑 Password: `123456`
+
+- 📧 Email: `omar@mail.com`  
+  🔑 Password: `123456`
+
+## 👩‍🏫 Instructor
+- 📧 Email: `sara@mail.com`  
+  🔑 Password: `123456`
+
+## 🗂️ Training Coordinator
+- 📧 Email: `dana@mail.com`  
+  🔑 Password: `123456`
+
+---
+
 ## ⚙️ Core Features
 
 ### 📚 Course Management
@@ -75,18 +94,6 @@ This project is a web-based system designed to manage the full training lifecycl
 ### 🔔 Notifications
 
 * Notify users about important events
-
----
-
-## 🗄️ Database
-
-### 📁 Setup
-
-Run the following file to create the database and insert sample data:
-
-```sql
-database.sql
-```
 
 ---
 
