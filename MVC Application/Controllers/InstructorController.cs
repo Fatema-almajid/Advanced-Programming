@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVC_Application.Models.ViewModels;
+using MVC_Application.Services;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
+using TrainingCertificationPlatform.Services;
 
 namespace MVC_Application.Controllers
 {
@@ -12,10 +14,12 @@ namespace MVC_Application.Controllers
     public class InstructorController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly NotificationService _notificationService;
 
-        public InstructorController(AppDbContext context)
+        public InstructorController(AppDbContext context, NotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         private int GetInstructorId()
@@ -189,8 +193,9 @@ namespace MVC_Application.Controllers
         public async Task<IActionResult> UpdateAssessment(int enrollmentId, AssessmentStatus status)
         {
             var enrollment = await _context.Enrollments
-                .Include(e => e.Session)
-                .FirstOrDefaultAsync(e => e.Id == enrollmentId);
+                 .Include(e => e.Session)
+                     .ThenInclude(s => s.Course)
+                 .FirstOrDefaultAsync(e => e.Id == enrollmentId);
 
             if (enrollment == null)
                 return NotFound();
@@ -219,6 +224,16 @@ namespace MVC_Application.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            //Send a notification to the trainee about the assessment result
+            var resultText = status == AssessmentStatus.PASS ? "passed" : "failed";
+            var courseTitle = enrollment.Session.Course.Title;
+
+            await _notificationService.CreateNotificationAsync(
+                enrollment.TraineeId,
+                $"Your assessment result for {courseTitle} has been updated. You {resultText}."
+            );
+
 
             TempData["SuccessMessage"] = "Assessment updated successfully.";
             return RedirectToAction(nameof(CourseDetails), new { id = enrollment.SessionId });
@@ -264,6 +279,18 @@ namespace MVC_Application.Controllers
             };
 
             return View(model);
+        }
+
+        public async Task<IActionResult> MyNotifications()
+        {
+            var instructorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var notifications = await _context.Notifications
+                .Where(n => n.UserId == instructorId)
+                .OrderByDescending(n => n.CreatedDate)
+                .ToListAsync();
+
+            return View(notifications);
         }
     }
 }

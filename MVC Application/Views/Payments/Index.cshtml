@@ -2,27 +2,29 @@
 
 @{
     ViewData["Title"] = "Payment Tracking";
+
+    var courses = ViewBag.Courses as List<TrainingCertificationPlatform.Models.Course>;
+    var balanceStatuses = ViewBag.BalanceStatuses as List<TrainingCertificationPlatform.Models.BalanceStatus>;
+
+    int? selectedCourseId = ViewBag.SelectedCourseId as int?;
+    var selectedBalanceStatuses = ViewBag.SelectedBalanceStatuses as List<string> ?? new List<string>();
+
+
 }
-@if (ViewBag.Role == "Instructor")
-{
-    <partial name="~/Views/Instructor/_InstructorNav.cshtml" />
-}
-else if (ViewBag.Role == "TrainingCoordinator")
-{
+
     <partial name="_TrainingCoordinatorNav" />
-}
+
 
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <h2 class="mb-0">
         <i class="bi-credit-card"></i> Payment Tracking
     </h2>
 
-    @if (ViewBag.Role == "TrainingCoordinator")
-    {
+
         <a asp-action="Create" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Record Payment
         </a>
-    }
+    
 </div>
 
 @if (TempData["SuccessMessage"] != null)
@@ -41,6 +43,48 @@ else if (ViewBag.Role == "TrainingCoordinator")
     </div>
 }
 
+<div class="filter mb-4">
+    <form method="get" class="row g-3 align-items-center">
+        <div class="col-auto">
+            <label for="courseFilter" class="col-form-label">Filter by Course:</label>
+        </div>
+
+        <div class="col-auto">
+            <select id="courseFilter" name="courseId" class="form-select" onchange="this.form.submit()">
+                <option value="">All Courses</option>
+
+                @foreach (var course in courses)
+                {
+                    <option value="@course.Id" selected="@(selectedCourseId == course.Id)">
+                        @course.Title
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-auto">
+            <label class="col-form-label d-block">Filter by Balance:</label>
+
+            @foreach (var status in balanceStatuses)
+            {
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="balanceStatus_@status"
+                           name="balanceStatuses"
+                           value="@status"
+                           checked="@(selectedBalanceStatuses.Contains(status.ToString()))"
+                           onchange="this.form.submit()" />
+
+                    <label class="form-check-label" for="balanceStatus_@status">
+                        @status
+                    </label>
+                </div>
+            }
+        </div>
+    </form>
+</div>
+
 <div class="table-responsive">
     <table class="table table-hover align-middle">
         <thead class="table-light">
@@ -48,29 +92,57 @@ else if (ViewBag.Role == "TrainingCoordinator")
                 <th>Trainee</th>
                 <th>Course</th>
                 <th>Amount Paid</th>
+                <th>Amount Due</th>
+                <th>Total Amount</th>
                 <th>Payment Status</th>
                 <th>Payment Date</th>
+                <th>Balance Status</th>
             </tr>
         </thead>
         <tbody>
             @if (Model.Any())
             {
-                @foreach (var payment in Model)
+                foreach (var payment in Model)
                 {
                     <tr>
-                        <td>@payment.Enrollment.Trainee.FirstName @payment.Enrollment.Trainee.LastName</td>
-                        <td class="fw-semibold">@payment.Enrollment.Session.Course.Title</td>
-                        <td>BHD @payment.Amount</td>
-                        <td>@payment.Status</td>
-                        <td>@payment.PaymentDate.ToString("dd MMM yyyy")</td>
-                    </tr>    
-                }
+                        <td>
+                            @payment.Enrollment.Trainee.FirstName @payment.Enrollment.Trainee.LastName
+                        </td>
 
+                        <td class="fw-semibold">
+                            @payment.Enrollment.Session.Course.Title
+                        </td>
+
+                        <td>
+                            BHD @payment.Amount.ToString("0.000")
+                        </td>
+
+                        <td>
+                            BHD @(payment.Enrollment.Balance?.AmountDue.ToString("0.000") ?? "0.000")
+                        </td>
+
+                        <td>
+                            BHD @payment.Enrollment.Session.Course.Fee.ToString("0.000")
+                        </td>
+
+                        <td>
+                            @payment.Status
+                        </td>
+
+                        <td>
+                            @payment.PaymentDate.ToString("dd MMM yyyy")
+                        </td>
+
+                        <td>
+                            @(payment.Enrollment.Balance != null ? payment.Enrollment.Balance.Status : "No balance")
+                        </td>
+                    </tr>
+                }
             }
             else
             {
                 <tr>
-                    <td colspan="5" class="text-center text-muted py-4">
+                    <td colspan="8" class="text-center text-muted py-4">
                         No payments found.
                     </td>
                 </tr>

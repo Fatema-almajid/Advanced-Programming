@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 using TrainingCertificationPlatform.Services;
+using MVC_Application.Services;
 
 namespace MVC_Application.Controllers
 {
@@ -12,44 +13,77 @@ namespace MVC_Application.Controllers
     {
         private readonly AppDbContext _context;
         private readonly PaymentTrackingService _paymentTrackingService;
+        private readonly NotificationService _notificationService;
 
-        public PaymentsController(AppDbContext context, PaymentTrackingService paymentTrackingService)
+        public PaymentsController(AppDbContext context, PaymentTrackingService paymentTrackingService, NotificationService notificationService)
         {
             _context = context;
             _paymentTrackingService = paymentTrackingService;
+            _notificationService = notificationService;
         }
 
-        [Authorize(Roles = "TRAINING_COORDINATOR,INSTRUCTOR")]
-        public async Task<IActionResult> Index() { 
-
-            if (User.IsInRole(UserRole.INSTRUCTOR.ToString()))
+        [Authorize(Roles = "TRAINING_COORDINATOR")]
+        public async Task<IActionResult> Index(int? courseId, List<string>? balanceStatuses)
+        {
+            if (!User.IsInRole(UserRole.TRAINING_COORDINATOR.ToString()))
             {
-                ViewBag.Role = "Instructor";
-            }
-            else if (User.IsInRole(UserRole.TRAINING_COORDINATOR.ToString())) { 
-                ViewBag.Role = "TrainingCoordinator";
-            }
-            else
-            {
-                // If the user is authenticated but does not have the required role, show an error or redirect
                 return Forbid();
             }
-                await _paymentTrackingService.FlagOverdueBalancesAsync();
 
-            var payments = await _context.Payments
+            await _paymentTrackingService.FlagOverdueBalancesAsync();
+
+            ViewBag.Courses = await _context.Courses
+                .OrderBy(c => c.Title)
+                .ToListAsync();
+
+            ViewBag.SelectedCourseId = courseId;
+
+            ViewBag.SelectedBalanceStatuses = balanceStatuses ?? new List<string>();
+
+            ViewBag.BalanceStatuses = Enum.GetValues(typeof(BalanceStatus))
+                .Cast<BalanceStatus>()
+                .ToList();
+
+
+            var paymentsQuery = _context.Payments
                 .Include(p => p.Enrollment)
-                .ThenInclude(e => e.Trainee)
+                    .ThenInclude(e => e.Trainee)
                 .Include(p => p.Enrollment)
-                .ThenInclude(e => e.Session)
-                .ThenInclude(s => s.Course)
+                    .ThenInclude(e => e.Session)
+                        .ThenInclude(s => s.Course)
+                .Include(p => p.Enrollment)
+                    .ThenInclude(e => e.Balance)
+                .AsQueryable();
+
+            if (courseId.HasValue)
+            {
+                paymentsQuery = paymentsQuery
+                    .Where(p => p.Enrollment.Session.CourseId == courseId.Value);
+            }
+
+            if (balanceStatuses != null && balanceStatuses.Any())
+            {
+                var selectedStatuses = balanceStatuses
+                    .Where(s => Enum.TryParse<BalanceStatus>(s, out _))
+                    .Select(s => Enum.Parse<BalanceStatus>(s))
+                    .ToList();
+
+                paymentsQuery = paymentsQuery
+                    .Where(p => p.Enrollment.Balance != null &&
+                                selectedStatuses.Contains(p.Enrollment.Balance.Status));
+            }
+
+            var payments = await paymentsQuery
                 .OrderByDescending(p => p.PaymentDate)
                 .ToListAsync();
 
             return View(payments);
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Create(int? enrollmentId, string? returnUrl)
+        [Authorize(Roles = "TRAINING_COORDINATOR, TRAINEE")]
+        public async Task<IActionResult> Create(int? courseId, int? enrollmentId, string? returnUrl)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -62,38 +96,51 @@ namespace MVC_Application.Controllers
             int userId = int.Parse(userIdClaim);
 
             ViewBag.ReturnUrl = returnUrl;
+            ViewBag.SelectedCourseId = courseId;
+            ViewBag.SelectedEnrollmentId = enrollmentId;
 
-            var enrollmentsQuery = _context.Enrollments
+            var unpaidEnrollmentsQuery = _context.Enrollments
                 .Include(e => e.Trainee)
+                .Include(e => e.Balance)
                 .Include(e => e.Session)
                     .ThenInclude(s => s.Course)
                 .Where(e => e.Balance != null && e.Balance.AmountDue > 0);
 
             if (role == "TRAINEE")
             {
-                enrollmentsQuery = enrollmentsQuery
+                unpaidEnrollmentsQuery = unpaidEnrollmentsQuery
                     .Where(e => e.TraineeId == userId);
             }
-            else if ( role == "TRAINING_COORDINATOR")
+            else if (role != "TRAINING_COORDINATOR")
             {
-                // Coordinator can see all trainees with balance due
-                enrollmentsQuery = enrollmentsQuery;
+                return Forbid();
+            }
+
+            var unpaidEnrollments = await unpaidEnrollmentsQuery.ToListAsync();
+
+            ViewBag.Courses = unpaidEnrollments
+                .Select(e => e.Session.Course)
+                .DistinctBy(c => c.Id)
+                .ToList();
+
+            if (courseId.HasValue)
+            {
+                ViewBag.Enrollments = unpaidEnrollments
+                    .Where(e => e.Session.CourseId == courseId.Value)
+                    .ToList();
             }
             else
             {
-                TempData["ErrorMessage"] = "You are not allowed to record payments.";
-                return RedirectToAction("Index", "Home");
+                ViewBag.Enrollments = new List<Enrollment>();
             }
-
-            ViewBag.Enrollments = await enrollmentsQuery.ToListAsync();
-            ViewBag.SelectedEnrollmentId = enrollmentId;
 
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "TRAINING_COORDINATOR, TRAINEE")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int enrollmentId, decimal amount, string? returnUrl)
+        public async Task<IActionResult> Create(int courseId, int enrollmentId, decimal amount, string? returnUrl)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -110,12 +157,17 @@ namespace MVC_Application.Controllers
             if (role == "TRAINEE")
             {
                 isAllowedToPay = await _context.Enrollments
-                    .AnyAsync(e => e.Id == enrollmentId && e.TraineeId == userId);
+                    .AnyAsync(e =>
+                        e.Id == enrollmentId &&
+                        e.TraineeId == userId &&
+                        e.Session.CourseId == courseId);
             }
             else if (role == "TRAINING_COORDINATOR")
             {
                 isAllowedToPay = await _context.Enrollments
-                    .AnyAsync(e => e.Id == enrollmentId);
+                    .AnyAsync(e =>
+                        e.Id == enrollmentId &&
+                        e.Session.CourseId == courseId);
             }
 
             if (!isAllowedToPay)
@@ -134,7 +186,24 @@ namespace MVC_Application.Controllers
 
             TempData["SuccessMessage"] = "Payment recorded successfully";
 
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            // Notify the trainee if the payment was made by the coordinator
+            if (role == "TRAINING_COORDINATOR") {
+                var enrollment = await _context.Enrollments
+                        .Include(e => e.Trainee)
+                        .Include(e => e.Session)
+                            .ThenInclude(s => s.Course)
+                        .FirstOrDefaultAsync(e =>
+                            e.Id == enrollmentId &&
+                            e.Session.CourseId == courseId);
+
+                if (enrollment != null)
+                {
+                    var message = $"A payment has been recorded for your course {enrollment.Session.Course.Title}.";
+                    await _notificationService.CreateNotificationAsync(enrollment.TraineeId, message);
+                }
+            }
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }

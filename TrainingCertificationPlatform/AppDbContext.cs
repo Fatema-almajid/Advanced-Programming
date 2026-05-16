@@ -641,6 +641,5 @@ namespace TrainingCertificationPlatform
                 new { InstructorId = 2, CourseId = 5 }
             );
         }
-
     }
-}
+} 
