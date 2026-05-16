@@ -475,10 +475,7 @@ namespace TrainingCertificationPlatform.Migrations
                 values: new object[,]
                 {
                     { 1, 4, 0, new TimeOnly(16, 0, 0), 2, new TimeOnly(8, 0, 0) },
-                    { 2, 4, 0, new TimeOnly(17, 0, 0), 5, new TimeOnly(9, 0, 0) },
-                    { 3, 3, 1, new TimeOnly(18, 0, 0), 2, new TimeOnly(10, 0, 0) },
-                    { 4, 4, 2, new TimeOnly(19, 0, 0), 5, new TimeOnly(11, 0, 0) },
-                    { 5, 6, 6, new TimeOnly(13, 0, 0), 2, new TimeOnly(9, 0, 0) }
+                    { 2, 4, 0, new TimeOnly(17, 0, 0), 5, new TimeOnly(9, 0, 0) }
                 });
 
             migrationBuilder.InsertData(
@@ -519,10 +516,10 @@ namespace TrainingCertificationPlatform.Migrations
                 values: new object[,]
                 {
                     { 1, "CERT-1001", 1, 1, 1 },
-                    { 2, "", 1, 2, 4 },
-                    { 3, "", 0, 3, 1 },
-                    { 4, "", 0, 4, 4 },
-                    { 5, "", 1, 5, 1 }
+                    { 2, "CERT-44271CF2", 1, 2, 4 },
+                    { 3, "CERT-642FD464", 0, 3, 1 },
+                    { 4, "CERT-9B82DA1C", 0, 4, 4 },
+                    { 5, "CERT-785ED4AD", 1, 5, 1 }
                 });
 
             migrationBuilder.InsertData(

@@ -12,7 +12,7 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260516043453_InitialCreate")]
+    [Migration("20260516101044_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -564,33 +564,6 @@ namespace TrainingCertificationPlatform.Migrations
                             EndTime = new TimeOnly(17, 0, 0),
                             InstructorId = 5,
                             StartTime = new TimeOnly(9, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            DayEnd = 3,
-                            DayStart = 1,
-                            EndTime = new TimeOnly(18, 0, 0),
-                            InstructorId = 2,
-                            StartTime = new TimeOnly(10, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            DayEnd = 4,
-                            DayStart = 2,
-                            EndTime = new TimeOnly(19, 0, 0),
-                            InstructorId = 5,
-                            StartTime = new TimeOnly(11, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 5,
-                            DayEnd = 6,
-                            DayStart = 6,
-                            EndTime = new TimeOnly(13, 0, 0),
-                            InstructorId = 2,
-                            StartTime = new TimeOnly(9, 0, 0)
                         });
                 });
 
@@ -959,7 +932,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 2,
-                            CertificateReferenceNumber = "",
+                            CertificateReferenceNumber = "CERT-44271CF2",
                             Status = 1,
                             TrackId = 2,
                             TraineeId = 4
@@ -967,7 +940,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 3,
-                            CertificateReferenceNumber = "",
+                            CertificateReferenceNumber = "CERT-642FD464",
                             Status = 0,
                             TrackId = 3,
                             TraineeId = 1
@@ -975,7 +948,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 4,
-                            CertificateReferenceNumber = "",
+                            CertificateReferenceNumber = "CERT-9B82DA1C",
                             Status = 0,
                             TrackId = 4,
                             TraineeId = 4
@@ -983,7 +956,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 5,
-                            CertificateReferenceNumber = "",
+                            CertificateReferenceNumber = "CERT-785ED4AD",
                             Status = 1,
                             TrackId = 5,
                             TraineeId = 1

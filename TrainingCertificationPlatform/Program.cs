@@ -1,15 +1,18 @@
-using Microsoft.EntityFrameworkCore;
-using TrainingCertificationPlatform;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using TrainingCertificationPlatform;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString)
+           .ConfigureWarnings(w =>
+               w.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
 // Add JWT
 

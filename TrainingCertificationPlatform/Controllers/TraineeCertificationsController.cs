@@ -39,5 +39,48 @@ namespace TrainingCertificationPlatform.Controllers
 
             return traineeCertification;
         }
+        //public certification refrence
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerateCertificate(int trackId)
+        {
+            var traineeEmail = User.Identity!.Name;
+
+            var trainee = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == traineeEmail);
+
+            if (trainee == null)
+            {
+                return NotFound();
+            }
+
+            var existingCertificate = await _context.TraineeCertifications
+                .FirstOrDefaultAsync(tc =>
+                    tc.TraineeId == trainee.Id &&
+                    tc.TrackId == trackId);
+
+            if (existingCertificate != null)
+            {
+                return RedirectToAction("Certification");
+            }
+
+            var certification = new TraineeCertification
+            {
+                TraineeId = trainee.Id,
+                TrackId = trackId,
+                Status = TraineeCertificationStatus.SUCCESS,
+
+                CertificateReferenceNumber =
+                    "CERT-" + Guid.NewGuid().ToString("N")
+                    .Substring(0, 8)
+                    .ToUpper()
+            };
+
+            _context.TraineeCertifications.Add(certification);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Certification");
+        }
     }
 }

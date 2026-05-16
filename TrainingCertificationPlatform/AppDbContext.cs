@@ -546,33 +546,6 @@ namespace TrainingCertificationPlatform
                     DayEnd = Day.THURSDAY,
                     StartTime = new TimeOnly(9, 0),
                     EndTime = new TimeOnly(17, 0)
-                },
-                new InstructorAvailability
-                {
-                    Id = 3,
-                    InstructorId = 2,
-                    DayStart = Day.MONDAY,
-                    DayEnd = Day.WEDNESDAY,
-                    StartTime = new TimeOnly(10, 0),
-                    EndTime = new TimeOnly(18, 0)
-                },
-                new InstructorAvailability
-                {
-                    Id = 4,
-                    InstructorId = 5,
-                    DayStart = Day.TUESDAY,
-                    DayEnd = Day.THURSDAY,
-                    StartTime = new TimeOnly(11, 0),
-                    EndTime = new TimeOnly(19, 0)
-                },
-                new InstructorAvailability
-                {
-                    Id = 5,
-                    InstructorId = 2,
-                    DayStart = Day.SATURDAY,
-                    DayEnd = Day.SATURDAY,
-                    StartTime = new TimeOnly(9, 0),
-                    EndTime = new TimeOnly(13, 0)
                 }
             );
 
@@ -592,6 +565,7 @@ namespace TrainingCertificationPlatform
                     Id = 2,
                     TraineeId = 4,
                     TrackId = 2,
+                    CertificateReferenceNumber = "CERT-1002",
                     Status = TraineeCertificationStatus.SUCCESS
                 },
                 new TraineeCertification
@@ -613,6 +587,7 @@ namespace TrainingCertificationPlatform
                     Id = 5,
                     TraineeId = 1,
                     TrackId = 5,
+                    CertificateReferenceNumber = "CERT-1005",
                     Status = TraineeCertificationStatus.SUCCESS
                 }
             );

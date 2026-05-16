@@ -65,12 +65,21 @@
 
                     @if (track.IsEligible)
                     {
-                        <button type="button"
-                                class="btn btn-outline-dark mt-3"
-                                data-bs-toggle="modal"
-                                data-bs-target="#certificateModal-@track.TrackId">
-                            <i class="bi bi-award"></i> Generate Certificate
-                        </button>
+                        <form asp-action="GenerateCertificate" method="post">
+
+                            <input type="hidden"
+                                   name="trackId"
+                                   value="@track.TrackId" />
+
+                            <button type="submit"
+                                    class="btn btn-outline-dark mt-3">
+
+                                <i class="bi bi-award"></i>
+                                Generate Certificate
+
+                            </button>
+
+                        </form>
                     }
                     <div class="modal fade"
                          id="certificateModal-@track.TrackId"
