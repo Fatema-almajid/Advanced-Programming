@@ -1,8 +1,11 @@
-﻿@using TrainingCertificationPlatform.Models;
+﻿@using TrainingCertificationPlatform.Models
 
 @{
     ViewData["Title"] = "Record Payment";
+    var courses = ViewBag.Courses as List<Course>;
     var enrollments = ViewBag.Enrollments as List<Enrollment>;
+    int? selectedCourseId = ViewBag.SelectedCourseId as int?;
+    int? selectedEnrollmentId = ViewBag.SelectedEnrollmentId as int?;
 }
 
 
@@ -46,24 +49,56 @@
     @Html.AntiForgeryToken()
     <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
     <div class="m-3">
-        <label class="form-label">Enrollment</label>
-        <select name="enrollmentId" class="form-select" required>
-            <option value="">Select enrollment</option>
-            @if (enrollments != null)
+        <label class="form-label">Course</label>
+
+        <select name="courseId"
+                class="form-select"
+                required
+                onchange="window.location.href='@Url.Action("Create", "Payments")?courseId=' + this.value">
+
+            <option value="">Select Course</option>
+
+            @if (courses != null)
+            {
+                foreach (var course in courses)
                 {
-                    foreach (var enrollment in enrollments)
-                    {
-                        <option value="@enrollment.Id" selected="@(ViewBag.SelectedEnrollmentId)">
-                            @enrollment.Trainee.FirstName @enrollment.Trainee.LastName
-                        </option>    
-                    }
+                    <option value="@course.Id" selected="@(selectedCourseId == course.Id)">
+                        @course.Title
+                    </option>
                 }
-            </select>
+            }
+        </select>
+    </div>
+    <div class="m-3">
+        <label class="form-label">Enrollment</label>
+
+        <select name="enrollmentId" class="form-select" required>
+            <option value="">Select Enrollment</option>
+
+            @if (selectedCourseId == null)
+            {
+                <option disabled>Please select a course first</option>
+            }
+            else if (enrollments != null && enrollments.Any())
+            {
+                foreach (var enrollment in enrollments)
+                {
+                    <option value="@enrollment.Id" selected="@(selectedEnrollmentId == enrollment.Id)">
+                        @enrollment.Trainee.FirstName @enrollment.Trainee.LastName
+                        - Due: BHD @enrollment.Balance?.AmountDue
+                    </option>
+                }
+            }
+            else
+            {
+                <option disabled>No trainees need payment for this course</option>
+            }
+        </select>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Amount</label>
-        <input type="number" name="amount" class="form-control" step="0.001" min="0.001" required />
+        <input type="number" name="amount" class="form-control" step="1" min="1" required />
     </div>
 
     <button type="submit" class="btn btn-primary">
