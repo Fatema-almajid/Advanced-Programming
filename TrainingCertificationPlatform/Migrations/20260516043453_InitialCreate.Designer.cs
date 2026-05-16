@@ -12,8 +12,8 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260425191031_AddSessionSchedulingIndexes")]
-    partial class AddSessionSchedulingIndexes
+    [Migration("20260516043453_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,26 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             ClassroomsId = 1,
                             EquipmentsId = 1
+                        },
+                        new
+                        {
+                            ClassroomsId = 2,
+                            EquipmentsId = 2
+                        },
+                        new
+                        {
+                            ClassroomsId = 3,
+                            EquipmentsId = 3
+                        },
+                        new
+                        {
+                            ClassroomsId = 4,
+                            EquipmentsId = 3
+                        },
+                        new
+                        {
+                            ClassroomsId = 5,
+                            EquipmentsId = 4
                         });
                 });
 
@@ -71,6 +91,21 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             CoursesId = 2,
                             TracksId = 1
+                        },
+                        new
+                        {
+                            CoursesId = 3,
+                            TracksId = 2
+                        },
+                        new
+                        {
+                            CoursesId = 4,
+                            TracksId = 2
+                        },
+                        new
+                        {
+                            CoursesId = 5,
+                            TracksId = 3
                         });
                 });
 
@@ -105,8 +140,38 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
-                            DueDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 1,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CompletedBy = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 3,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CompletedBy = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 5,
                             Status = 0
                         });
                 });
@@ -119,13 +184,17 @@ namespace TrainingCertificationPlatform.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AmountDue")
-                        .HasColumnType("int");
+                    b.Property<decimal>("AmountDue")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("EnrollmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -139,9 +208,42 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
-                            AmountDue = 50,
+                            AmountDue = 0m,
                             DueDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EnrollmentId = 1
+                            EnrollmentId = 1,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AmountDue = 60m,
+                            DueDate = new DateTime(2026, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AmountDue = 0m,
+                            DueDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 3,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AmountDue = 50m,
+                            DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 4,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AmountDue = 0m,
+                            DueDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 5,
+                            Status = 0
                         });
                 });
 
@@ -170,6 +272,30 @@ namespace TrainingCertificationPlatform.Migrations
                             Id = 1,
                             Name = "Room A",
                             Seats = 30
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Room B",
+                            Seats = 25
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Lab 1",
+                            Seats = 20
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Lab 2",
+                            Seats = 20
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Conference Hall",
+                            Seats = 50
                         });
                 });
 
@@ -214,23 +340,54 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
-                            Capacity = 30,
-                            Category = 2,
-                            Description = "Intro",
-                            Duration = 10,
-                            Fee = 100.0,
+                            Capacity = 25,
+                            Category = 1,
+                            Description = "Introduction to C# programming",
+                            Duration = 20,
+                            Fee = 120.0,
                             Title = "C# Basics"
                         },
                         new
                         {
                             Id = 2,
-                            Capacity = 25,
+                            Capacity = 20,
                             Category = 1,
-                            Description = "Advanced",
-                            Duration = 15,
-                            Fee = 150.0,
+                            Description = "Advanced concepts in C#",
+                            Duration = 30,
+                            Fee = 180.0,
                             PrerequisiteId = 1,
                             Title = "Advanced C#"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Capacity = 30,
+                            Category = 2,
+                            Description = "Introduction to SQL Server",
+                            Duration = 25,
+                            Fee = 150.0,
+                            Title = "SQL Fundamentals"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Capacity = 20,
+                            Category = 2,
+                            Description = "Working with EF Core",
+                            Duration = 20,
+                            Fee = 170.0,
+                            PrerequisiteId = 3,
+                            Title = "Entity Framework Core"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Capacity = 25,
+                            Category = 4,
+                            Description = "Introduction to networking",
+                            Duration = 15,
+                            Fee = 100.0,
+                            Title = "Networking Basics"
                         });
                 });
 
@@ -281,6 +438,38 @@ namespace TrainingCertificationPlatform.Migrations
                             SessionId = 1,
                             Status = 0,
                             TraineeId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SessionId = 1,
+                            Status = 1,
+                            TraineeId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SessionId = 3,
+                            Status = 2,
+                            TraineeId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SessionId = 5,
+                            Status = 3,
+                            TraineeId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SessionId = 2,
+                            Status = 4,
+                            TraineeId = 1
                         });
                 });
 
@@ -305,6 +494,26 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             Id = 1,
                             Name = "Projector"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Whiteboard"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Lab Computers"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Microphones"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Networking Kit"
                         });
                 });
 
@@ -343,7 +552,43 @@ namespace TrainingCertificationPlatform.Migrations
                             Id = 1,
                             DayEnd = 4,
                             DayStart = 0,
+                            EndTime = new TimeOnly(16, 0, 0),
+                            InstructorId = 2,
+                            StartTime = new TimeOnly(8, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DayEnd = 4,
+                            DayStart = 0,
                             EndTime = new TimeOnly(17, 0, 0),
+                            InstructorId = 5,
+                            StartTime = new TimeOnly(9, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DayEnd = 3,
+                            DayStart = 1,
+                            EndTime = new TimeOnly(18, 0, 0),
+                            InstructorId = 2,
+                            StartTime = new TimeOnly(10, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DayEnd = 4,
+                            DayStart = 2,
+                            EndTime = new TimeOnly(19, 0, 0),
+                            InstructorId = 5,
+                            StartTime = new TimeOnly(11, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DayEnd = 6,
+                            DayStart = 6,
+                            EndTime = new TimeOnly(13, 0, 0),
                             InstructorId = 2,
                             StartTime = new TimeOnly(9, 0, 0)
                         });
@@ -373,6 +618,21 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             InstructorId = 2,
                             CourseId = 2
+                        },
+                        new
+                        {
+                            InstructorId = 5,
+                            CourseId = 3
+                        },
+                        new
+                        {
+                            InstructorId = 5,
+                            CourseId = 4
+                        },
+                        new
+                        {
+                            InstructorId = 2,
+                            CourseId = 5
                         });
                 });
 
@@ -408,9 +668,41 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             Id = 1,
                             CreatedDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Message = "Welcome",
+                            Message = "Welcome to the platform",
                             Status = 0,
                             UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Message = "New session assigned",
+                            Status = 1,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Message = "New enrollment received",
+                            Status = 0,
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Message = "Payment reminder",
+                            Status = 0,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Message = "Schedule updated",
+                            Status = 1,
+                            UserId = 5
                         });
                 });
 
@@ -422,8 +714,9 @@ namespace TrainingCertificationPlatform.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
@@ -444,8 +737,40 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
-                            Amount = 100.0,
+                            Amount = 120m,
                             EnrollmentId = 1,
+                            PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Amount = 60m,
+                            EnrollmentId = 2,
+                            PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Amount = 150m,
+                            EnrollmentId = 3,
+                            PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Amount = 50m,
+                            EnrollmentId = 4,
+                            PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Amount = 180m,
+                            EnrollmentId = 5,
                             PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 1
                         });
@@ -493,10 +818,50 @@ namespace TrainingCertificationPlatform.Migrations
                             Id = 1,
                             ClassroomId = 1,
                             CourseId = 1,
-                            EndTime = new TimeOnly(12, 0, 0),
+                            EndTime = new TimeOnly(11, 0, 0),
                             InstructorId = 2,
                             SessionDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new TimeOnly(9, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClassroomId = 2,
+                            CourseId = 2,
+                            EndTime = new TimeOnly(14, 0, 0),
+                            InstructorId = 2,
+                            SessionDate = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new TimeOnly(12, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClassroomId = 3,
+                            CourseId = 3,
+                            EndTime = new TimeOnly(12, 0, 0),
+                            InstructorId = 5,
+                            SessionDate = new DateTime(2026, 4, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartTime = new TimeOnly(10, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ClassroomId = 4,
+                            CourseId = 4,
+                            EndTime = new TimeOnly(15, 0, 0),
+                            InstructorId = 5,
+                            SessionDate = new DateTime(2026, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new TimeOnly(13, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ClassroomId = 5,
+                            CourseId = 5,
+                            EndTime = new TimeOnly(16, 0, 0),
+                            InstructorId = 2,
+                            SessionDate = new DateTime(2026, 4, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new TimeOnly(14, 0, 0)
                         });
                 });
 
@@ -524,8 +889,32 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "Programming Track",
-                            Name = "Backend"
+                            Description = "Backend programming track",
+                            Name = "Backend Development"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Database management track",
+                            Name = "Database Administration"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Networking certification track",
+                            Name = "Networking Essentials"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Complete web development track",
+                            Name = "Full Stack Development"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Software engineering foundations",
+                            Name = "Software Engineering"
                         });
                 });
 
@@ -536,6 +925,10 @@ namespace TrainingCertificationPlatform.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CertificateReferenceNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -558,8 +951,41 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
+                            CertificateReferenceNumber = "CERT-1001",
                             Status = 1,
                             TrackId = 1,
+                            TraineeId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CertificateReferenceNumber = "",
+                            Status = 1,
+                            TrackId = 2,
+                            TraineeId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CertificateReferenceNumber = "",
+                            Status = 0,
+                            TrackId = 3,
+                            TraineeId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CertificateReferenceNumber = "",
+                            Status = 0,
+                            TrackId = 4,
+                            TraineeId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CertificateReferenceNumber = "",
+                            Status = 1,
+                            TrackId = 5,
                             TraineeId = 1
                         });
                 });
@@ -609,8 +1035,8 @@ namespace TrainingCertificationPlatform.Migrations
                             Email = "ali@mail.com",
                             FirstName = "Ali",
                             LastName = "Ahmad",
-                            Password = "$2a$11$examplehash...",
-                            Phone = "99999999",
+                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Phone = "99999991",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 0
                         },
@@ -620,8 +1046,41 @@ namespace TrainingCertificationPlatform.Migrations
                             Email = "sara@mail.com",
                             FirstName = "Sara",
                             LastName = "Mohamed",
-                            Password = "$2a$11$examplehash...",
-                            Phone = "88888888",
+                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Phone = "99999992",
+                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "dana@mail.com",
+                            FirstName = "Dana",
+                            LastName = "Albanki",
+                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Phone = "99999993",
+                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Email = "omar@mail.com",
+                            FirstName = "Omar",
+                            LastName = "Ali",
+                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Phone = "99999994",
+                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Email = "fatima@mail.com",
+                            FirstName = "Fatima",
+                            LastName = "Yousef",
+                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                            Phone = "99999995",
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1
                         });
@@ -671,7 +1130,7 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Balance", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.Enrollment", "Enrollment")
-                        .WithOne()
+                        .WithOne("Balance")
                         .HasForeignKey("TrainingCertificationPlatform.Models.Balance", "EnrollmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -755,7 +1214,7 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Payment", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.Enrollment", "Enrollment")
-                        .WithMany()
+                        .WithMany("Payments")
                         .HasForeignKey("EnrollmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -812,6 +1271,13 @@ namespace TrainingCertificationPlatform.Migrations
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Course", b =>
                 {
                     b.Navigation("InstructorExpertises");
+                });
+
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.Enrollment", b =>
+                {
+                    b.Navigation("Balance");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.User", b =>

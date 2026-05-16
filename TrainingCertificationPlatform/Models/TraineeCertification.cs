@@ -15,6 +15,9 @@ namespace TrainingCertificationPlatform.Models
         public int TrackId { get; set; }
         public TraineeCertificationStatus Status { get; set; }
 
+        // for public certification lookup
+        public string CertificateReferenceNumber { get; set; } = string.Empty;
+
         [ForeignKey("TraineeId")]
         public User Trainee { get; set; } = null!;
 

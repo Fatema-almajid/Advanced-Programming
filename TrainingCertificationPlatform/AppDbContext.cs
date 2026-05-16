@@ -26,6 +26,7 @@ namespace TrainingCertificationPlatform
         {
             base.OnModelCreating(modelBuilder);
 
+
             // InstructorExpertise 
             modelBuilder.Entity<InstructorExpertise>()
                 .HasKey(e => new { e.InstructorId, e.CourseId });
@@ -582,6 +583,8 @@ namespace TrainingCertificationPlatform
                     Id = 1,
                     TraineeId = 1,
                     TrackId = 1,
+                    // for public certification lookup
+                    CertificateReferenceNumber = "CERT-1001",
                     Status = TraineeCertificationStatus.SUCCESS
                 },
                 new TraineeCertification

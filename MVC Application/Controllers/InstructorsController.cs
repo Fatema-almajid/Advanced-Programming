@@ -29,10 +29,14 @@ namespace MVC_Application.Controllers
 
             var instructorIds = instructorUsers.Select(u => u.Id).ToList();
 
+            // fix instructor 
             var availabilityLookup = await _context.InstructorAvailabilities
                 .Where(a => instructorIds.Contains(a.InstructorId))
                 .AsNoTracking()
-                .ToDictionaryAsync(a => a.InstructorId);
+                .GroupBy(a => a.InstructorId)
+                .ToDictionaryAsync(
+                    g => g.Key,
+                    g => g.First());
 
             var expertiseLookup = await _context.InstructorExpertises
                 .Where(e => instructorIds.Contains(e.InstructorId))

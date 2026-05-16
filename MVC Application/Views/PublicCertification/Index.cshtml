@@ -1,0 +1,92 @@
+﻿@* // for public certification lookup *@
+@model MVC_Application.Models.ViewModels.CertificationLookupViewModel
+
+@{
+    ViewData["Title"] = "Public Certification Lookup";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-7">
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+
+                <h2 class="text-center mb-4">
+                    Certification Verification
+                </h2>
+
+                <form method="post">
+
+                    <div class="mb-3">
+                        <label class="form-label">Trainee ID</label>
+                        <input asp-for="TraineeId" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Certificate Reference Number
+                        </label>
+                        <input asp-for="ReferenceNumber" class="form-control" />
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary">
+                            Verify Certification
+                        </button>
+                    </div>
+
+                </form>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger mt-4">
+                        @ViewBag.Error
+                    </div>
+                }
+
+                @if (Model.TraineeName != null)
+                {
+                    <div class="card mt-4 border-success">
+                        <div class="card-body">
+
+                            <h4 class="mb-3 text-success">
+                                Certification Verified
+                            </h4>
+
+                            <p>
+                                <strong>Trainee:</strong>
+                                @Model.TraineeName
+                            </p>
+
+                            <p>
+                                <strong>Track:</strong>
+                                @Model.Track
+                            </p>
+
+                            <p>
+                                <strong>Status:</strong>
+                                @Model.Status
+                            </p>
+
+                            <h5 class="mt-4">
+                                Completed Courses
+                            </h5>
+
+                            <ul class="list-group">
+                                @foreach (var course in Model.CompletedCourses)
+                                {
+                                    <li class="list-group-item">
+                                        @course
+                                    </li>
+                                }
+                            </ul>
+
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+    </div>
+</div>
