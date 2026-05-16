@@ -34,7 +34,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("EquipmentsId");
 
-                    b.ToTable("ClassroomEquipment");
+                    b.ToTable("ClassroomEquipment", (string)null);
 
                     b.HasData(
                         new
@@ -76,7 +76,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("TracksId");
 
-                    b.ToTable("CourseTrack");
+                    b.ToTable("CourseTrack", (string)null);
 
                     b.HasData(
                         new
@@ -131,7 +131,7 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("EnrollmentId")
                         .IsUnique();
 
-                    b.ToTable("Assessments");
+                    b.ToTable("Assessments", (string)null);
 
                     b.HasData(
                         new
@@ -199,7 +199,7 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("EnrollmentId")
                         .IsUnique();
 
-                    b.ToTable("Balances");
+                    b.ToTable("Balances", (string)null);
 
                     b.HasData(
                         new
@@ -261,7 +261,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Classrooms");
+                    b.ToTable("Classrooms", (string)null);
 
                     b.HasData(
                         new
@@ -331,7 +331,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("PrerequisiteId");
 
-                    b.ToTable("Courses");
+                    b.ToTable("Courses", (string)null);
 
                     b.HasData(
                         new
@@ -425,7 +425,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Enrollments");
+                    b.ToTable("Enrollments", (string)null);
 
                     b.HasData(
                         new
@@ -484,7 +484,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Equipments");
+                    b.ToTable("Equipments", (string)null);
 
                     b.HasData(
                         new
@@ -541,7 +541,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("InstructorId");
 
-                    b.ToTable("InstructorAvailabilities");
+                    b.ToTable("InstructorAvailabilities", (string)null);
 
                     b.HasData(
                         new
@@ -576,7 +576,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("InstructorExpertises");
+                    b.ToTable("InstructorExpertises", (string)null);
 
                     b.HasData(
                         new
@@ -631,7 +631,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
 
                     b.HasData(
                         new
@@ -701,7 +701,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("EnrollmentId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
 
                     b.HasData(
                         new
@@ -780,7 +780,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("InstructorId", "SessionDate");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
 
                     b.HasData(
                         new
@@ -853,7 +853,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tracks");
+                    b.ToTable("Tracks", (string)null);
 
                     b.HasData(
                         new
@@ -915,7 +915,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("TraineeId");
 
-                    b.ToTable("TraineeCertifications");
+                    b.ToTable("TraineeCertifications", (string)null);
 
                     b.HasData(
                         new
@@ -996,7 +996,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new

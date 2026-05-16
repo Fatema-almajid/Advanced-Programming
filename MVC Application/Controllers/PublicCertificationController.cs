@@ -3,9 +3,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Application.Models.ViewModels;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
+
 
 namespace MVC_Application.Controllers
 {
@@ -57,60 +55,16 @@ namespace MVC_Application.Controllers
                     .Select(x => x.GetString()!)
                     .ToList();
 
+            model.CertificateReference =
+    data.RootElement.GetProperty("certificateReference").GetString();
+
+            model.TotalCompletedCourses =
+                data.RootElement.GetProperty("totalCompletedCourses").GetInt32();
+
+            model.VerificationDate =
+                data.RootElement.GetProperty("verificationDate").GetDateTime();
+
             return View(model);
-        }
-        [HttpPost]
-        public IActionResult DownloadPdf(CertificationLookupViewModel model)
-        {
-            QuestPDF.Settings.License = LicenseType.Community;
-
-            var pdf = Document.Create(container =>
-            {
-                container.Page(page =>
-                {
-                    page.Margin(40);
-
-                    page.Header()
-                        .Text("Training Certification")
-                        .FontSize(24)
-                        .Bold()
-                        .AlignCenter();
-
-                    page.Content()
-                        .PaddingVertical(20)
-                        .Column(col =>
-                        {
-                            col.Item().Text($"Trainee: {model.TraineeName}");
-                            col.Item().Text($"Track: {model.Track}");
-                            col.Item().Text($"Status: {model.Status}");
-                            col.Item().Text($"Reference #: {model.ReferenceNumber}");
-
-                            col.Item().PaddingTop(20)
-                                .Text("Completed Courses:")
-                                .Bold();
-
-                            foreach (var course in model.CompletedCourses)
-                            {
-                                col.Item().Text($"• {course}");
-                            }
-                        });
-
-                    page.Footer()
-                        .AlignCenter()
-                        .Text(x =>
-                        {
-                            x.Span("Generated on ");
-                            x.Span(DateTime.Now.ToString("dd MMM yyyy"));
-                        });
-                });
-            });
-
-            var pdfBytes = pdf.GeneratePdf();
-
-            return File(
-                pdfBytes,
-                "application/pdf",
-                "certificate.pdf");
         }
     }
 }

@@ -101,3 +101,46 @@ body {
     padding: 5px;
     font-weight: 400;
 }
+
+body {
+    background: linear-gradient(to right, #f5f9ff, #eef4ff);
+}
+
+.card {
+    border-radius: 18px;
+    transition: 0.25s ease;
+}
+
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    }
+
+.btn {
+    font-weight: 600;
+}
+
+.hero-section {
+    min-height: 100vh;
+    background: linear-gradient(rgba(245,249,255,0.95), rgba(245,249,255,0.95)), url('/images/bg-pattern.png');
+    background-size: cover;
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+    .hero-section h1 {
+        letter-spacing: -2px;
+    }
+
+    .hero-section .card {
+        border-radius: 20px;
+        transition: 0.25s ease;
+    }
+
+        .hero-section .card:hover {
+            transform: translateY(-6px);
+        }
+
+    .hero-section .btn {
+        box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }

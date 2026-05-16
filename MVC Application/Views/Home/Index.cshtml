@@ -2,46 +2,114 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="container d-flex justify-content-center align-items-center"
-     style="min-height: 80vh;">
+    <div class="container-fluid hero-section">
+    <div class="container text-center py-5">
 
-    <div class="text-center p-5 rounded-4 shadow-sm bg-white"
-         style="max-width: 800px; width:100%;">
+    <div class="mb-4">
+        <i class="bi bi-mortarboard-fill text-primary"
+           style="font-size:70px;"></i>
+    </div>
 
-        <h1 class="display-4 mb-4 fw-light">
-            Welcome
-        </h1>
+    <h1 class="display-3 fw-bold text-dark mb-3">
+        Training & Certification Platform
+    </h1>
 
-        <h2 class="fw-semibold mb-3">
-            Training & Certification Platform
-        </h2>
+    <p class="lead text-muted mb-5">
+        Manage courses, enrollments, certifications,
+        scheduling, trainee progress, and reporting
+        through one modern platform.
+    </p>
 
-        <p class="lead text-muted mb-5">
-            Manage courses, instructors, rooms, scheduling,
-            certifications, and trainee progress.
-        </p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap mb-5">
 
-        <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a asp-controller="Account"
+           asp-action="Login"
+           class="btn btn-primary btn-lg px-4 rounded-pill">
 
-            <a asp-controller="Account"
-               asp-action="Login"
-               class="btn btn-primary px-4 py-2 rounded-pill">
-                Login
-            </a>
+            <i class="bi bi-box-arrow-in-right"></i>
+            Login
+        </a>
 
-            <a asp-controller="Account"
-               asp-action="Register"
-               class="btn btn-primary px-4 py-2 rounded-pill">
-                Register
-            </a>
+        <a asp-controller="Account"
+           asp-action="Register"
+           class="btn btn-outline-primary btn-lg px-4 rounded-pill">
 
-            <a asp-controller="PublicCertification"
-               asp-action="Index"
-               class="btn btn-primary px-4 py-2 rounded-pill">
-                Certification Lookup
-            </a>
+            <i class="bi bi-person-plus"></i>
+            Register
+        </a>
 
+        <a asp-controller="PublicCertification"
+           asp-action="Index"
+               class="btn btn-outline-primary btn-lg px-4 rounded-pill">
+
+            <i class="bi bi-patch-check-fill"></i>
+            Public Certificate Lookup
+        </a>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+                <div class="card border-0 shadow h-100 p-4 bg-white">
+                <div class="card-body">
+
+                    <i class="bi bi-book-half text-primary display-5"></i>
+
+                    <h4 class="mt-3">
+                        Courses
+                    </h4>
+
+                    <p class="text-muted">
+                        Browse and enroll in available training courses.
+                    </p>
+
+                </div>
+
+            </div>
         </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 p-3">
+
+                <div class="card-body">
+
+                    <i class="bi bi-award-fill text-success display-5"></i>
+
+                    <h4 class="mt-3">
+                        Certifications
+                    </h4>
+
+                    <p class="text-muted">
+                        Generate and verify professional certificates.
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 p-3">
+
+                <div class="card-body">
+
+                    <i class="bi bi-graph-up-arrow text-warning display-5"></i>
+
+                    <h4 class="mt-3">
+                        Progress Tracking
+                    </h4>
+
+                    <p class="text-muted">
+                        Monitor trainee performance and achievements.
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 
     </div>
 

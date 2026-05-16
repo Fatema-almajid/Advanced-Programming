@@ -79,15 +79,33 @@
 
                             </button>
 
-                            @if (!string.IsNullOrEmpty(track.CertificateReferenceNumber))
-                            {
-                                <div class="alert alert-success mt-3">
-                                    <strong>Certificate Reference:</strong>
-                                    @track.CertificateReferenceNumber
-                                </div>
-                            }
-
                         </form>
+
+                        @if (!string.IsNullOrEmpty(track.CertificateReferenceNumber))
+                        {
+                            <div class="alert alert-success mt-3">
+                                <strong>Certificate Reference:</strong>
+                                @track.CertificateReferenceNumber
+                            </div>
+
+                            <form asp-action="DownloadCertificatePdf"
+                                  method="post"
+                                  class="mt-2">
+
+                                <input type="hidden"
+                                       name="trackId"
+                                       value="@track.TrackId" />
+
+                                <button type="submit"
+                                        class="btn btn-danger">
+
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                    Download Certificate PDF
+
+                                </button>
+
+                            </form>
+                        }
                     }
                     <div class="modal fade"
                          id="certificateModal-@track.TrackId"

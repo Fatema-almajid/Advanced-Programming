@@ -15,5 +15,11 @@ namespace MVC_Application.Models.ViewModels
         public string? Status { get; set; }
 
         public List<string> CompletedCourses { get; set; } = new();
+
+        public DateTime VerificationDate { get; set; }
+
+        public int TotalCompletedCourses { get; set; }
+
+        public string? CertificateReference { get; set; }
     }
 }

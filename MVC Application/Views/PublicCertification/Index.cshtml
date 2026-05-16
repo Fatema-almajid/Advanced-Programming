@@ -46,12 +46,24 @@
 
                 @if (Model.TraineeName != null)
                 {
-                    <div class="card mt-4 border-success">
+                    <div class="card mt-4 border-0 shadow-lg rounded-4">
                         <div class="card-body">
 
-                            <h4 class="mb-3 text-success">
-                                Certification Verified
-                            </h4>
+                            <div class="text-center mb-4">
+
+                                <i class="bi bi-patch-check-fill text-success"
+                                   style="font-size:70px;">
+                                </i>
+
+                                <h3 class="fw-bold text-success mt-3">
+                                    Certification Verified
+                                </h3>
+
+                                <p class="text-muted">
+                                    This certification has been successfully verified.
+                                </p>
+
+                            </div>
 
                             <p>
                                 <strong>Trainee:</strong>
@@ -65,7 +77,44 @@
 
                             <p>
                                 <strong>Status:</strong>
-                                @Model.Status
+
+                                @if (Model.Status == "SUCCESS")
+                                {
+                                    <span class="badge bg-success">
+                                        Verified
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">
+                                        Failed
+                                    </span>
+                                }
+                            </p>
+
+                            <p>
+                                <strong>Certificate Reference:</strong>
+                                @Model.CertificateReference
+                            </p>
+
+                            <p>
+                                <strong>Verified On:</strong>
+                                @Model.VerificationDate.ToString("dd MMM yyyy")
+                            </p>
+
+                            <p>
+                                <strong>Total Completed Courses:</strong>
+                                @Model.TotalCompletedCourses
+                            </p>
+
+                            <p>
+                                <strong>Reference Number:</strong>
+                                @Model.ReferenceNumber
+                            </p>
+
+                            <p>
+                                <strong>Verified On:</strong>
+                                @DateTime.Now.ToString("dd MMM yyyy")
                             </p>
 
                             <h5 class="mt-4">
@@ -75,32 +124,16 @@
                             <ul class="list-group">
                                 @foreach (var course in Model.CompletedCourses)
                                 {
-                                    <li class="list-group-item">
+                                    <li class="list-group-item d-flex align-items-center">
+
+                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+
                                         @course
+
                                     </li>
                                 }
                             </ul>
 
-                            <form asp-action="DownloadPdf" method="post" class="mt-4">
-
-                                <input type="hidden" asp-for="TraineeId" />
-                                <input type="hidden" asp-for="ReferenceNumber" />
-                                <input type="hidden" asp-for="TraineeName" />
-                                <input type="hidden" asp-for="Track" />
-                                <input type="hidden" asp-for="Status" />
-
-                                @for (int i = 0; i < Model.CompletedCourses.Count; i++)
-                                {
-                                    <input type="hidden"
-                                           name="CompletedCourses[@i]"
-                                           value="@Model.CompletedCourses[i]" />
-                                }
-
-                                <button class="btn btn-danger">
-                                    Download PDF
-                                </button>
-
-                            </form>
 
                         </div>
                     </div>

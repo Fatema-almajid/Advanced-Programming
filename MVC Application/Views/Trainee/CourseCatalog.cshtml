@@ -62,7 +62,7 @@
                         <td class="fw-semibold">@course.Title</td>
                         <td>@course.Category</td>
                         <td>@course.Duration hrs</td>
-                        <td>@course.Fee.ToString("C")</td>
+                        <td>@@course.Fee.ToString("0.00") BHD</td>
                         <td>@(course.Prerequisite?.Title ?? "None")</td>
                         <td>
                             <a asp-action="CourseDetails" asp-route-id="@course.Id" class="btn btn-sm btn-outline-info">
@@ -97,7 +97,7 @@ else
                         </div>
 
                         <ul class="list-unstyled small mb-0">
-                            <li><strong>Fee:</strong> @course.Fee.ToString("C")</li>
+                            <li><strong>Fee:</strong> @course.Fee.ToString("0.00") BHD</li>
                             <li><strong>Prerequisite:</strong> @(course.Prerequisite?.Title ?? "None")</li>
                         </ul>
                     </div>

@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<TrainingCertificationPlatform.Models.Enrollment>
-
+@using TrainingCertificationPlatform.Models
 
 @{
     ViewData["Title"] = "My Payment";
@@ -52,15 +52,24 @@
                             {
                                 <span class="badge bg-secondary">No Balance</span>
                             }
+                            else if (enrollment.Status == EnrollmentStatus.DROPPED)
+                            {
+                                <span class="badge bg-danger">
+                                    Dropped
+                                </span>
+                            }
                             else if (amountDue > 0)
                             {
                                 <a asp-controller="Payments"
-                                       asp-action="Create"
-                                       asp-route-enrollmentId="@enrollment.Id"
-                                       asp-route-courseId="@enrollment.Session.CourseId"
-                                       asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)"
-                                       class="btn btn-sm btn-primary">
-                                    <i class="bi bi-cash-coin"></i> Pay
+                                   asp-action="Create"
+                                   asp-route-enrollmentId="@enrollment.Id"
+                                   asp-route-courseId="@enrollment.Session.CourseId"
+                                   asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)"
+                                   class="btn btn-sm btn-primary">
+
+                                    <i class="bi bi-cash-coin"></i>
+                                    Pay
+
                                 </a>
                             }
                             else

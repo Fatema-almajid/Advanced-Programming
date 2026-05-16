@@ -48,7 +48,11 @@ namespace TrainingCertificationPlatform.Controllers
                 traineeName = certification.Trainee.FirstName + " " + certification.Trainee.LastName,
                 track = certification.Track.Name,
                 status = certification.Status.ToString(),
-                completedCourses = completedCourses
+                completedCourses = completedCourses,
+
+                certificateReference = certification.CertificateReferenceNumber,
+                verificationDate = DateTime.Now,
+                totalCompletedCourses = completedCourses.Count
             });
         }
     }

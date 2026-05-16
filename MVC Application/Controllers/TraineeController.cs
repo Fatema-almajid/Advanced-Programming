@@ -10,6 +10,9 @@ using MVC_Application.Services;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 using TrainingCertificationPlatform.Services;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace MVC_Application.Controllers
 {
@@ -262,6 +265,48 @@ namespace MVC_Application.Controllers
             return RedirectToAction(nameof(CourseDetails), new { id = courseId });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DropCourse(int enrollmentId)
+        {
+            var traineeId = GetTraineeId();
+
+            var enrollment = await _context.Enrollments
+                .Include(e => e.Balance)
+                .FirstOrDefaultAsync(e =>
+                    e.Id == enrollmentId &&
+                    e.TraineeId == traineeId);
+
+            if (enrollment == null)
+            {
+                TempData["ErrorMessage"] = "Enrollment not found.";
+                return RedirectToAction(nameof(MyCourses));
+            }
+
+            if (enrollment.Status == EnrollmentStatus.COMPLETED)
+            {
+                TempData["ErrorMessage"] =
+                    "Completed courses cannot be dropped.";
+
+                return RedirectToAction(nameof(MyCourses));
+            }
+
+            enrollment.Status = EnrollmentStatus.DROPPED;
+
+            // cancel payment
+            if (enrollment.Balance != null)
+            {
+                enrollment.Balance.AmountDue = 0;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] =
+                "Course dropped successfully.";
+
+            return RedirectToAction(nameof(MyCourses));
+        }
+
         public async Task<IActionResult> Certification()
         {
             var traineeId = GetTraineeId();
@@ -368,6 +413,142 @@ namespace MVC_Application.Controllers
             }
 
             return RedirectToAction(nameof(Certification));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DownloadCertificatePdf(int trackId)
+        {
+            var traineeId = GetTraineeId();
+
+            var trainee = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == traineeId);
+
+            var track = await _context.Tracks
+                .FirstOrDefaultAsync(t => t.Id == trackId);
+
+            var certificate = await _context.TraineeCertifications
+                .FirstOrDefaultAsync(tc =>
+                    tc.TraineeId == traineeId &&
+                    tc.TrackId == trackId);
+
+            if (trainee == null || track == null || certificate == null)
+            {
+                return NotFound();
+            }
+
+            QuestPDF.Settings.License =
+                LicenseType.Community;
+
+            var pdf = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4.Landscape());
+                    page.Margin(25);
+
+                    page.Background()
+                        .Border(10)
+                        .BorderColor("#1b6ec2");
+
+                    page.Content().Padding(40).Column(col =>
+                    {
+                        col.Item().AlignCenter()
+                            .Text("🏆 TRAINING CERTIFICATE")
+                            .FontSize(34)
+                            .Bold()
+                            .FontColor("#1b6ec2");
+
+                        col.Item().PaddingTop(15);
+
+                        col.Item().AlignCenter()
+                            .Text("This certificate is proudly awarded to")
+                            .FontSize(18)
+                            .FontColor("#555555");
+
+                        col.Item().PaddingTop(25);
+
+                        col.Item().AlignCenter()
+                            .Text($"{trainee.FirstName} {trainee.LastName}")
+                            .FontSize(38)
+                            .Bold()
+                            .FontColor("#212529");
+
+                        col.Item().PaddingTop(20);
+
+                        col.Item().AlignCenter()
+                            .Text("For successfully completing")
+                            .FontSize(18)
+                            .FontColor("#555555");
+
+                        col.Item().PaddingTop(10);
+
+                        col.Item().AlignCenter()
+                            .Text(track.Name)
+                            .FontSize(30)
+                            .Bold()
+                            .FontColor("#198754");
+
+                        col.Item().PaddingTop(35);
+
+                        col.Item().LineHorizontal(1)
+                            .LineColor("#d6d6d6");
+
+                        col.Item().PaddingTop(25);
+
+                        col.Item().Row(row =>
+                        {
+                            row.RelativeItem().Column(left =>
+                            {
+                                left.Item()
+                                    .Text("Certificate Reference")
+                                    .Bold()
+                                    .FontColor("#1b6ec2");
+
+                                left.Item()
+                                    .Text(certificate.CertificateReferenceNumber);
+
+                                left.Item().PaddingTop(10);
+
+                                left.Item()
+                                    .Text("Issued Date")
+                                    .Bold()
+                                    .FontColor("#1b6ec2");
+
+                                left.Item()
+                                    .Text(DateTime.Today.ToString("dd MMM yyyy"));
+                            });
+
+                            row.RelativeItem().AlignRight().Column(right =>
+                            {
+                                right.Item()
+                                    .Text("Training Certification Platform")
+                                    .Bold()
+                                    .FontSize(18)
+                                    .FontColor("#1b6ec2");
+
+                                right.Item()
+                                    .Text("Authorized Digital Signature")
+                                    .Italic()
+                                    .FontColor("#777777");
+                            });
+                        });
+
+                        col.Item().PaddingTop(30);
+
+                        col.Item().AlignCenter()
+                            .Text("Verified Digital Certificate")
+                            .FontColor("#198754")
+                            .Bold();
+                    });
+                });
+            });
+
+            var pdfBytes = pdf.GeneratePdf();
+
+            return File(
+                pdfBytes,
+                "application/pdf",
+                "certificate.pdf");
         }
     }
 }
