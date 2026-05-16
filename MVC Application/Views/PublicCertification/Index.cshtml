@@ -81,6 +81,27 @@
                                 }
                             </ul>
 
+                            <form asp-action="DownloadPdf" method="post" class="mt-4">
+
+                                <input type="hidden" asp-for="TraineeId" />
+                                <input type="hidden" asp-for="ReferenceNumber" />
+                                <input type="hidden" asp-for="TraineeName" />
+                                <input type="hidden" asp-for="Track" />
+                                <input type="hidden" asp-for="Status" />
+
+                                @for (int i = 0; i < Model.CompletedCourses.Count; i++)
+                                {
+                                    <input type="hidden"
+                                           name="CompletedCourses[@i]"
+                                           value="@Model.CompletedCourses[i]" />
+                                }
+
+                                <button class="btn btn-danger">
+                                    Download PDF
+                                </button>
+
+                            </form>
+
                         </div>
                     </div>
                 }
