@@ -34,6 +34,7 @@
         public int ProgressPercent { get; set; }
         public bool IsEligible { get; set; }
 
+        public string? CertificateReferenceNumber { get; set; }
         public List<CertificationCourseItemViewModel> Courses { get; set; } = new();
     }
 

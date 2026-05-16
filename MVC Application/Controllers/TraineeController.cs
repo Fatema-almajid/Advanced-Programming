@@ -282,6 +282,11 @@ namespace MVC_Application.Controllers
                 var required = t.Courses.Count;
                 var completed = t.Courses.Count(c => completedCourseIds.Contains(c.Id));
 
+                var certificate = _context.TraineeCertifications
+                    .FirstOrDefault(tc =>
+                        tc.TraineeId == traineeId &&
+                        tc.TrackId == t.Id);
+
                 return new TraineeCertificationProgressViewModel
                 {
                     TrackId = t.Id,
@@ -292,6 +297,9 @@ namespace MVC_Application.Controllers
                     RemainingCourses = required - completed,
                     ProgressPercent = required == 0 ? 0 : (int)Math.Round((double)completed / required * 100),
                     IsEligible = required > 0 && completed == required,
+
+                    CertificateReferenceNumber = certificate?.CertificateReferenceNumber,
+
                     Courses = t.Courses.Select(c => new CertificationCourseItemViewModel
                     {
                         CourseTitle = c.Title,
@@ -327,6 +335,39 @@ namespace MVC_Application.Controllers
                 .ToListAsync();
 
             return View(notifications);
+        }
+        [HttpPost]
+        public async Task<IActionResult> GenerateCertificate(int trackId)
+        {
+            var traineeId = GetTraineeId();
+
+            var exists = await _context.TraineeCertifications
+                .AnyAsync(tc =>
+                    tc.TraineeId == traineeId &&
+                    tc.TrackId == trackId);
+
+            if (!exists)
+            {
+                var certification = new TraineeCertification
+                {
+                    TraineeId = traineeId,
+                    TrackId = trackId,
+                    Status = TraineeCertificationStatus.SUCCESS,
+
+                    CertificateReferenceNumber =
+                        "CERT-" +
+                        Guid.NewGuid()
+                        .ToString("N")
+                        .Substring(0, 8)
+                        .ToUpper()
+                };
+
+                _context.TraineeCertifications.Add(certification);
+
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Certification));
         }
     }
 }

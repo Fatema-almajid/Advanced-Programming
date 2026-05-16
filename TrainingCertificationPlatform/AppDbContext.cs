@@ -356,6 +356,14 @@ namespace TrainingCertificationPlatform
                     SessionId = 2,
                     Status = EnrollmentStatus.DROPPED,
                     EnrollmentDate = fixedDate
+                },
+                new Enrollment
+                {
+                    Id = 6,
+                    TraineeId = 1,
+                    SessionId = 2,
+                    Status = EnrollmentStatus.COMPLETED,
+                    EnrollmentDate = fixedDate
                 }
             );
 
@@ -448,8 +456,9 @@ namespace TrainingCertificationPlatform
                 {
                     Id = 1,
                     EnrollmentId = 1,
-                    Status = AssessmentStatus.PENDING,
-                    DueDate = fixedDate.AddDays(5)
+                    Status = AssessmentStatus.PASS,
+                    DueDate = fixedDate.AddDays(5),
+                    CompletedBy = fixedDate.AddDays(6)
                 },
                 new Assessment
                 {
@@ -480,6 +489,14 @@ namespace TrainingCertificationPlatform
                     EnrollmentId = 5,
                     Status = AssessmentStatus.PENDING,
                     DueDate = fixedDate.AddDays(5)
+                },
+                new Assessment
+                {
+                    Id = 6,
+                    EnrollmentId = 6,
+                    Status = AssessmentStatus.PASS,
+                    DueDate = fixedDate.AddDays(5),
+                    CompletedBy = fixedDate.AddDays(6)
                 }
             );
 

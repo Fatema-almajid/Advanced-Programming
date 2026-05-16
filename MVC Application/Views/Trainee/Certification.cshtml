@@ -79,6 +79,14 @@
 
                             </button>
 
+                            @if (!string.IsNullOrEmpty(track.CertificateReferenceNumber))
+                            {
+                                <div class="alert alert-success mt-3">
+                                    <strong>Certificate Reference:</strong>
+                                    @track.CertificateReferenceNumber
+                                </div>
+                            }
+
                         </form>
                     }
                     <div class="modal fade"
