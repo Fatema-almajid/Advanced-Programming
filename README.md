@@ -15,7 +15,7 @@ This project is a web-based system designed to manage the full training lifecycl
 
 ---
 
-# 🛑Project Setup Instructions
+# 🛑 Project Setup Instructions
 
 ### 1️⃣ Clone the Project
 
@@ -37,7 +37,7 @@ Update-Database
 
 ### 4️⃣ Run the Project
 
-Build and run the so
+Build and run the solution.
 
  ---
 
