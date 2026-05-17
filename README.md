@@ -15,6 +15,33 @@ This project is a web-based system designed to manage the full training lifecycl
 
 ---
 
+# 🛑Project Setup Instructions
+
+### 1️⃣ Clone the Project
+
+Clone the project from GitHub and open the solution in Visual Studio.
+
+### 2️⃣ Configure Startup Projects
+
+Set the following as Multiple Startup Projects:
+
+- MVC Application
+- Web API
+- Reporting Application
+
+### 3️⃣ Update the Database
+
+Run the following command in Package Manager Console:
+
+Update-Database
+
+### 4️⃣ Run the Project
+
+Build and run the so
+
+ ---
+
+
 # 👥 Test Users
 
 ## 🎓 Trainee
