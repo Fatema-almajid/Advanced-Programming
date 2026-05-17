@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -47,7 +48,33 @@ namespace reportingApplication.Controllers
                     using (JsonDocument doc = JsonDocument.Parse(jsonContent))
                     {
                         var root = doc.RootElement;
-                        string token = root.GetProperty("token").GetString();
+                        
+                        // Extract token from response
+                        string? token = null;
+                        if (root.TryGetProperty("token", out var tokenElement))
+                        {
+                            token = tokenElement.GetString();
+                        }
+
+                        // Extract userId from response
+                        string? userId = null;
+                        if (root.TryGetProperty("userId", out var userIdElement))
+                        {
+                            userId = userIdElement.GetInt32().ToString();
+                        }
+
+                        // Extract role from response
+                        string? role = null;
+                        if (root.TryGetProperty("role", out var roleElement))
+                        {
+                            role = roleElement.GetString();
+                        }
+
+                        if (string.IsNullOrEmpty(token))
+                        {
+                            ModelState.AddModelError(string.Empty, "Failed to retrieve authentication token.");
+                            return View(model);
+                        }
 
                         var claims = new List<Claim>
                         {
@@ -55,13 +82,26 @@ namespace reportingApplication.Controllers
                             new Claim("Token", token)
                         };
 
+                        // Add userId claim if available
+                        if (!string.IsNullOrEmpty(userId))
+                        {
+                            claims.Add(new Claim(ClaimTypes.NameIdentifier, userId));
+                        }
+
+                        // Add role claim if available - this is critical for authorization!
+                        if (!string.IsNullOrEmpty(role))
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, role));
+                        }
+
                         var claimsIdentity = new ClaimsIdentity(
                             claims,
                             CookieAuthenticationDefaults.AuthenticationScheme);
 
                         var authProperties = new AuthenticationProperties
                         {
-                            IsPersistent = true
+                            IsPersistent = true,
+                            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(1)
                         };
 
                         await HttpContext.SignInAsync(

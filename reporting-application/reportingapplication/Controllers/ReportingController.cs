@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace reportingApplication.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "INSTRUCTOR,TRAINING_COORDINATOR")]
     [Route("reporting")]
     public class ReportingController : Controller
     {
@@ -44,7 +45,7 @@ namespace reportingApplication.Controllers
             {
                 // Fetch raw JSON data from API
                 var usersJson = await FetchApiDataAsJson("/api/users");
-                var coursesJson = await FetchApiDataAsJson("/api/courses");
+                var coursesJson = await FetchApiDataAsJson("/api/Courses");
                 var sessionsJson = await FetchApiDataAsJson("/api/sessions");
                 var enrollmentsJson = await FetchApiDataAsJson("/api/enrollments");
                 var assessmentsJson = await FetchApiDataAsJson("/api/assessments");
@@ -82,7 +83,17 @@ namespace reportingApplication.Controllers
                 var url = ApiBaseUrl + endpoint;
                 _logger.LogInformation($"Fetching data from: {url}");
                 
-                var response = await _httpClient.GetAsync(url);
+                // Get the JWT token from claims
+                var token = User?.FindFirst("Token")?.Value;
+                
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                if (!string.IsNullOrEmpty(token))
+                {
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                    _logger.LogInformation($"Adding Bearer token to request for {endpoint}");
+                }
+                
+                var response = await _httpClient.SendAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
@@ -91,6 +102,10 @@ namespace reportingApplication.Controllers
                 }
                 
                 _logger.LogWarning($"Failed to fetch from {endpoint}. Status: {response.StatusCode}");
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    _logger.LogWarning($"Unauthorized - Token may be expired or invalid for {endpoint}");
+                }
                 return "[]";
             }
             catch (Exception ex)
@@ -131,8 +146,21 @@ namespace reportingApplication.Controllers
         {
             try
             {
+                var enrollments = JsonDocument.Parse(enrollmentsJson).RootElement.EnumerateArray().ToList();
                 var months = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-                var monthlyData = months.Select(m => Random.Shared.Next(10, 50)).ToList();
+                
+                var monthlyData = months.Select((month, monthIndex) =>
+                {
+                    var monthNum = monthIndex + 1;
+                    return enrollments.Count(e => 
+                    {
+                        if (DateTime.TryParse(GetStringValue(e, "enrollmentDate"), out var date))
+                        {
+                            return date.Month == monthNum;
+                        }
+                        return false;
+                    });
+                }).ToList();
 
                 var data = new
                 {
@@ -221,13 +249,26 @@ namespace reportingApplication.Controllers
 
                 var instructors = users
                     .Where(u => GetIntValue(u, "role") == 1)
-                    .Select(i => new
+                    .Select(i => 
                     {
-                        name = GetStringValue(i, "firstName") + " " + GetStringValue(i, "lastName"),
-                        sessions = sessions.Count(s => GetIntValue(s, "instructorId") == GetIntValue(i, "id")),
-                        hours = sessions.Count(s => GetIntValue(s, "instructorId") == GetIntValue(i, "id")) * 2,
-                        trainees = Random.Shared.Next(5, 50),
-                        utilization = Random.Shared.Next(50, 95)
+                        var instructorId = GetIntValue(i, "id");
+                        var instructorSessions = sessions.Where(s => GetIntValue(s, "instructorId") == instructorId).ToList();
+                        var sessionCount = instructorSessions.Count;
+                        var totalTrainees = instructorSessions
+                            .Sum(s => enrollments.Count(e => GetIntValue(e, "sessionId") == GetIntValue(s, "id")));
+                        
+                        // Calculate total hours: estimate 2 hours per session
+                        var totalHours = sessionCount * 2;
+                        var utilization = sessionCount > 0 ? Math.Min(100, (sessionCount * 10)) : 0;
+
+                        return new
+                        {
+                            name = GetStringValue(i, "firstName") + " " + GetStringValue(i, "lastName"),
+                            sessions = sessionCount,
+                            hours = totalHours,
+                            trainees = totalTrainees,
+                            utilization = utilization
+                        };
                     })
                     .ToList();
 
@@ -243,11 +284,16 @@ namespace reportingApplication.Controllers
         {
             try
             {
+                var assessments = JsonDocument.Parse(assessmentsJson).RootElement.EnumerateArray().ToList();
+
+                // Group assessments by track (we'll need to infer from course data if available)
+                // For now, categorize by assessment status
+                var passedAssessments = assessments.Count(a => GetIntValue(a, "status") == 2);
+                var allAssessments = assessments.Count;
+
                 var certData = new List<object> 
                 { 
-                    new { name = "Web Development Track", completed = 25, eligible = 50 },
-                    new { name = "Data Science Track", completed = 15, eligible = 40 },
-                    new { name = "Cloud Computing Track", completed = 10, eligible = 30 }
+                    new { name = "Certified Trainees", completed = passedAssessments, eligible = allAssessments }
                 };
                 return JsonSerializer.Serialize(certData);
             }
@@ -308,13 +354,32 @@ namespace reportingApplication.Controllers
             try
             {
                 var users = JsonDocument.Parse(usersJson).RootElement.EnumerateArray().ToList();
+                var assessments = JsonDocument.Parse(assessmentsJson).RootElement.EnumerateArray().ToList();
+                var sessions = JsonDocument.Parse(sessionsJson).RootElement.EnumerateArray().ToList();
 
                 var instructorAssessments = users
                     .Where(u => GetIntValue(u, "role") == 1)
-                    .Select(i => new
+                    .Select(i => 
                     {
-                        name = GetStringValue(i, "firstName") + " " + GetStringValue(i, "lastName"),
-                        passRate = Random.Shared.Next(65, 95)
+                        var instructorId = GetIntValue(i, "id");
+                        var instructorSessionIds = sessions
+                            .Where(s => GetIntValue(s, "instructorId") == instructorId)
+                            .Select(s => GetIntValue(s, "id"))
+                            .ToList();
+                        
+                        var instructorAssessments = assessments
+                            .Where(a => instructorSessionIds.Contains(GetIntValue(a, "sessionId")))
+                            .ToList();
+                        
+                        var passCount = instructorAssessments.Count(a => GetIntValue(a, "status") == 2);
+                        var totalCount = instructorAssessments.Count;
+                        var passRate = totalCount > 0 ? (passCount * 100) / totalCount : 0;
+
+                        return new
+                        {
+                            name = GetStringValue(i, "firstName") + " " + GetStringValue(i, "lastName"),
+                            passRate = passRate
+                        };
                     })
                     .ToList();
 
@@ -333,12 +398,20 @@ namespace reportingApplication.Controllers
                 var sessions = JsonDocument.Parse(sessionsJson).RootElement.EnumerateArray().ToList();
                 var classrooms = JsonDocument.Parse(classroomsJson).RootElement.EnumerateArray().ToList();
 
-                var roomUtil = classrooms.Select(r => new
+                var roomUtil = classrooms.Select(r => 
                 {
-                    room = GetStringValue(r, "name"),
-                    booked = sessions.Count(s => GetIntValue(s, "classroomId") == GetIntValue(r, "id")),
-                    totalSlots = 40,
-                    fillRate = Random.Shared.Next(40, 90)
+                    var roomId = GetIntValue(r, "id");
+                    var bookedSessions = sessions.Count(s => GetIntValue(s, "classroomId") == roomId);
+                    var totalSlots = 40; // Assuming 40 available slots per room
+                    var fillRate = totalSlots > 0 ? (bookedSessions * 100) / totalSlots : 0;
+
+                    return new
+                    {
+                        room = GetStringValue(r, "name"),
+                        booked = bookedSessions,
+                        totalSlots = totalSlots,
+                        fillRate = Math.Min(100, fillRate)
+                    };
                 }).ToList();
 
                 return JsonSerializer.Serialize(roomUtil);

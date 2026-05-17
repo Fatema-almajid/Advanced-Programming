@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrainingCertificationPlatform;
 
@@ -11,9 +12,11 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260516101044_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("EquipmentsId");
 
-                    b.ToTable("ClassroomEquipment", (string)null);
+                    b.ToTable("ClassroomEquipment");
 
                     b.HasData(
                         new
@@ -44,18 +47,8 @@ namespace TrainingCertificationPlatform.Migrations
                         },
                         new
                         {
-<<<<<<< HEAD
-                            ClassroomsId = 1,
-                            EquipmentsId = 2
-                        },
-                        new
-                        {
-                            ClassroomsId = 2,
-                            EquipmentsId = 1
-=======
                             ClassroomsId = 2,
                             EquipmentsId = 2
->>>>>>> fd2e9fb (making it up-to-date)
                         },
                         new
                         {
@@ -86,7 +79,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("TracksId");
 
-                    b.ToTable("CourseTrack", (string)null);
+                    b.ToTable("CourseTrack");
 
                     b.HasData(
                         new
@@ -141,7 +134,7 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("EnrollmentId")
                         .IsUnique();
 
-                    b.ToTable("Assessments", (string)null);
+                    b.ToTable("Assessments");
 
                     b.HasData(
                         new
@@ -161,43 +154,25 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 3,
-<<<<<<< HEAD
-                            DueDate = new DateTime(2026, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EnrollmentId = 3,
-                            Status = 0
-=======
                             CompletedBy = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 3,
                             Status = 1
->>>>>>> fd2e9fb (making it up-to-date)
                         },
                         new
                         {
                             Id = 4,
-<<<<<<< HEAD
-                            CompletedBy = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DueDate = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-=======
                             CompletedBy = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
->>>>>>> fd2e9fb (making it up-to-date)
                             EnrollmentId = 4,
                             Status = 1
                         },
                         new
                         {
                             Id = 5,
-<<<<<<< HEAD
-                            CompletedBy = new DateTime(2026, 4, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DueDate = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EnrollmentId = 6,
-                            Status = 2
-=======
                             DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 5,
                             Status = 0
->>>>>>> fd2e9fb (making it up-to-date)
                         });
                 });
 
@@ -227,7 +202,7 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("EnrollmentId")
                         .IsUnique();
 
-                    b.ToTable("Balances", (string)null);
+                    b.ToTable("Balances");
 
                     b.HasData(
                         new
@@ -257,12 +232,6 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 4,
-<<<<<<< HEAD
-                            AmountDue = 0m,
-                            DueDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EnrollmentId = 4,
-                            Status = 0
-=======
                             AmountDue = 50m,
                             DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 4,
@@ -275,7 +244,6 @@ namespace TrainingCertificationPlatform.Migrations
                             DueDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 5,
                             Status = 0
->>>>>>> fd2e9fb (making it up-to-date)
                         });
                 });
 
@@ -296,7 +264,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Classrooms", (string)null);
+                    b.ToTable("Classrooms");
 
                     b.HasData(
                         new
@@ -366,7 +334,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("PrerequisiteId");
 
-                    b.ToTable("Courses", (string)null);
+                    b.ToTable("Courses");
 
                     b.HasData(
                         new
@@ -460,7 +428,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Enrollments", (string)null);
+                    b.ToTable("Enrollments");
 
                     b.HasData(
                         new
@@ -485,27 +453,15 @@ namespace TrainingCertificationPlatform.Migrations
                             EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SessionId = 3,
                             Status = 2,
-<<<<<<< HEAD
-                            TraineeId = 6
-=======
                             TraineeId = 1
->>>>>>> fd2e9fb (making it up-to-date)
                         },
                         new
                         {
                             Id = 4,
-<<<<<<< HEAD
-                            CompletionDate = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EnrollmentDate = new DateTime(2026, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SessionId = 4,
-                            Status = 3,
-                            TraineeId = 1
-=======
                             EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SessionId = 5,
                             Status = 3,
                             TraineeId = 4
->>>>>>> fd2e9fb (making it up-to-date)
                         },
                         new
                         {
@@ -513,20 +469,7 @@ namespace TrainingCertificationPlatform.Migrations
                             EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SessionId = 2,
                             Status = 4,
-<<<<<<< HEAD
-                            TraineeId = 4
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CompletionDate = new DateTime(2026, 4, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EnrollmentDate = new DateTime(2026, 3, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SessionId = 5,
-                            Status = 3,
-                            TraineeId = 6
-=======
                             TraineeId = 1
->>>>>>> fd2e9fb (making it up-to-date)
                         });
                 });
 
@@ -544,7 +487,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Equipments", (string)null);
+                    b.ToTable("Equipments");
 
                     b.HasData(
                         new
@@ -565,14 +508,11 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 4,
-<<<<<<< HEAD
-=======
                             Name = "Microphones"
                         },
                         new
                         {
                             Id = 5,
->>>>>>> fd2e9fb (making it up-to-date)
                             Name = "Networking Kit"
                         });
                 });
@@ -604,7 +544,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("InstructorId");
 
-                    b.ToTable("InstructorAvailabilities", (string)null);
+                    b.ToTable("InstructorAvailabilities");
 
                     b.HasData(
                         new
@@ -639,7 +579,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("InstructorExpertises", (string)null);
+                    b.ToTable("InstructorExpertises");
 
                     b.HasData(
                         new
@@ -654,14 +594,6 @@ namespace TrainingCertificationPlatform.Migrations
                         },
                         new
                         {
-<<<<<<< HEAD
-                            InstructorId = 2,
-                            CourseId = 5
-                        },
-                        new
-                        {
-=======
->>>>>>> fd2e9fb (making it up-to-date)
                             InstructorId = 5,
                             CourseId = 3
                         },
@@ -669,14 +601,11 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             InstructorId = 5,
                             CourseId = 4
-<<<<<<< HEAD
-=======
                         },
                         new
                         {
                             InstructorId = 2,
                             CourseId = 5
->>>>>>> fd2e9fb (making it up-to-date)
                         });
                 });
 
@@ -705,7 +634,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
 
                     b.HasData(
                         new
@@ -728,11 +657,6 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             Id = 3,
                             CreatedDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-<<<<<<< HEAD
-                            Message = "Payment reminder",
-                            Status = 0,
-                            UserId = 4
-=======
                             Message = "New enrollment received",
                             Status = 0,
                             UserId = 3
@@ -752,7 +676,6 @@ namespace TrainingCertificationPlatform.Migrations
                             Message = "Schedule updated",
                             Status = 1,
                             UserId = 5
->>>>>>> fd2e9fb (making it up-to-date)
                         });
                 });
 
@@ -781,7 +704,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("EnrollmentId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
 
                     b.HasData(
                         new
@@ -811,26 +734,15 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 4,
-<<<<<<< HEAD
-                            Amount = 180m,
-                            EnrollmentId = 4,
-                            PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = 1
-=======
                             Amount = 50m,
                             EnrollmentId = 4,
                             PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 0
->>>>>>> fd2e9fb (making it up-to-date)
                         },
                         new
                         {
                             Id = 5,
-<<<<<<< HEAD
-                            Amount = 170m,
-=======
                             Amount = 180m,
->>>>>>> fd2e9fb (making it up-to-date)
                             EnrollmentId = 5,
                             PaymentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 1
@@ -871,7 +783,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("InstructorId", "SessionDate");
 
-                    b.ToTable("Sessions", (string)null);
+                    b.ToTable("Sessions");
 
                     b.HasData(
                         new
@@ -881,11 +793,7 @@ namespace TrainingCertificationPlatform.Migrations
                             CourseId = 1,
                             EndTime = new TimeOnly(11, 0, 0),
                             InstructorId = 2,
-<<<<<<< HEAD
-                            SessionDate = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-=======
                             SessionDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
->>>>>>> fd2e9fb (making it up-to-date)
                             StartTime = new TimeOnly(9, 0, 0)
                         },
                         new
@@ -895,11 +803,7 @@ namespace TrainingCertificationPlatform.Migrations
                             CourseId = 2,
                             EndTime = new TimeOnly(14, 0, 0),
                             InstructorId = 2,
-<<<<<<< HEAD
-                            SessionDate = new DateTime(2026, 4, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-=======
                             SessionDate = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
->>>>>>> fd2e9fb (making it up-to-date)
                             StartTime = new TimeOnly(12, 0, 0)
                         },
                         new
@@ -909,11 +813,7 @@ namespace TrainingCertificationPlatform.Migrations
                             CourseId = 3,
                             EndTime = new TimeOnly(12, 0, 0),
                             InstructorId = 5,
-<<<<<<< HEAD
-                            SessionDate = new DateTime(2026, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
-=======
                             SessionDate = new DateTime(2026, 4, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
->>>>>>> fd2e9fb (making it up-to-date)
                             StartTime = new TimeOnly(10, 0, 0)
                         },
                         new
@@ -923,11 +823,7 @@ namespace TrainingCertificationPlatform.Migrations
                             CourseId = 4,
                             EndTime = new TimeOnly(15, 0, 0),
                             InstructorId = 5,
-<<<<<<< HEAD
-                            SessionDate = new DateTime(2026, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-=======
                             SessionDate = new DateTime(2026, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
->>>>>>> fd2e9fb (making it up-to-date)
                             StartTime = new TimeOnly(13, 0, 0)
                         },
                         new
@@ -937,11 +833,7 @@ namespace TrainingCertificationPlatform.Migrations
                             CourseId = 5,
                             EndTime = new TimeOnly(16, 0, 0),
                             InstructorId = 2,
-<<<<<<< HEAD
-                            SessionDate = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-=======
                             SessionDate = new DateTime(2026, 4, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
->>>>>>> fd2e9fb (making it up-to-date)
                             StartTime = new TimeOnly(14, 0, 0)
                         });
                 });
@@ -964,7 +856,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tracks", (string)null);
+                    b.ToTable("Tracks");
 
                     b.HasData(
                         new
@@ -984,8 +876,6 @@ namespace TrainingCertificationPlatform.Migrations
                             Id = 3,
                             Description = "Networking certification track",
                             Name = "Networking Essentials"
-<<<<<<< HEAD
-=======
                         },
                         new
                         {
@@ -998,7 +888,6 @@ namespace TrainingCertificationPlatform.Migrations
                             Id = 5,
                             Description = "Software engineering foundations",
                             Name = "Software Engineering"
->>>>>>> fd2e9fb (making it up-to-date)
                         });
                 });
 
@@ -1029,7 +918,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("TraineeId");
 
-                    b.ToTable("TraineeCertifications", (string)null);
+                    b.ToTable("TraineeCertifications");
 
                     b.HasData(
                         new
@@ -1043,11 +932,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 2,
-<<<<<<< HEAD
-                            CertificateReferenceNumber = "CERT-1002",
-=======
                             CertificateReferenceNumber = "CERT-44271CF2",
->>>>>>> fd2e9fb (making it up-to-date)
                             Status = 1,
                             TrackId = 2,
                             TraineeId = 4
@@ -1055,12 +940,6 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 3,
-<<<<<<< HEAD
-                            CertificateReferenceNumber = "",
-                            Status = 0,
-                            TrackId = 3,
-                            TraineeId = 6
-=======
                             CertificateReferenceNumber = "CERT-642FD464",
                             Status = 0,
                             TrackId = 3,
@@ -1081,7 +960,6 @@ namespace TrainingCertificationPlatform.Migrations
                             Status = 1,
                             TrackId = 5,
                             TraineeId = 1
->>>>>>> fd2e9fb (making it up-to-date)
                         });
                 });
 
@@ -1092,10 +970,6 @@ namespace TrainingCertificationPlatform.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CPR")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -1125,52 +999,23 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CPR = "123456789",
                             Email = "ali@mail.com",
                             FirstName = "Ali",
                             LastName = "Ahmad",
                             Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
                             Phone = "99999991",
-<<<<<<< HEAD
-                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Role = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CPR = "098765432",
-                            Email = "omar@mail.com",
-                            FirstName = "Omar",
-                            LastName = "Ali",
-                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
-                            Phone = "99999994",
-                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Role = 0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CPR = "444555666",
-                            Email = "mariam@mail.com",
-                            FirstName = "Mariam",
-                            LastName = "Hasan",
-                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
-                            Phone = "99999996",
-=======
->>>>>>> fd2e9fb (making it up-to-date)
                             RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 0
                         },
                         new
                         {
                             Id = 2,
-                            CPR = "987654321",
                             Email = "sara@mail.com",
                             FirstName = "Sara",
                             LastName = "Mohamed",
@@ -1181,24 +1026,7 @@ namespace TrainingCertificationPlatform.Migrations
                         },
                         new
                         {
-<<<<<<< HEAD
-                            Id = 5,
-                            CPR = "012345678",
-                            Email = "fatima@mail.com",
-                            FirstName = "Fatima",
-                            LastName = "Yousef",
-                            Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
-                            Phone = "99999995",
-                            RegistrationDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Role = 1
-                        },
-                        new
-                        {
                             Id = 3,
-                            CPR = "112233445",
-=======
-                            Id = 3,
->>>>>>> fd2e9fb (making it up-to-date)
                             Email = "dana@mail.com",
                             FirstName = "Dana",
                             LastName = "Albanki",

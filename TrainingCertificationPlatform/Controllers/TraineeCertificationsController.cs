@@ -55,6 +55,7 @@ namespace TrainingCertificationPlatform.Controllers
             }
 
             var existingCertificate = await _context.TraineeCertifications
+<<<<<<< HEAD
                 .Where(tc =>
                     tc.TraineeId == trainee.Id &&
                     tc.TrackId == trackId)
@@ -68,6 +69,17 @@ namespace TrainingCertificationPlatform.Controllers
 
 
 
+=======
+                .FirstOrDefaultAsync(tc =>
+                    tc.TraineeId == trainee.Id &&
+                    tc.TrackId == trackId);
+
+            if (existingCertificate != null)
+            {
+                return RedirectToAction("Certification");
+            }
+
+>>>>>>> fd2e9fb (making it up-to-date)
             var certification = new TraineeCertification
             {
                 TraineeId = trainee.Id,

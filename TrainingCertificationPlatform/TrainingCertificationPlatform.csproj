@@ -17,7 +17,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.12" />
+<<<<<<< HEAD
     <PackageReference Include="QRCoder" Version="1.8.0" />
+=======
+>>>>>>> fd2e9fb (making it up-to-date)
     <PackageReference Include="QuestPDF" Version="2026.5.0" />
   </ItemGroup>
 
