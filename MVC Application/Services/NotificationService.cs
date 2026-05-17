@@ -17,6 +17,8 @@ namespace MVC_Application.Services
             _notificationHub = notificationHub;
         }
 
+
+        // Create a new notification for a user and sends it in real-time via SignalR
         public async Task CreateNotificationAsync(int userId, string message)
         {
             var notification = new Notification
@@ -30,6 +32,8 @@ namespace MVC_Application.Services
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
 
+
+            // Send real-time notification to the specific user via SignalR
             await _notificationHub.Clients
                 .Group($"user-{userId}")
                 .SendAsync("ReceiveNotification", new
@@ -41,10 +45,12 @@ namespace MVC_Application.Services
                 });
         }
 
+
         public async Task CreateOverduePaymentNotificationsForUserAsync(int traineeId)
         {
             var today = DateTime.Today;
 
+            // Fetch overdue balances for the trainee, including related course information
             var overdueBalances = await _context.Balances
                 .Include(b => b.Enrollment)
                     .ThenInclude(e => e.Session)
@@ -55,6 +61,7 @@ namespace MVC_Application.Services
                     b.Status == BalanceStatus.OVERDUE)
                 .ToListAsync();
 
+            // For each overdue balance, check if a notification has already been sent today for that course
             foreach (var balance in overdueBalances)
             {
                 var courseTitle = balance.Enrollment.Session.Course.Title;
@@ -71,6 +78,7 @@ namespace MVC_Application.Services
                     continue;
                 }
 
+                // Create a new notification for the overdue payment if not already sent
                 await CreateNotificationAsync(
                     traineeId,
                     $"You have an overdue payment for {courseTitle}. Remaining balance: BHD {balance.AmountDue}."

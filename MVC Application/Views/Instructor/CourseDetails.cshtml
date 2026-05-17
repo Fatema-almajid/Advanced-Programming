@@ -16,6 +16,7 @@
         </div>
     }
 
+    @* data-session-id="@Model.SessionId", this is used to have instructor join the enrollment group for real-time updates *@
     <div class="card shadow-sm mb-4" data-session-id="@Model.SessionId">
         <div class="card-body">
             <span class="badge bg-primary mb-3">@Model.Category</span>
@@ -43,7 +44,7 @@
                 <div class="col-md-3">
                     <strong>Trainees</strong>
                     <p>
-                        <span data-session-trainee-count-for="@Model.SessionId">
+                        <span data-session-enrolled-count-for="@Model.SessionId">
                             @Model.Trainees.Count
                         </span>
                     </p>

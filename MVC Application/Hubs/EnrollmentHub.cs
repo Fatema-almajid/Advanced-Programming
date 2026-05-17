@@ -12,7 +12,7 @@ namespace MVC_Application.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, $"course-{courseId}");
         }
 
-        //For instructors
+        //For instructors and training coordinators
         public async Task JoinSessionGroup(int sessionId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, $"session-{sessionId}");

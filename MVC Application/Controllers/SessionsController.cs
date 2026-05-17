@@ -131,12 +131,17 @@ namespace MVC_Application.Controllers
             await _context.SaveChangesAsync();
 
             //Send notif to instructor about new session
+
+            //Get course title for notification
             var course = await _context.Courses
         .FirstOrDefaultAsync(c => c.Id == model.CourseId);
+
             var courseTitle = course?.Title ?? "a course";
 
+            //Create notification message
             var message = $"You have been assigned to teach a new session for the course '{courseTitle}' on {session.SessionDate:MMMM dd, yyyy}.";
 
+            //Send notification to instructor
             await _notificationService.CreateNotificationAsync(session.InstructorId, message);
 
             TempData["SuccessMessage"] = "Session scheduled successfully.";
@@ -173,12 +178,13 @@ namespace MVC_Application.Controllers
 
             //Validate session editing
             var errors = await _schedulingService.ValidateSessionAsync(
-                 model.CourseId,
-                 model.InstructorId,
-                 model.ClassroomId,
-                 model.SessionDate,
-                 model.StartTime,
-                 model.EndTime);
+                model.CourseId,
+                model.InstructorId,
+                model.ClassroomId,
+                model.SessionDate,
+                model.StartTime,
+                model.EndTime,
+                model.Id);
 
             foreach (var error in errors)
             {
@@ -191,8 +197,9 @@ namespace MVC_Application.Controllers
                 return View(model);
             }
 
-            var session = await _context.Sessions.FindAsync(id);
-            if (session == null) return NotFound();
+            var session = await _context.Sessions
+                            .Include(s => s.Course)
+                            .FirstOrDefaultAsync(s => s.Id == id); if (session == null) return NotFound();
 
             session.CourseId = model.CourseId;
             session.InstructorId = model.InstructorId;
@@ -202,6 +209,11 @@ namespace MVC_Application.Controllers
             session.EndTime = model.EndTime;
 
             await _context.SaveChangesAsync();
+
+            //Send notif to instructor about session update
+            var message = $"The session for the course '{session.Course.Title}' scheduled on {session.SessionDate:MMMM dd, yyyy} has been updated.";
+            var instructorId = session.InstructorId;
+            await _notificationService.CreateNotificationAsync(instructorId, message);
 
             TempData["SuccessMessage"] = "Session updated successfully.";
             return RedirectToAction(nameof(Index));
@@ -243,7 +255,9 @@ namespace MVC_Application.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var session = await _context.Sessions.FindAsync(id);
+            var session = await _context.Sessions
+                .Include(s => s.Course)
+                .FirstOrDefaultAsync(s => s.Id == id);
 
             if (session == null)
             {
@@ -253,8 +267,15 @@ namespace MVC_Application.Controllers
 
             try
             {
+                var message = $"The session for the course '{session.Course.Title}' scheduled on {session.SessionDate:MMMM dd, yyyy} has been cancelled.";
+                var instructorId = session.InstructorId;
+
                 _context.Sessions.Remove(session);
                 await _context.SaveChangesAsync();
+
+                //Send notif to instructor about session cancellation
+                await _notificationService.CreateNotificationAsync(instructorId, message);
+
                 TempData["SuccessMessage"] = "Session deleted successfully.";
             }
             catch (DbUpdateException)

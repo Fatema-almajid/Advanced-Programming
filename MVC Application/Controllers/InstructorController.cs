@@ -283,7 +283,7 @@ namespace MVC_Application.Controllers
 
         public async Task<IActionResult> MyNotifications()
         {
-            var instructorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var instructorId = GetInstructorId();
 
             var notifications = await _context.Notifications
                 .Where(n => n.UserId == instructorId)

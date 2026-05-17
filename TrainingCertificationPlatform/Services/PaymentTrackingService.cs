@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TrainingCertificationPlatform.Models;
 
 namespace TrainingCertificationPlatform.Services
@@ -12,6 +13,7 @@ namespace TrainingCertificationPlatform.Services
             _context = context;
         }
 
+        [HttpPost]
         public async Task<string?> RecordPaymentAsync(int enrollmentId, decimal paymentAmount) { 
            
 
@@ -91,6 +93,7 @@ namespace TrainingCertificationPlatform.Services
             }
 
             await _context.SaveChangesAsync();
+
         }
 
         public async Task<List<Enrollment>> GetTraineePaymentsAsync(int traineeId)

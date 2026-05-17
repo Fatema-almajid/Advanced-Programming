@@ -6,6 +6,7 @@ namespace MVC_Application.Hubs
 {
     public class NotificationHub : Hub
     {
+        // For sending notifications to specific users based on their user ID
         public override async Task OnConnectedAsync()
         {
             var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -18,6 +19,7 @@ namespace MVC_Application.Hubs
             await base.OnConnectedAsync();
         }
 
+        // Remove the user from their group when they disconnect
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;

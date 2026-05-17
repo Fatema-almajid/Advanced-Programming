@@ -1,5 +1,6 @@
 ﻿"use strict";
 
+// enrollmentConnection is used to receive real-time updates about course enrollments and session enrollments.
 const enrollmentConnection = new signalR.HubConnectionBuilder()
     .withUrl("/hubs/enrollment")
     .withAutomaticReconnect()
@@ -13,18 +14,15 @@ function updateEnrollmentDisplay(data) {
 
     // Trainee course pages
     if (courseId) {
-        document
-            .querySelectorAll(`[data-remaining-seats-for='${courseId}']`)
-            .forEach(element => {
-                element.textContent = data.remainingSeats;
-            });
 
+        //update enrolled count
         document
             .querySelectorAll(`[data-enrolled-count-for='${courseId}']`)
             .forEach(element => {
                 element.textContent = data.enrolledCount;
             });
 
+        //update enroll buttons
         document
             .querySelectorAll(`[data-enroll-button-for='${courseId}']`)
             .forEach(button => {
@@ -36,50 +34,28 @@ function updateEnrollmentDisplay(data) {
             });
     }
 
-    // Instructor pages
+    // Instructor and training-coordinator pages
     if (sessionId) {
+
+        //update enrolled count
         document
             .querySelectorAll(`[data-session-enrolled-count-for='${sessionId}']`)
             .forEach(element => {
                 element.textContent = data.enrolledCount;
             });
 
-        document
-            .querySelectorAll(`[data-session-capacity-for='${sessionId}']`)
-            .forEach(element => {
-                element.textContent = data.capacity;
-            });
-
-        document
-            .querySelectorAll(`[data-session-enrollment-text-for='${sessionId}']`)
-            .forEach(element => {
-                element.textContent = `${data.enrolledCount} / ${data.capacity}`;
-            });
-
-        document
-            .querySelectorAll(`[data-session-trainee-count-for='${sessionId}']`)
-            .forEach(element => {
-                element.textContent = data.enrolledCount;
-            });
-
-        document
-            .querySelectorAll(`[data-session-status-for='${sessionId}']`)
-            .forEach(element => {
-                if (data.isFull) {
-                    element.textContent = "Full";
-                    element.classList.remove("bg-secondary", "bg-success");
-                    element.classList.add("bg-danger");
-                }
-            });
     }
 }
 
+// Listen for enrollment updates from the server
 enrollmentConnection.on("EnrollmentUpdated", updateEnrollmentDisplay);
 
 async function joinEnrollmentGroups() {
+    // Find all course and session elements with data attributes
     const courseElements = document.querySelectorAll("[data-course-id]");
     const sessionElements = document.querySelectorAll("[data-session-id]");
 
+    // Join course groups
     for (const element of courseElements) {
         const courseId = parseInt(element.dataset.courseId);
 
@@ -89,6 +65,7 @@ async function joinEnrollmentGroups() {
         }
     }
 
+    // Join session groups
     for (const element of sessionElements) {
         const sessionId = parseInt(element.dataset.sessionId);
 
@@ -99,6 +76,8 @@ async function joinEnrollmentGroups() {
     }
 }
 
+
+// Start the SignalR connection and join groups on page load
 async function startEnrollmentConnection() {
     try {
         await enrollmentConnection.start();
@@ -111,8 +90,5 @@ async function startEnrollmentConnection() {
     }
 }
 
-enrollmentConnection.onreconnected(async () => {
-    await joinEnrollmentGroups();
-});
 
 startEnrollmentConnection();

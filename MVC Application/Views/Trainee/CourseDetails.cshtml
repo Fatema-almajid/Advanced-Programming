@@ -21,6 +21,7 @@
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
+@* data-course-id="@Model.Id" this is to have the trainee join the course group for real-time updates for enrollment count *@
 <div class="card shadow-sm" data-course-id="@Model.Id">
     <div class="card-body p-4">
         <span class="course-category">@Model.Category</span>

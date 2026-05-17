@@ -23,14 +23,18 @@ namespace MVC_Application.Controllers
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+            // Get the specific notification from the database for the current user
             var notification = await _context.Notifications
                 .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
 
+            // If the notification doesn't exist or doesn't belong to the user,
             if (notification == null)
             {
+                // return a 404 Not Found response
                 return NotFound();
             }
 
+            // Mark the notification as read
             notification.Status = NotificationStatus.READ;
             await _context.SaveChangesAsync();
 

@@ -136,6 +136,8 @@
                                 <tbody>
                                     @foreach (var item in Model.UpcomingCourses)
                                     {
+                                        @* data-session-id="@item.SessionId" ,  is used here have training coordinator join the
+                                        enrollment group for real-time updates *@
                                         <tr data-session-id="@item.SessionId">
                                             <td class="fw-semibold">@item.CourseName</td>
                                             <td>@item.InstructorName</td>
@@ -144,9 +146,11 @@
                                             <td>@item.ScheduleTime</td>
                                             <td>
                                                 <span class="badge @(item.EnrolledCount >= item.Capacity ? "bg-danger" : item.EnrolledCount >= item.Capacity - 5 ? "bg-warning text-dark" : "bg-success")">
-                                                    <span data-session-enrollment-text-for="@item.SessionId">
-                                                        @item.EnrolledCount / @item.Capacity
+                                                    @* data-session-enrolled-count-for="@item.SessionId" to update enrolled count*@
+                                                    <span data-session-enrolled-count-for="@item.SessionId">
+                                                        @item.EnrolledCount 
                                                     </span>
+                                                    / @item.Capacity
                                                 </span>
                                             </td>
                                         </tr>

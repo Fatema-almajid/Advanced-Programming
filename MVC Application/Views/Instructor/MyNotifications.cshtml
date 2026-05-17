@@ -27,6 +27,7 @@
             {
                 @foreach (var notif in Model)
                 {
+                    // Each notification row has an id like "notification-row-1" where 1 is the notification id
                     <tr id="notification-row-@notif.Id">
                         <td>@notif.Message</td>
                         <td>@notif.CreatedDate.ToString("dd MMM yyyy")</td>
@@ -59,15 +60,22 @@
     </table>
 </div>
 
+
 @section Scripts {
     <script>
+        //get all Mark as Read buttons
         document.querySelectorAll(".mark-as-read-btn").forEach(button => {
+            //add click event listener to each button
             button.addEventListener("click", async function () {
+                //get the notification id from the data-id attribute of the button
                 const notificationId = this.dataset.id;
 
+                //get the anti-forgery token from the hidden input field in the page (in the shared layout page)
                 const tokenInput = document.querySelector("input[name='__RequestVerificationToken']");
                 const token = tokenInput ? tokenInput.value : "";
 
+                //send a POST request to the MarkAsRead action in the Notifications controller
+                // with the notification id and the anti-forgery token
                 const response = await fetch("/Notifications/MarkAsRead", {
                     method: "POST",
                     headers: {
@@ -77,10 +85,14 @@
                     body: `id=${encodeURIComponent(notificationId)}`
                 });
 
+                //if the response is successful,
+                // update the status cell in the table to show "Read"
                 if (response.ok) {
                     const row = document.getElementById(`notification-row-${notificationId}`);
+                    //find the status cell in the same row as the button that was clicked
                     const statusCell = this.closest("td");
 
+                    //update the status cell to show a green badge with "Read"
                     statusCell.innerHTML = `<span class="badge bg-success">Read</span>`;
                 }
             });

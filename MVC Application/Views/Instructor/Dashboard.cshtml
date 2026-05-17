@@ -97,9 +97,10 @@
                                     <div class="mb-2">
                                         <span class="badge bg-primary">@session.Category</span>
                                         <span class="badge bg-secondary">
-                                            <span data-session-enrollment-text-for="@session.SessionId">
-                                                @session.EnrolledCount / @session.Capacity
+                                            <span data-session-enrolled-count-for="@session.SessionId">
+                                                @session.EnrolledCount 
                                             </span>
+                                            / @session.Capacity 
                                             enrolled
                                         </span>
                                     </div>

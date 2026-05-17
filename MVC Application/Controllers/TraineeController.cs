@@ -7,12 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using MVC_Application.Hubs;
 using MVC_Application.Models.ViewModels;
 using MVC_Application.Services;
-using TrainingCertificationPlatform;
-using TrainingCertificationPlatform.Models;
-using TrainingCertificationPlatform.Services;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using TrainingCertificationPlatform;
+using TrainingCertificationPlatform.Models;
+using TrainingCertificationPlatform.Services;
+using static System.Collections.Specialized.BitVector32;
 
 namespace MVC_Application.Controllers
 {
@@ -238,23 +239,26 @@ namespace MVC_Application.Controllers
 
             await _context.SaveChangesAsync();
 
+            // Notify real-time enrollment count updates
+            //1) Get the current enrolled count for the session (excluding dropped)
             var enrolledCount = await _context.Enrollments
-    .CountAsync(e => e.SessionId == session.Id);
+               .Where(e => e.Status != EnrollmentStatus.DROPPED)
+                      .CountAsync(e => e.SessionId == session.Id);
 
-           
+            //2) Get the course capacity and calculate remaining seats
             var capacity = session.Course?.Capacity ?? 0;
             var remainingSeats = capacity - enrolledCount;
 
+            //3) Create a payload with the updated enrollment info
             var payload = new
             {
                 courseId = session.CourseId,
                 sessionId = session.Id,
                 enrolledCount = enrolledCount,
-                capacity = capacity,
-                remainingSeats = remainingSeats,
                 isFull = remainingSeats <= 0
             };
 
+            //4) Send the update to all clients subscribed to this course and session
             await _enrollmentHub.Clients.Group($"course-{session.CourseId}")
                 .SendAsync("EnrollmentUpdated", payload);
 
@@ -270,6 +274,19 @@ namespace MVC_Application.Controllers
         public async Task<IActionResult> DropCourse(int enrollmentId)
         {
             var traineeId = GetTraineeId();
+
+            var session = await _context.Enrollments
+                .Where(e => e.Id == enrollmentId && e.TraineeId == traineeId)
+                .Select(e => e.Session)
+                .FirstOrDefaultAsync();
+            
+            var courseId = session?.CourseId ?? 0;
+
+            if (session == null)
+            {
+                TempData["ErrorMessage"] = "No session is available for this course.";
+                return RedirectToAction(nameof(CourseDetails), new { id = courseId });
+            }
 
             var enrollment = await _context.Enrollments
                 .Include(e => e.Balance)
@@ -300,6 +317,32 @@ namespace MVC_Application.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            // Notify real-time enrollment count updates
+            //1) Get the current enrolled count for the session (excluding dropped)
+            var enrolledCount = await _context.Enrollments
+                .Where(e => e.Status != EnrollmentStatus.DROPPED)
+                       .CountAsync(e => e.SessionId == session.Id);
+
+            //2) Get the course capacity and calculate remaining seats
+            var capacity = session.Course?.Capacity ?? 0;
+            var remainingSeats = capacity - enrolledCount;
+
+            //3) Create a payload with the updated enrollment info
+            var payload = new
+            {
+                courseId = session.CourseId,
+                sessionId = session.Id,
+                enrolledCount = enrolledCount,
+                isFull = remainingSeats <= 0
+            };
+
+            //4) Send the update to all clients subscribed to this course and session
+            await _enrollmentHub.Clients.Group($"course-{session.CourseId}")
+               .SendAsync("EnrollmentUpdated", payload);
+
+            await _enrollmentHub.Clients.Group($"session-{session.Id}")
+                .SendAsync("EnrollmentUpdated", payload);
 
             TempData["SuccessMessage"] =
                 "Course dropped successfully.";
@@ -363,8 +406,10 @@ namespace MVC_Application.Controllers
             if (traineeId <= 0)
                 return RedirectToAction("Login", "Account");
 
+            // Get all enrollments with payment info for the trainee
             var enrollments = await _paymentTrackingService.GetTraineePaymentsAsync(traineeId);
 
+            // Create OVERDUE notifications if needed
             await _notificationService.CreateOverduePaymentNotificationsForUserAsync(traineeId);
 
             return View(enrollments);
@@ -372,8 +417,9 @@ namespace MVC_Application.Controllers
 
         public async Task<IActionResult> MyNotifications()
         {
-            var traineeId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var traineeId = GetTraineeId();
 
+            // Get all notifications for the trainee, ordered by most recent
             var notifications = await _context.Notifications
                 .Where(n => n.UserId == traineeId)
                 .OrderByDescending(n => n.CreatedDate)
@@ -381,6 +427,7 @@ namespace MVC_Application.Controllers
 
             return View(notifications);
         }
+
         [HttpPost]
         public async Task<IActionResult> GenerateCertificate(int trackId)
         {
