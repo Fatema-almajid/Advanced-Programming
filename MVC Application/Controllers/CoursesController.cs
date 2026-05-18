@@ -61,6 +61,7 @@ namespace MVC_Application.Controllers
 
             if (!string.IsNullOrWhiteSpace(searchString))
             {
+                //searches in the title, description, and prerequisite title for the search string
                 query = query.Where(c =>
                     c.Title.Contains(searchString) ||
                     c.Description.Contains(searchString) ||
