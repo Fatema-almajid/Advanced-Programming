@@ -210,7 +210,7 @@ namespace MVC_Application.Controllers
             if (error != null)
             {
                 TempData["ErrorMessage"] = error;
-                return RedirectToAction(nameof(Create), new { enrollmentId, returnUrl });
+                return RedirectToAction(nameof(Create), new { courseId, enrollmentId, returnUrl });
             }
 
             TempData["SuccessMessage"] = "Payment recorded successfully";
