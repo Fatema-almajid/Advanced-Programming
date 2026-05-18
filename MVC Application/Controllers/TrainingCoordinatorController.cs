@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MVC_Application.Controllers
 {
+    //only training coordinators should have access to this controller and its views, so we apply the Authorize attribute at the class level
     [Authorize(Roles = "TRAINING_COORDINATOR")]
     public class TrainingCoordinatorController : Controller
     {
@@ -18,6 +19,7 @@ namespace MVC_Application.Controllers
             _context = context;
         }
 
+        //redirects to the dashboard. 
         public IActionResult Index()
         {
             return RedirectToAction(nameof(Dashboard));
@@ -34,7 +36,7 @@ namespace MVC_Application.Controllers
                 .Include(s => s.Classroom)
                 .OrderBy(s => s.SessionDate)
                 .ThenBy(s => s.StartTime)
-                .Take(5)
+                .Take(5) // Gets the next 5 scheduled sessions from the database.
                 .Select(s => new UpcomingCourseViewModel
                 {
                     SessionId = s.Id,
@@ -55,6 +57,7 @@ namespace MVC_Application.Controllers
                 .OrderByDescending(e => e.EnrollmentDate)
                 .Take(5)
                 .Select(e => new RecentEnrollmentViewModel
+                // Convert enrollment data into a ViewModel for display.
                 {
                     TraineeName = e.Trainee.FirstName + " " + e.Trainee.LastName,
                     CourseName = e.Session.Course.Title,
@@ -63,8 +66,10 @@ namespace MVC_Application.Controllers
                 })
                 .ToListAsync();
 
+            // Creates the main dashboard model containing statistics and summary lists.
             var model = new DashboardViewModel
             {
+                // CountAsync is used because it runs the counting query directly in the database.
                 TotalTrainees = await _context.Users.CountAsync(u => u.Role == UserRole.TRAINEE),
                 TotalInstructors = await _context.Users.CountAsync(u => u.Role == UserRole.INSTRUCTOR),
                 TotalCourses = await _context.Courses.CountAsync(),
