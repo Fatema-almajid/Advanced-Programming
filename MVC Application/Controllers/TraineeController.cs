@@ -25,6 +25,7 @@ namespace MVC_Application.Controllers
         private readonly IHubContext<EnrollmentHub> _enrollmentHub;
         private readonly NotificationService _notificationService;
 
+        // Constructor injection gives the controller access to the database and required services.
         public TraineeController(AppDbContext context, 
             PaymentTrackingService paymentTrackingService, 
             IHubContext<EnrollmentHub> enrollmentHub,
@@ -36,11 +37,13 @@ namespace MVC_Application.Controllers
             _notificationService = notificationService;
         }
 
+        // Gets the logged-in trainee's ID from the authentication claims. so each trainee can only access their own data and dashboard.
         private int GetTraineeId()
         {
             return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         }
 
+        //trainee dashboard 
         public async Task<IActionResult> Dashboard()
         {
             var traineeId = GetTraineeId();
@@ -68,22 +71,25 @@ namespace MVC_Application.Controllers
                         StartTime = e.Session.StartTime,
                         EndTime = e.Session.EndTime
                     })
-                    .Take(6)
+                    .Take(6) //6 records on the dashboard only. 
                     .ToListAsync()
             };
 
             return View(model);
         }
 
+        // Displays all courses the trainee is enrolled in, with search, status filter, and card/table view mode.
         public async Task<IActionResult> MyCourses(string searchString, string statusFilter, string viewMode = "card")
         {
             var traineeId = GetTraineeId();
 
+            // Base query gets only the enrollments belonging to the logged-in trainee.
             var query = _context.Enrollments
                 .Include(e => e.Session).ThenInclude(s => s.Course)
                 .Where(e => e.TraineeId == traineeId)
                 .AsQueryable();
 
+            // Applies search filter if the trainee typed a course title or description.
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 query = query.Where(e =>
@@ -100,6 +106,7 @@ namespace MVC_Application.Controllers
             ViewData["CurrentStatus"] = statusFilter;
             ViewData["ViewMode"] = viewMode;
 
+            // Creates the dropdown list for enrollment statuses.
             ViewBag.StatusList = Enum.GetValues(typeof(EnrollmentStatus))
                 .Cast<EnrollmentStatus>()
                 .Select(s => new SelectListItem
@@ -110,6 +117,7 @@ namespace MVC_Application.Controllers
                 })
                 .ToList();
 
+            // Converts enrollment data into a simpler ViewModel for the view.
             var courses = await query
                 .OrderBy(e => e.Session.Course.Title)
                 .Select(e => new TraineeCourseViewModel
@@ -129,6 +137,7 @@ namespace MVC_Application.Controllers
             return View(courses);
         }
 
+        // Displays all available courses in the catalog with search, category filter, and card/table view mode.
         public async Task<IActionResult> CourseCatalog(string searchString, CourseCategory? categoryFilter, string viewMode = "card")
         {
             var query = _context.Courses
@@ -136,6 +145,7 @@ namespace MVC_Application.Controllers
                 .AsNoTracking()
                 .AsQueryable();
 
+            // Filters courses by title or description.
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 query = query.Where(c =>
@@ -143,6 +153,7 @@ namespace MVC_Application.Controllers
                     c.Description.Contains(searchString));
             }
 
+            // Filters courses by category if a category was selected.
             if (categoryFilter.HasValue && categoryFilter.Value != CourseCategory.None)
             {
                 query = query.Where(c => c.Category == categoryFilter.Value);
@@ -166,6 +177,7 @@ namespace MVC_Application.Controllers
             return View(courses);
         }
 
+        // Shows full details for one course, including prerequisite, tracks, next session, and enrollment status.
         public async Task<IActionResult> CourseDetails(int id)
         {
             var traineeId = GetTraineeId();
@@ -177,9 +189,11 @@ namespace MVC_Application.Controllers
 
             if (course == null) return NotFound();
 
+            // Checks if the logged-in trainee is already enrolled in this course.
             ViewBag.IsEnrolled = await _context.Enrollments
                 .AnyAsync(e => e.TraineeId == traineeId && e.Session.CourseId == id);
 
+            // Gets the next available session for this course.
             ViewBag.NextSession = await _context.Sessions
                 .Include(s => s.Instructor)
                 .Include(s => s.Classroom)
@@ -187,6 +201,7 @@ namespace MVC_Application.Controllers
                 .OrderBy(s => s.SessionDate)
                 .FirstOrDefaultAsync();
 
+            // Counts how many trainees are enrolled in this course.
             ViewBag.EnrolledCount = await _context.Enrollments
                 .CountAsync(e => e.Session.CourseId == id);
 
