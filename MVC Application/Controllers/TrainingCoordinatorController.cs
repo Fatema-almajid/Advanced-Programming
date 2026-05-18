@@ -83,5 +83,16 @@ namespace MVC_Application.Controllers
 
             return View(model);
         }
+        public async Task<IActionResult> AllEnrollments()
+        {
+            var enrollments = await _context.Enrollments
+                .Include(e => e.Trainee)
+                .Include(e => e.Session)
+                .ThenInclude(s => s.Course)
+                .OrderByDescending(e => e.EnrollmentDate)
+                .ToListAsync();
+
+            return View(enrollments);
+        }
     }
 }

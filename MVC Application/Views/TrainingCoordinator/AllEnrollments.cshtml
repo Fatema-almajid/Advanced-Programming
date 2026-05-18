@@ -1,0 +1,92 @@
+﻿@model IEnumerable<TrainingCertificationPlatform.Models.Enrollment>
+
+@{
+    ViewData["Title"] = "All Enrollments";
+}
+
+<partial name="_TrainingCoordinatorNav" />
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2>
+            <i class="bi bi-people-fill"></i>
+            All Enrollments
+        </h2>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Trainee</th>
+                            <th>Course</th>
+                            <th>Status</th>
+                            <th>Enrollment Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var enrollment in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @enrollment.Trainee.FirstName
+                                    @enrollment.Trainee.LastName
+                                </td>
+
+                                <td>
+                                    @enrollment.Session.Course.Title
+                                </td>
+
+                                <td>
+
+                                    @if (enrollment.Status == TrainingCertificationPlatform.Models.EnrollmentStatus.DROPPED)
+                                    {
+                                        <span class="badge bg-danger">
+                                            Dropped
+                                        </span>
+                                    }
+                                    else if (enrollment.Status == TrainingCertificationPlatform.Models.EnrollmentStatus.COMPLETED)
+                                    {
+                                        <span class="badge bg-success">
+                                            Completed
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">
+                                            @enrollment.Status
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+                                    @enrollment.EnrollmentDate.ToString("dd MMM yyyy")
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
