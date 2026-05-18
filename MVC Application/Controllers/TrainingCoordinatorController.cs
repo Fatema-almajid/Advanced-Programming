@@ -46,7 +46,8 @@ namespace MVC_Application.Controllers
                     ScheduleDate = s.SessionDate.ToString("dd MMM yyyy"),
                     ScheduleTime = s.StartTime.ToString("hh\\:mm") + " - " + s.EndTime.ToString("hh\\:mm"),
                     Capacity = s.Course.Capacity,
-                    EnrolledCount = _context.Enrollments.Count(e => e.SessionId == s.Id)
+                    EnrolledCount = _context.Enrollments.Where(e => e.Status != EnrollmentStatus.DROPPED)
+                       .Count(e => e.SessionId == s.Id)
                 })
                 .ToListAsync();
 
