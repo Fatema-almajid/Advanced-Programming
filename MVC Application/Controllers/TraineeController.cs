@@ -369,11 +369,13 @@ namespace MVC_Application.Controllers
         {
             var traineeId = GetTraineeId();
 
-            var completedCourseIds = await _context.Enrollments
-                .Where(e =>
-                    e.TraineeId == traineeId &&
-                    e.Status == EnrollmentStatus.COMPLETED)
-                .Select(e => e.Session.CourseId)
+            var completedCourseIds = await _context.Assessments
+                .Where(a =>
+                    a.Enrollment.TraineeId == traineeId &&
+                    a.Status == AssessmentStatus.PASS &&
+                    a.Enrollment.Status == EnrollmentStatus.COMPLETED &&
+                    a.Enrollment.Balance.AmountDue == 0)
+                            .Select(a => a.Enrollment.Session.CourseId)
                 .Distinct()
                 .ToListAsync();
 
@@ -407,10 +409,33 @@ namespace MVC_Application.Controllers
 
                     CertificateReferenceNumber = certificate?.CertificateReferenceNumber,
 
-                    Courses = t.Courses.Select(c => new CertificationCourseItemViewModel
+                    Courses = t.Courses.Select(c =>
                     {
-                        CourseTitle = c.Title,
-                        IsCompleted = completedCourseIds.Contains(c.Id)
+                        var assessment = _context.Assessments
+                            .Include(a => a.Enrollment)
+                            .ThenInclude(e => e.Balance)
+                            .FirstOrDefault(a =>
+                                a.Enrollment.TraineeId == traineeId &&
+                                a.Enrollment.Session.CourseId == c.Id);
+
+                        return new CertificationCourseItemViewModel
+                        {
+                            CourseTitle = c.Title,
+
+                            IsCompleted = assessment != null &&
+                                          assessment.Status == AssessmentStatus.PASS,
+
+                            Status =
+    assessment == null
+        ? "PENDING"
+        : assessment.Status == AssessmentStatus.FAIL
+            ? "FAIL"
+            : assessment.Status == AssessmentStatus.PASS &&
+              assessment.Enrollment.Balance != null &&
+              assessment.Enrollment.Balance.AmountDue > 0
+                ? "UNPAID"
+                : "PASS"
+                        };
                     }).ToList()
                 };
             }).ToList();
@@ -448,23 +473,24 @@ namespace MVC_Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> GenerateCertificate(int trackId)
         {
             var traineeId = GetTraineeId();
 
-            var exists = await _context.TraineeCertifications
-                .AnyAsync(tc =>
+            var certification = await _context.TraineeCertifications
+                .FirstOrDefaultAsync(tc =>
                     tc.TraineeId == traineeId &&
                     tc.TrackId == trackId);
 
-            if (!exists)
+            if (certification == null)
             {
-                var certification = new TraineeCertification
+                certification = new TraineeCertification
                 {
                     TraineeId = traineeId,
                     TrackId = trackId,
                     Status = TraineeCertificationStatus.SUCCESS,
-
                     CertificateReferenceNumber =
                         "CERT-" +
                         Guid.NewGuid()
@@ -474,9 +500,23 @@ namespace MVC_Application.Controllers
                 };
 
                 _context.TraineeCertifications.Add(certification);
-
-                await _context.SaveChangesAsync();
             }
+            else
+            {
+                certification.Status = TraineeCertificationStatus.SUCCESS;
+
+                if (string.IsNullOrEmpty(certification.CertificateReferenceNumber))
+                {
+                    certification.CertificateReferenceNumber =
+                        "CERT-" +
+                        Guid.NewGuid()
+                        .ToString("N")
+                        .Substring(0, 8)
+                        .ToUpper();
+                }
+            }
+
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Certification));
         }

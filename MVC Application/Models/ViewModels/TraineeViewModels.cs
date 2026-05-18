@@ -42,5 +42,6 @@
     {
         public string CourseTitle { get; set; } = string.Empty;
         public bool IsCompleted { get; set; }
+        public string Status { get; set; }
     }
 }

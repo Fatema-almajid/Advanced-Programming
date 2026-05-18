@@ -47,16 +47,28 @@
                             <li class="list-group-item d-flex justify-content-between">
                                 @course.CourseTitle
 
-                                @if (course.IsCompleted)
+                                @if (course.Status == "PASS")
                                 {
                                     <span class="text-success">
-                                        <i class="bi bi-check-circle"></i> Completed
+                                        <i class="bi bi-check-circle"></i> Passed
+                                    </span>
+                                }
+                                else if (course.Status == "FAIL")
+                                {
+                                    <span class="text-danger">
+                                        <i class="bi bi-x-circle"></i> Failed
+                                    </span>
+                                }
+                                else if (course.Status == "UNPAID")
+                                {
+                                    <span class="text-warning">
+                                        <i class="bi bi-exclamation-circle"></i> Passed but Payment Pending
                                     </span>
                                 }
                                 else
                                 {
                                     <span class="text-muted">
-                                        <i class="bi bi-clock"></i> Remaining
+                                        <i class="bi bi-clock"></i> Pending
                                     </span>
                                 }
                             </li>
@@ -65,8 +77,9 @@
 
                     @if (track.IsEligible)
                     {
-                        <form asp-action="GenerateCertificate" method="post">
+                        <form action="/Trainee/GenerateCertificate" method="post">
 
+                            @Html.AntiForgeryToken()
 
                             <input type="hidden"
                                    name="trackId"
