@@ -26,7 +26,7 @@ namespace MVC_Application.Controllers
         public async Task<IActionResult> Index(CertificationLookupViewModel model)
         {
             var apiUrl =
-            $"https://localhost:7102/api/CertificationApi/verify?traineeId={model.TraineeId}&referenceNumber={model.ReferenceNumber}";
+            $"https://localhost:7102/api/CertificationApi/verify?cpr={model.CPR}&referenceNumber={model.ReferenceNumber}"; 
             var response = await _httpClient.GetAsync(apiUrl);
 
             if (!response.IsSuccessStatusCode)

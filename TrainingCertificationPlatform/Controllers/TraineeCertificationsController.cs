@@ -55,14 +55,18 @@ namespace TrainingCertificationPlatform.Controllers
             }
 
             var existingCertificate = await _context.TraineeCertifications
-                .FirstOrDefaultAsync(tc =>
+                .Where(tc =>
                     tc.TraineeId == trainee.Id &&
-                    tc.TrackId == trackId);
+                    tc.TrackId == trackId)
+                .OrderByDescending(tc => tc.Id)
+                .FirstOrDefaultAsync();
 
             if (existingCertificate != null)
             {
-                return RedirectToAction("Certification");
+                return Ok(existingCertificate);
             }
+
+
 
             var certification = new TraineeCertification
             {

@@ -369,9 +369,11 @@ namespace MVC_Application.Controllers
         {
             var traineeId = GetTraineeId();
 
-            var completedCourseIds = await _context.Assessments
-                .Where(a => a.Enrollment.TraineeId == traineeId && a.Status == AssessmentStatus.PASS)
-                .Select(a => a.Enrollment.Session.CourseId)
+            var completedCourseIds = await _context.Enrollments
+                .Where(e =>
+                    e.TraineeId == traineeId &&
+                    e.Status == EnrollmentStatus.COMPLETED)
+                .Select(e => e.Session.CourseId)
                 .Distinct()
                 .ToListAsync();
 
@@ -386,9 +388,11 @@ namespace MVC_Application.Controllers
                 var completed = t.Courses.Count(c => completedCourseIds.Contains(c.Id));
 
                 var certificate = _context.TraineeCertifications
-                    .FirstOrDefault(tc =>
+                    .Where(tc =>
                         tc.TraineeId == traineeId &&
-                        tc.TrackId == t.Id);
+                        tc.TrackId == t.Id)
+                    .OrderByDescending(tc => tc.Id)
+                    .FirstOrDefault();
 
                 return new TraineeCertificationProgressViewModel
                 {
@@ -489,9 +493,11 @@ namespace MVC_Application.Controllers
                 .FirstOrDefaultAsync(t => t.Id == trackId);
 
             var certificate = await _context.TraineeCertifications
-                .FirstOrDefaultAsync(tc =>
+                .Where(tc =>
                     tc.TraineeId == traineeId &&
-                    tc.TrackId == trackId);
+                    tc.TrackId == trackId)
+                .OrderByDescending(tc => tc.Id)
+                .FirstOrDefaultAsync();
 
             if (trainee == null || track == null || certificate == null)
             {

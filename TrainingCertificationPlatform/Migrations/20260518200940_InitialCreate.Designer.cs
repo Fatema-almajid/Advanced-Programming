@@ -12,7 +12,7 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260516101044_InitialCreate")]
+    [Migration("20260518200940_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -140,9 +140,10 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
+                            CompletedBy = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 1,
-                            Status = 0
+                            Status = 1
                         },
                         new
                         {
@@ -173,6 +174,14 @@ namespace TrainingCertificationPlatform.Migrations
                             DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 5,
                             Status = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CompletedBy = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 6,
+                            Status = 1
                         });
                 });
 
@@ -469,6 +478,14 @@ namespace TrainingCertificationPlatform.Migrations
                             EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SessionId = 2,
                             Status = 4,
+                            TraineeId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SessionId = 2,
+                            Status = 3,
                             TraineeId = 1
                         });
                 });
@@ -932,7 +949,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 2,
-                            CertificateReferenceNumber = "CERT-44271CF2",
+                            CertificateReferenceNumber = "CERT-1002",
                             Status = 1,
                             TrackId = 2,
                             TraineeId = 4
@@ -940,7 +957,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 3,
-                            CertificateReferenceNumber = "CERT-642FD464",
+                            CertificateReferenceNumber = "",
                             Status = 0,
                             TrackId = 3,
                             TraineeId = 1
@@ -948,7 +965,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 4,
-                            CertificateReferenceNumber = "CERT-9B82DA1C",
+                            CertificateReferenceNumber = "",
                             Status = 0,
                             TrackId = 4,
                             TraineeId = 4
@@ -956,7 +973,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 5,
-                            CertificateReferenceNumber = "CERT-785ED4AD",
+                            CertificateReferenceNumber = "CERT-1005",
                             Status = 1,
                             TrackId = 5,
                             TraineeId = 1
@@ -970,6 +987,10 @@ namespace TrainingCertificationPlatform.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CPR")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -1005,6 +1026,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
+                            CPR = "123456789",
                             Email = "ali@mail.com",
                             FirstName = "Ali",
                             LastName = "Ahmad",
@@ -1016,6 +1038,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 2,
+                            CPR = "987654321",
                             Email = "sara@mail.com",
                             FirstName = "Sara",
                             LastName = "Mohamed",
@@ -1027,6 +1050,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 3,
+                            CPR = "112233445",
                             Email = "dana@mail.com",
                             FirstName = "Dana",
                             LastName = "Albanki",
@@ -1038,6 +1062,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 4,
+                            CPR = "098765432",
                             Email = "omar@mail.com",
                             FirstName = "Omar",
                             LastName = "Ali",
@@ -1049,6 +1074,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 5,
+                            CPR = "012345678",
                             Email = "fatima@mail.com",
                             FirstName = "Fatima",
                             LastName = "Yousef",

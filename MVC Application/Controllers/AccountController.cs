@@ -108,12 +108,21 @@ namespace MVC_Application.Controllers
                 return View(model);
             }
 
+            var cprExists = await _context.Users.AnyAsync(u => u.CPR == model.CPR);
+
+            if (cprExists)
+            {
+                ModelState.AddModelError(nameof(model.CPR),
+                    "This CPR is already registered.");
+            }
+
             var user = new User
             {
                 FirstName = model.FirstName.Trim(),
                 LastName = model.LastName.Trim(),
                 Email = model.Email.Trim(),
                 Phone = model.Phone.Trim(),
+                CPR = model.CPR.Trim(),
                 Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 RegistrationDate = DateTime.Today,
                 Role = UserRole.TRAINEE

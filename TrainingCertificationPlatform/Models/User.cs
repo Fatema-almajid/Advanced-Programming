@@ -19,6 +19,7 @@ namespace TrainingCertificationPlatform.Models
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public DateTime RegistrationDate { get; set; }
+        public string CPR { get; set; } = string.Empty;
         public List<InstructorExpertise> InstructorExpertises { get; set; } = new();
         public List<Enrollment> Enrollments { get; set; } = new();
         public List<Notification> Notifications { get; set; } = new();

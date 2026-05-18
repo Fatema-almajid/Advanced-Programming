@@ -34,7 +34,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("EquipmentsId");
 
-                    b.ToTable("ClassroomEquipment", (string)null);
+                    b.ToTable("ClassroomEquipment");
 
                     b.HasData(
                         new
@@ -76,7 +76,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("TracksId");
 
-                    b.ToTable("CourseTrack", (string)null);
+                    b.ToTable("CourseTrack");
 
                     b.HasData(
                         new
@@ -131,15 +131,16 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("EnrollmentId")
                         .IsUnique();
 
-                    b.ToTable("Assessments", (string)null);
+                    b.ToTable("Assessments");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            CompletedBy = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 1,
-                            Status = 0
+                            Status = 1
                         },
                         new
                         {
@@ -170,6 +171,14 @@ namespace TrainingCertificationPlatform.Migrations
                             DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 5,
                             Status = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CompletedBy = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DueDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 6,
+                            Status = 1
                         });
                 });
 
@@ -199,7 +208,7 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("EnrollmentId")
                         .IsUnique();
 
-                    b.ToTable("Balances", (string)null);
+                    b.ToTable("Balances");
 
                     b.HasData(
                         new
@@ -261,7 +270,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Classrooms", (string)null);
+                    b.ToTable("Classrooms");
 
                     b.HasData(
                         new
@@ -331,7 +340,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("PrerequisiteId");
 
-                    b.ToTable("Courses", (string)null);
+                    b.ToTable("Courses");
 
                     b.HasData(
                         new
@@ -425,7 +434,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Enrollments", (string)null);
+                    b.ToTable("Enrollments");
 
                     b.HasData(
                         new
@@ -467,6 +476,14 @@ namespace TrainingCertificationPlatform.Migrations
                             SessionId = 2,
                             Status = 4,
                             TraineeId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            EnrollmentDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SessionId = 2,
+                            Status = 3,
+                            TraineeId = 1
                         });
                 });
 
@@ -484,7 +501,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Equipments", (string)null);
+                    b.ToTable("Equipments");
 
                     b.HasData(
                         new
@@ -541,7 +558,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("InstructorId");
 
-                    b.ToTable("InstructorAvailabilities", (string)null);
+                    b.ToTable("InstructorAvailabilities");
 
                     b.HasData(
                         new
@@ -576,7 +593,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("InstructorExpertises", (string)null);
+                    b.ToTable("InstructorExpertises");
 
                     b.HasData(
                         new
@@ -631,7 +648,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
 
                     b.HasData(
                         new
@@ -701,7 +718,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("EnrollmentId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
 
                     b.HasData(
                         new
@@ -780,7 +797,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("InstructorId", "SessionDate");
 
-                    b.ToTable("Sessions", (string)null);
+                    b.ToTable("Sessions");
 
                     b.HasData(
                         new
@@ -853,7 +870,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tracks", (string)null);
+                    b.ToTable("Tracks");
 
                     b.HasData(
                         new
@@ -915,7 +932,7 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasIndex("TraineeId");
 
-                    b.ToTable("TraineeCertifications", (string)null);
+                    b.ToTable("TraineeCertifications");
 
                     b.HasData(
                         new
@@ -929,7 +946,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 2,
-                            CertificateReferenceNumber = "CERT-44271CF2",
+                            CertificateReferenceNumber = "CERT-1002",
                             Status = 1,
                             TrackId = 2,
                             TraineeId = 4
@@ -937,7 +954,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 3,
-                            CertificateReferenceNumber = "CERT-642FD464",
+                            CertificateReferenceNumber = "",
                             Status = 0,
                             TrackId = 3,
                             TraineeId = 1
@@ -945,7 +962,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 4,
-                            CertificateReferenceNumber = "CERT-9B82DA1C",
+                            CertificateReferenceNumber = "",
                             Status = 0,
                             TrackId = 4,
                             TraineeId = 4
@@ -953,7 +970,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 5,
-                            CertificateReferenceNumber = "CERT-785ED4AD",
+                            CertificateReferenceNumber = "CERT-1005",
                             Status = 1,
                             TrackId = 5,
                             TraineeId = 1
@@ -967,6 +984,10 @@ namespace TrainingCertificationPlatform.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CPR")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -996,12 +1017,13 @@ namespace TrainingCertificationPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            CPR = "123456789",
                             Email = "ali@mail.com",
                             FirstName = "Ali",
                             LastName = "Ahmad",
@@ -1013,6 +1035,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 2,
+                            CPR = "987654321",
                             Email = "sara@mail.com",
                             FirstName = "Sara",
                             LastName = "Mohamed",
@@ -1024,6 +1047,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 3,
+                            CPR = "112233445",
                             Email = "dana@mail.com",
                             FirstName = "Dana",
                             LastName = "Albanki",
@@ -1035,6 +1059,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 4,
+                            CPR = "098765432",
                             Email = "omar@mail.com",
                             FirstName = "Omar",
                             LastName = "Ali",
@@ -1046,6 +1071,7 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 5,
+                            CPR = "012345678",
                             Email = "fatima@mail.com",
                             FirstName = "Fatima",
                             LastName = "Yousef",
