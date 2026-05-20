@@ -1,4 +1,13 @@
-﻿@model IEnumerable<TrainingCertificationPlatform.Models.Enrollment>
+﻿@* 
+ * This presentation layer component implements a strongly-typed collection view bound to an `IEnumerable<Enrollment>` data contract.
+ * It integrates a modular partial view composition pattern (`<partial>`) to dynamically inject context-specific navigation controls.
+ * The interface executes multi-level relational object graph traversal (`@enrollment.Session.Course.Title`) to unpack nested entity data stream attributes,
+ * handles strict logical evaluation branches via conditional block structures (`@if`/`else if`) to evaluate state constraints using system-defined enum schemas (`EnrollmentStatus`),
+ * and applies structural layout frameworks paired with precise scalar formatting operations (`ToString`) to ensure highly scalable, responsive, and standardized data rendering.
+ *@
+
+
+@model IEnumerable<TrainingCertificationPlatform.Models.Enrollment>
 
 @{
     ViewData["Title"] = "All Enrollments";

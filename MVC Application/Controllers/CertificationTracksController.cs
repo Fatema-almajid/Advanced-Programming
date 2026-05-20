@@ -6,6 +6,14 @@ using MVC_Application.Models.ViewModels;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 
+/* 
+ * This controller implements full CRUD (Create, Read, Update, Delete) operations for managing Certification Tracks,
+ * restricted strictly to the "TRAINING_COORDINATOR" role via the dynamic [Authorize] attribute. 
+ * It manages many-to-many relationships by linking tracks with multiple corresponding courses using Entity Framework Core,
+ * optimizes database lookups using eager loading (.Include) and non-tracking queries (.AsNoTracking) for data presentation,
+ * and incorporates advanced server-side capabilities such as full-text search filtering and cross-site request forgery protection ([ValidateAntiForgeryToken]).
+ */
+
 namespace MVC_Application.Controllers
 {
     [Authorize(Roles = "TRAINING_COORDINATOR")]

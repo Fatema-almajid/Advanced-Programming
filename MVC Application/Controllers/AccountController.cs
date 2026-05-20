@@ -7,6 +7,14 @@ using MVC_Application.Models.ViewModels;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 
+/* 
+ * This controller handles user identity and access management using ASP.NET Core Cookie Authentication.
+ * It manages the secure registration of trainees (validating unique constraints like Email, Phone, and CPR),
+ * performs user login using BCrypt for secure password hashing and verification, establishes user claims 
+ * for Role-Based Access Control (RBAC), and provides dynamic navigation routing (RedirectByRole) based on 
+ * authorized user roles (Trainee, Instructor, and Training Coordinator).
+ */
+
 namespace MVC_Application.Controllers
 {
     public class AccountController : Controller

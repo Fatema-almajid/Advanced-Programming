@@ -1,5 +1,12 @@
-﻿@* // for public certification lookup *@
-@model MVC_Application.Models.ViewModels.CertificationLookupViewModel
+﻿@* 
+ * This Razor View implements a strongly-typed public interface (`CertificationLookupViewModel`) for user-driven record verification.
+ * It employs standard ASP.NET Core Tag Helpers (`asp-for`) to map input data elements directly to model state properties,
+ * executing server-side conditional rendering structures (`@if`) to dynamically display contextual validation error feedback or verification results.
+ * The presentation layer implements structured evaluation pathways to safely navigate and unwrap internal metadata collection arrays (`@foreach`),
+ * rendering asynchronous domain payload attributes alongside dynamic system timestamp operations (`DateTime.Now`), all structured inside responsive and stylized UI components.
+ *@
+ 
+ @model MVC_Application.Models.ViewModels.CertificationLookupViewModel
 
 @{
     ViewData["Title"] = "Public Certification Lookup";

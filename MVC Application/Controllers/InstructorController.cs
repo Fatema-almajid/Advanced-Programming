@@ -211,6 +211,26 @@ namespace MVC_Application.Controllers
             if (enrollment == null)
                 return NotFound();
 
+            if (enrollment.Status == EnrollmentStatus.DROPPED)
+            {
+                TempData["ErrorMessage"] = "Cannot assess a dropped trainee.";
+
+                return RedirectToAction(nameof(CourseDetails),
+                    new { id = enrollment.SessionId });
+            }
+
+            if ((enrollment.Status == EnrollmentStatus.ENROLLED ||
+                 enrollment.Status == EnrollmentStatus.CONFIRMED)
+                 &&
+                 status != AssessmentStatus.PENDING)
+            {
+                TempData["ErrorMessage"] =
+                    "Assessment cannot be PASS or FAIL before attendance.";
+
+                return RedirectToAction(nameof(CourseDetails),
+                    new { id = enrollment.SessionId });
+            }
+
             var assessment = await _context.Assessments
                 .FirstOrDefaultAsync(a => a.EnrollmentId == enrollmentId);
 
@@ -226,18 +246,24 @@ namespace MVC_Application.Controllers
             }
 
             assessment.Status = status;
-            assessment.CompletedBy = DateTime.Now;
 
-            if (status == AssessmentStatus.PASS)
+            if (status == AssessmentStatus.PASS ||
+                status == AssessmentStatus.FAIL)
             {
+                assessment.CompletedBy = DateTime.Now;
+
                 enrollment.Status = EnrollmentStatus.COMPLETED;
                 enrollment.CompletionDate = DateTime.Today;
             }
 
             await _context.SaveChangesAsync();
 
-            //Send a notification to the trainee about the assessment result
-            var resultText = status == AssessmentStatus.PASS ? "passed" : "failed";
+            var resultText = status == AssessmentStatus.PASS
+                ? "passed"
+                : status == AssessmentStatus.FAIL
+                    ? "failed"
+                    : "is pending";
+
             var courseTitle = enrollment.Session.Course.Title;
 
             await _notificationService.CreateNotificationAsync(
@@ -245,9 +271,10 @@ namespace MVC_Application.Controllers
                 $"Your assessment result for {courseTitle} has been updated. You {resultText}."
             );
 
-
             TempData["SuccessMessage"] = "Assessment updated successfully.";
-            return RedirectToAction(nameof(CourseDetails), new { id = enrollment.SessionId });
+
+            return RedirectToAction(nameof(CourseDetails),
+                new { id = enrollment.SessionId });
         }
 
         [HttpPost]

@@ -6,6 +6,15 @@ using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 using Microsoft.AspNetCore.Authorization;
 
+/* 
+ * This controller governs the academic course catalog under the authorized "TRAINING_COORDINATOR" role.
+ * It features dual-view presentation interfaces (Table-based Index and Card-based Index) supported by asynchronous,
+ * multi-parameter LINQ queries that execute server-side full-text searches across entities and self-referencing relationships (.Include for Prerequisites).
+ * The implementation enforces strict educational business rules (such as blocking self-prerequisite assignment loops),
+ * handles standard data persistency cycles with anti-forgery validation tokens, dynamically populates dynamic dropdown structures from enums,
+ * and incorporates robust exception handling to cleanly capture both concurrent data access anomalies (`DbUpdateConcurrencyException`) and relational database constraint violations (`DbUpdateException`).
+ */
+
 namespace MVC_Application.Controllers
 {
     [Authorize(Roles = "TRAINING_COORDINATOR")]

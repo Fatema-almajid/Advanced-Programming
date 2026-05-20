@@ -3,6 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using MVC_Application.Models;
 using Microsoft.AspNetCore.Authorization;
 
+/* 
+ * This component acts as the centralized landing routing mechanism and root controller for the application ecosystem.
+ * It implements a dynamic role-based redirection workflow within the landing `Index` action, evaluationally intercepts authenticated HTTP context identities,
+ * and programmatically routes distinct operational profiles ("TRAINING_COORDINATOR", "INSTRUCTOR", and "TRAINEE") to their respective domain-specific management dashboards.
+ * Additionally, the infrastructure establishes built-in error diagnostics and operational tracing by integrating automated platform logging (`ILogger`),
+ * and configures standard `ResponseCache` control attributes to strictly prevent sensitive diagnostic data caching during server-side application anomalies.
+ */
+
 namespace MVC_Application.Controllers
 {
     public class HomeController : Controller

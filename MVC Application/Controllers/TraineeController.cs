@@ -14,6 +14,7 @@ using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 using TrainingCertificationPlatform.Services;
 using static System.Collections.Specialized.BitVector32;
+using QRCoder;
 
 namespace MVC_Application.Controllers
 {
@@ -231,6 +232,29 @@ namespace MVC_Application.Controllers
             {
                 TempData["ErrorMessage"] = "You are already enrolled in this course.";
                 return RedirectToAction(nameof(CourseDetails), new { id = courseId });
+            }
+
+            var prerequisiteId = session.Course.PrerequisiteId;
+
+            if (prerequisiteId != null)
+            {
+                var passedPrerequisite = await _context.Assessments
+                    .AnyAsync(a =>
+                        a.Enrollment.TraineeId == traineeId &&
+                        a.Enrollment.Session.CourseId == prerequisiteId &&
+                        a.Status == AssessmentStatus.PASS &&
+                        a.Enrollment.Status == EnrollmentStatus.COMPLETED);
+
+                if (!passedPrerequisite)
+                {
+                    var prerequisiteCourse = await _context.Courses
+                        .FirstOrDefaultAsync(c => c.Id == prerequisiteId);
+
+                    TempData["ErrorMessage"] =
+                        $"You must complete '{prerequisiteCourse?.Title}' before enrolling in this course.";
+
+                    return RedirectToAction(nameof(CourseDetails), new { id = courseId });
+                }
             }
 
             var enrollment = new Enrollment
@@ -544,8 +568,21 @@ namespace MVC_Application.Controllers
                 return NotFound();
             }
 
-            QuestPDF.Settings.License =
-                LicenseType.Community;
+            var verificationUrl =
+                $"{Request.Scheme}://{Request.Host}/PublicCertification?referenceNumber={certificate.CertificateReferenceNumber}";
+            byte[] qrCodeBytes;
+
+            using (var qrGenerator = new QRCodeGenerator())
+            {
+                var qrData = qrGenerator.CreateQrCode(
+                    verificationUrl,
+                    QRCodeGenerator.ECCLevel.Q);
+
+                var pngQrCode = new PngByteQRCode(qrData);
+                qrCodeBytes = pngQrCode.GetGraphic(20);
+            }
+
+            QuestPDF.Settings.License = LicenseType.Community;
 
             var pdf = Document.Create(container =>
             {
@@ -558,7 +595,7 @@ namespace MVC_Application.Controllers
                         .Border(10)
                         .BorderColor("#1b6ec2");
 
-                    page.Content().Padding(40).Column(col =>
+                    page.Content().PaddingHorizontal(40).PaddingVertical(30).Column(col =>
                     {
                         col.Item().AlignCenter()
                             .Text("🏆 TRAINING CERTIFICATE")
@@ -566,22 +603,22 @@ namespace MVC_Application.Controllers
                             .Bold()
                             .FontColor("#1b6ec2");
 
-                        col.Item().PaddingTop(15);
+                        col.Item().PaddingTop(10);
 
                         col.Item().AlignCenter()
                             .Text("This certificate is proudly awarded to")
                             .FontSize(18)
                             .FontColor("#555555");
 
-                        col.Item().PaddingTop(25);
+                        col.Item().PaddingTop(15);
 
                         col.Item().AlignCenter()
                             .Text($"{trainee.FirstName} {trainee.LastName}")
-                            .FontSize(38)
+                            .FontSize(36)
                             .Bold()
                             .FontColor("#212529");
 
-                        col.Item().PaddingTop(20);
+                        col.Item().PaddingTop(15);
 
                         col.Item().AlignCenter()
                             .Text("For successfully completing")
@@ -592,61 +629,72 @@ namespace MVC_Application.Controllers
 
                         col.Item().AlignCenter()
                             .Text(track.Name)
-                            .FontSize(30)
+                            .FontSize(28)
                             .Bold()
                             .FontColor("#198754");
 
-                        col.Item().PaddingTop(35);
+                        col.Item().PaddingTop(25);
 
                         col.Item().LineHorizontal(1)
                             .LineColor("#d6d6d6");
 
-                        col.Item().PaddingTop(25);
+                        col.Item().PaddingTop(20);
 
                         col.Item().Row(row =>
                         {
-                            row.RelativeItem().Column(left =>
+                            row.RelativeItem(2).Column(left =>
                             {
                                 left.Item()
                                     .Text("Certificate Reference")
                                     .Bold()
+                                    .FontSize(11)
                                     .FontColor("#1b6ec2");
 
                                 left.Item()
-                                    .Text(certificate.CertificateReferenceNumber);
+                                    .Text(certificate.CertificateReferenceNumber)
+                                    .FontSize(11);
 
-                                left.Item().PaddingTop(10);
+                                left.Item().PaddingTop(8);
 
                                 left.Item()
                                     .Text("Issued Date")
                                     .Bold()
+                                    .FontSize(11)
                                     .FontColor("#1b6ec2");
 
                                 left.Item()
-                                    .Text(DateTime.Today.ToString("dd MMM yyyy"));
+                                    .Text(DateTime.Today.ToString("dd MMM yyyy"))
+                                    .FontSize(11);
                             });
 
-                            row.RelativeItem().AlignRight().Column(right =>
+                            row.RelativeItem(2).AlignCenter().Column(middle =>
                             {
-                                right.Item()
+                                middle.Item().PaddingTop(10);
+                                middle.Item()
                                     .Text("Training Certification Platform")
                                     .Bold()
-                                    .FontSize(18)
+                                    .FontSize(14)
                                     .FontColor("#1b6ec2");
 
-                                right.Item()
+                                middle.Item()
                                     .Text("Authorized Digital Signature")
                                     .Italic()
+                                    .FontSize(11)
                                     .FontColor("#777777");
                             });
+
+                            row.RelativeItem(2).AlignRight().Column(right =>
+                            {
+                                right.Item().Width(90).Image(qrCodeBytes);
+
+                                right.Item().PaddingTop(4);
+
+                                right.Item().Width(120).AlignCenter()
+                                    .Text("Scan to verify certificate")
+                                    .FontSize(10)
+                                    .FontColor("#555555");
+                            });
                         });
-
-                        col.Item().PaddingTop(30);
-
-                        col.Item().AlignCenter()
-                            .Text("Verified Digital Certificate")
-                            .FontColor("#198754")
-                            .Bold();
                     });
                 });
             });

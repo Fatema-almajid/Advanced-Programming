@@ -351,10 +351,11 @@ namespace TrainingCertificationPlatform
                 }
             );
 
-            // ENROLLMENT
+            // ENROLLMENTS
+
             modelBuilder.Entity<Enrollment>().HasData(
 
-                // Student just enrolled
+                // ENROLLED (JUST REGISTERED)
                 new Enrollment
                 {
                     Id = 1,
@@ -364,7 +365,7 @@ namespace TrainingCertificationPlatform
                     EnrollmentDate = fixedDate
                 },
 
-                // Student confirmed
+                // CONFIRMED (PAYMENT CONFIRMED)
                 new Enrollment
                 {
                     Id = 2,
@@ -374,44 +375,46 @@ namespace TrainingCertificationPlatform
                     EnrollmentDate = fixedDate
                 },
 
-                // Student attending
+                // ATTENDING (CURRENTLY ATTENDING)
                 new Enrollment
                 {
                     Id = 3,
-                    TraineeId = 1,
+                    TraineeId = 6,
                     SessionId = 3,
                     Status = EnrollmentStatus.ATTENDING,
                     EnrollmentDate = fixedDate
                 },
 
-                // Student completed successfully
+                // COMPLETED AND PASSED
                 new Enrollment
                 {
                     Id = 4,
-                    TraineeId = 4,
-                    SessionId = 5,
+                    TraineeId = 1,
+                    SessionId = 4,
                     Status = EnrollmentStatus.COMPLETED,
-                    EnrollmentDate = fixedDate,
-                    CompletionDate = fixedDate
+                    EnrollmentDate = fixedDate.AddDays(-10),
+                    CompletionDate = fixedDate.AddDays(-2)
                 },
 
+                // DROPPED 
                 new Enrollment
                 {
                     Id = 5,
-                    TraineeId = 1,
+                    TraineeId = 4,
                     SessionId = 2,
-                    Status = EnrollmentStatus.CONFIRMED,
+                    Status = EnrollmentStatus.DROPPED,
                     EnrollmentDate = fixedDate
                 },
 
-                // Dropped course
+                // COMPLETED BUT FAILED
                 new Enrollment
                 {
                     Id = 6,
-                    TraineeId = 4,
-                    SessionId = 4,
-                    Status = EnrollmentStatus.DROPPED,
-                    EnrollmentDate = fixedDate
+                    TraineeId = 6,
+                    SessionId = 5,
+                    Status = EnrollmentStatus.COMPLETED,
+                    EnrollmentDate = fixedDate.AddDays(-8),
+                    CompletionDate = fixedDate.AddDays(-1)
                 }
             );
 
@@ -503,45 +506,57 @@ namespace TrainingCertificationPlatform
             );
 
             // ASSESSMENTS
+
             modelBuilder.Entity<Assessment>().HasData(
 
-                // Confirmed student (pending)
+                // ENROLLED (PENDING)
                 new Assessment
                 {
                     Id = 1,
+                    EnrollmentId = 1,
+                    Status = AssessmentStatus.PENDING,
+                    DueDate = fixedDate.AddDays(5)
+                },
+
+                // CONFIRMED
+                new Assessment
+                {
+                    Id = 2,
                     EnrollmentId = 2,
                     Status = AssessmentStatus.PENDING,
                     DueDate = fixedDate.AddDays(5)
                 },
 
-                // Attending student (pending)
-                new Assessment
-                {
-                    Id = 2,
-                    EnrollmentId = 3,
-                    Status = AssessmentStatus.PENDING,
-                    DueDate = fixedDate.AddDays(5)
-                },
-
-                // Completed student (pass)
+                // ATTENDING
                 new Assessment
                 {
                     Id = 3,
-                    EnrollmentId = 4,
-                    Status = AssessmentStatus.PASS,
-                    DueDate = fixedDate.AddDays(-1),
-                    CompletedBy = fixedDate
+                    EnrollmentId = 3,
+                    Status = AssessmentStatus.PENDING,
+                    DueDate = fixedDate.AddDays(3)
                 },
 
-                // Confirmed student (pending)
+                // COMPLETED (PASS)
                 new Assessment
                 {
                     Id = 4,
-                    EnrollmentId = 5,
-                    Status = AssessmentStatus.PENDING,
-                    DueDate = fixedDate.AddDays(5)
+                    EnrollmentId = 4,
+                    Status = AssessmentStatus.PASS,
+                    DueDate = fixedDate.AddDays(-3),
+                    CompletedBy = fixedDate.AddDays(-2)
+                },
+
+                // COMPLETED (FAIL)
+                new Assessment
+                {
+                    Id = 5,
+                    EnrollmentId = 6,
+                    Status = AssessmentStatus.FAIL,
+                    DueDate = fixedDate.AddDays(-2),
+                    CompletedBy = fixedDate.AddDays(-1)
                 }
             );
+
 
             // NOTIFICATIONS
 

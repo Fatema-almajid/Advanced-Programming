@@ -6,6 +6,14 @@ using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 using Microsoft.AspNetCore.Authorization;
 
+/* 
+ * This controller manages the physical classroom infrastructure and asset allocations under the "TRAINING_COORDINATOR" role.
+ * It provides asynchronous CRUD operations integrated with complex multi-field in-memory filtering (Search on Name, Seats, and child Equipment strings).
+ * The codebase maintains data integrity through business-rule validations (preventing duplicate room names and verifying requested resource IDs),
+ * manages many-to-many entity associations by dynamically clearing and re-mapping related infrastructure equipment components,
+ * and implements defensive database exceptions handling (`DbUpdateException`) to safely capture and handle referential integrity conflicts.
+ */
+
 namespace MVC_Application.Controllers
 {
     [Authorize(Roles = "TRAINING_COORDINATOR")]
