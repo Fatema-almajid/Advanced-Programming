@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.Text.Json;
 
 namespace reportingApplication.Controllers
 {
-    [Authorize(Roles = "INSTRUCTOR,TRAINING_COORDINATOR")]
-    [Route("reporting")]
+    [Authorize(Roles = "TRAINING_COORDINATOR,INSTRUCTOR")]
     public class ReportingController : Controller
     {
         private readonly HttpClient _httpClient;
@@ -26,467 +23,273 @@ namespace reportingApplication.Controllers
         {
             try
             {
-                var overviewData = await GetReportData();
-                return View(overviewData);
+                var reports = new ReportingViewModel();
+                
+                var token = User?.FindFirst("Token")?.Value ?? "";
+                
+                
+                var courses = await FetchApiData("/api/Courses", token);
+                var sessions = await FetchApiData("/api/Sessions", token);
+                var payments = await FetchApiData("/api/Payments", token);
+                var certifications = await FetchApiData("/api/TraineeCertifications", token);
+                
+                
+                reports.EnrollmentByCourse = BuildEnrollmentByCourse(sessions, courses);
+                reports.InstructorWorkload = BuildInstructorWorkload(sessions);
+                reports.CertificationRates = BuildCertificationRates(certifications, sessions);
+                reports.RevenueReport = BuildRevenueReport(payments);
+                reports.SessionMetrics = BuildSessionMetrics(sessions);
+                
+                return View(reports);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading reporting data");
                 ViewBag.Error = "Could not load reporting data. Please ensure the API is running.";
-                return View(new ReportingData());
+                return View(new ReportingViewModel());
             }
         }
 
-        private async Task<ReportingData> GetReportData()
-        {
-            var data = new ReportingData();
-
-            try
-            {
-                // Fetch raw JSON data from API
-                var usersJson = await FetchApiDataAsJson("/api/users");
-                var coursesJson = await FetchApiDataAsJson("/api/Courses");
-                var sessionsJson = await FetchApiDataAsJson("/api/sessions");
-                var enrollmentsJson = await FetchApiDataAsJson("/api/enrollments");
-                var assessmentsJson = await FetchApiDataAsJson("/api/assessments");
-                var balancesJson = await FetchApiDataAsJson("/api/balances");
-                var tracksJson = await FetchApiDataAsJson("/api/tracks");
-                var classroomsJson = await FetchApiDataAsJson("/api/classrooms");
-
-                // Transform JSON data into reporting format
-                data.DashboardSummary = TransformDashboardSummary(usersJson, coursesJson, sessionsJson, enrollmentsJson, balancesJson, tracksJson);
-                data.EnrollmentTrends = TransformEnrollmentTrends(enrollmentsJson);
-                data.EnrollmentsByCategory = TransformEnrollmentsByCategory(enrollmentsJson, coursesJson);
-                data.EnrollmentsByCourse = TransformEnrollmentsByCourse(enrollmentsJson, coursesJson);
-                data.EnrollmentStatusBreakdown = TransformEnrollmentStatusBreakdown(enrollmentsJson);
-                data.InstructorWorkload = TransformInstructorWorkload(usersJson, sessionsJson, enrollmentsJson);
-                data.CertificationData = TransformCertificationData(usersJson, assessmentsJson);
-                data.RevenueData = TransformRevenueData(balancesJson);
-                data.AssessmentsByCourse = TransformAssessmentsByCourse(assessmentsJson, enrollmentsJson, coursesJson);
-                data.AssessmentsByInstructor = TransformAssessmentsByInstructor(assessmentsJson, usersJson, sessionsJson);
-                data.RoomUtilization = TransformRoomUtilization(sessionsJson, classroomsJson, coursesJson);
-                data.LowEnrollmentSessions = TransformLowEnrollmentSessions(sessionsJson, coursesJson, enrollmentsJson, classroomsJson);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error fetching report data from API");
-                throw;
-            }
-
-            return data;
-        }
-
-        private async Task<string> FetchApiDataAsJson(string endpoint)
+        private async Task<JsonElement> FetchApiData(string endpoint, string token)
         {
             try
             {
                 var url = ApiBaseUrl + endpoint;
-                _logger.LogInformation($"Fetching data from: {url}");
-                
-                // Get the JWT token from claims
-                var token = User?.FindFirst("Token")?.Value;
-                
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
+                
                 if (!string.IsNullOrEmpty(token))
                 {
                     request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                    _logger.LogInformation($"Adding Bearer token to request for {endpoint}");
                 }
                 
                 var response = await _httpClient.SendAsync(request);
+                
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    _logger.LogInformation($"Successfully fetched from {endpoint}");
-                    return content;
+                    return JsonDocument.Parse(content).RootElement;
                 }
                 
-                _logger.LogWarning($"Failed to fetch from {endpoint}. Status: {response.StatusCode}");
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    _logger.LogWarning($"Unauthorized - Token may be expired or invalid for {endpoint}");
-                }
-                return "[]";
+                _logger.LogWarning($"Failed to fetch {endpoint}. Status: {response.StatusCode}");
+                return JsonDocument.Parse("[]").RootElement;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Exception fetching from {endpoint}");
-                return "[]";
+                _logger.LogError(ex, $"Exception fetching {endpoint}");
+                return JsonDocument.Parse("[]").RootElement;
             }
         }
 
-        private string TransformDashboardSummary(string usersJson, string coursesJson, string sessionsJson, string enrollmentsJson, string balancesJson, string tracksJson)
+        private List<EnrollmentByCourseReport> BuildEnrollmentByCourse(JsonElement sessions, JsonElement courses)
         {
+            var result = new List<EnrollmentByCourseReport>();
+            
             try
             {
-                var users = JsonDocument.Parse(usersJson).RootElement.EnumerateArray().ToList();
-                var courses = JsonDocument.Parse(coursesJson).RootElement.EnumerateArray().ToList();
-                var sessions = JsonDocument.Parse(sessionsJson).RootElement.EnumerateArray().ToList();
-                var enrollments = JsonDocument.Parse(enrollmentsJson).RootElement.EnumerateArray().ToList();
-                var balances = JsonDocument.Parse(balancesJson).RootElement.EnumerateArray().ToList();
-
-                var data = new
-                {
-                    totalTrainees = users.Count(u => GetIntValue(u, "role") == 3),
-                    totalInstructors = users.Count(u => GetIntValue(u, "role") == 1),
-                    totalCourses = courses.Count,
-                    activeSessions = sessions.Count,
-                    pendingPayments = balances.Count(b => GetIntValue(b, "amountDue") > 0),
-                    certificatesIssued = 0
-                };
-                return JsonSerializer.Serialize(data);
-            }
-            catch
-            {
-                return JsonSerializer.Serialize(new { totalTrainees = 0, totalInstructors = 0, totalCourses = 0, activeSessions = 0, pendingPayments = 0, certificatesIssued = 0 });
-            }
-        }
-
-        private string TransformEnrollmentTrends(string enrollmentsJson)
-        {
-            try
-            {
-                var enrollments = JsonDocument.Parse(enrollmentsJson).RootElement.EnumerateArray().ToList();
-                var months = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+                var sessionList = sessions.EnumerateArray().ToList();
+                var courseList = courses.EnumerateArray().ToList();
                 
-                var monthlyData = months.Select((month, monthIndex) =>
+                foreach (var course in courseList)
                 {
-                    var monthNum = monthIndex + 1;
-                    return enrollments.Count(e => 
+                    if (course.TryGetProperty("id", out var courseId) && course.TryGetProperty("title", out var title))
                     {
-                        if (DateTime.TryParse(GetStringValue(e, "enrollmentDate"), out var date))
-                        {
-                            return date.Month == monthNum;
-                        }
-                        return false;
+                        int courseIdValue = courseId.GetInt32();
+                        var count = sessionList.Count(s => 
+                            s.TryGetProperty("courseId", out var sCourseId) && 
+                            sCourseId.GetInt32() == courseIdValue);
+                        result.Add(new EnrollmentByCourseReport 
+                        { 
+                            CourseName = title.GetString() ?? "Unknown",
+                            EnrollmentCount = count
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error building enrollment by course report");
+            }
+
+            return result;
+        }
+
+        private List<InstructorWorkloadReport> BuildInstructorWorkload(JsonElement sessions)
+        {
+            var result = new List<InstructorWorkloadReport>();
+            
+            try
+            {
+                var sessionList = sessions.EnumerateArray().ToList();
+                var instructorSessions = new Dictionary<int, int>();
+                
+                foreach (var session in sessionList)
+                {
+                    if (session.TryGetProperty("instructorId", out var instructorId))
+                    {
+                        int instructorIdValue = instructorId.GetInt32();
+                        if (!instructorSessions.ContainsKey(instructorIdValue))
+                            instructorSessions[instructorIdValue] = 0;
+                        instructorSessions[instructorIdValue]++;
+                    }
+                }
+
+                foreach (var pair in instructorSessions)
+                {
+                    result.Add(new InstructorWorkloadReport 
+                    { 
+                        InstructorId = pair.Key,
+                        SessionCount = pair.Value,
+                        AssignedStudents = 0
                     });
-                }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error building instructor workload report");
+            }
 
-                var data = new
+            return result;
+        }
+
+        private List<CertificationRateReport> BuildCertificationRates(JsonElement certifications, JsonElement sessions)
+        {
+            var result = new List<CertificationRateReport>();
+            
+            try
+            {
+                int totalCertifications = certifications.EnumerateArray().Count();
+                int totalSessions = sessions.EnumerateArray().Count();
+                
+                result.Add(new CertificationRateReport
                 {
-                    labels = months.ToList(),
-                    data = monthlyData
-                };
-                return JsonSerializer.Serialize(data);
+                    TotalCertifications = totalCertifications,
+                    TotalEnrollments = totalSessions,
+                    CompletionRate = totalSessions > 0 
+                        ? Math.Round((double)totalCertifications / totalSessions * 100, 2)
+                        : 0
+                });
             }
-            catch
+            catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new { labels = new string[0], data = new int[0] });
+                _logger.LogError(ex, "Error building certification rates report");
             }
+
+            return result;
         }
 
-        private string TransformEnrollmentsByCategory(string enrollmentsJson, string coursesJson)
+        private List<RevenueReport> BuildRevenueReport(JsonElement payments)
         {
+            var result = new List<RevenueReport>();
+            
             try
             {
-                var courses = JsonDocument.Parse(coursesJson).RootElement.EnumerateArray().ToList();
-                var categoryGroups = new List<object>();
+                decimal totalRevenue = 0;
+                int completedPayments = 0;
+                int pendingPayments = 0;
 
-                var groupedByCategory = courses
-                    .GroupBy(c => GetStringValue(c, "category"))
-                    .Select(g => new { category = g.Key, count = g.Count() })
-                    .ToList();
-
-                return JsonSerializer.Serialize(groupedByCategory);
-            }
-            catch
-            {
-                return JsonSerializer.Serialize(new List<object>());
-            }
-        }
-
-        private string TransformEnrollmentsByCourse(string enrollmentsJson, string coursesJson)
-        {
-            try
-            {
-                var courses = JsonDocument.Parse(coursesJson).RootElement.EnumerateArray().ToList();
-                var enrollments = JsonDocument.Parse(enrollmentsJson).RootElement.EnumerateArray().ToList();
-
-                var courseEnrollments = courses.Select(c => new
+                foreach (var payment in payments.EnumerateArray())
                 {
-                    course = GetStringValue(c, "title"),
-                    enrolled = enrollments.Count(e => GetIntValue(e, "courseId") == GetIntValue(c, "id")),
-                    completed = enrollments.Count(e => GetIntValue(e, "courseId") == GetIntValue(c, "id") && GetIntValue(e, "status") == 3),
-                    dropped = enrollments.Count(e => GetIntValue(e, "courseId") == GetIntValue(c, "id") && GetIntValue(e, "status") == 2)
-                }).ToList();
-
-                return JsonSerializer.Serialize(courseEnrollments);
-            }
-            catch
-            {
-                return JsonSerializer.Serialize(new List<object>());
-            }
-        }
-
-        private string TransformEnrollmentStatusBreakdown(string enrollmentsJson)
-        {
-            try
-            {
-                var enrollments = JsonDocument.Parse(enrollmentsJson).RootElement.EnumerateArray().ToList();
-
-                var statuses = new Dictionary<string, int>
-                {
-                    { "ENROLLED", enrollments.Count(e => GetIntValue(e, "status") == 0) },
-                    { "DROPPED", enrollments.Count(e => GetIntValue(e, "status") == 2) },
-                    { "COMPLETED", enrollments.Count(e => GetIntValue(e, "status") == 3) }
-                };
-
-                return JsonSerializer.Serialize(statuses);
-            }
-            catch
-            {
-                return JsonSerializer.Serialize(new Dictionary<string, int> { { "ENROLLED", 0 }, { "DROPPED", 0 }, { "COMPLETED", 0 } });
-            }
-        }
-
-        private string TransformInstructorWorkload(string usersJson, string sessionsJson, string enrollmentsJson)
-        {
-            try
-            {
-                var users = JsonDocument.Parse(usersJson).RootElement.EnumerateArray().ToList();
-                var sessions = JsonDocument.Parse(sessionsJson).RootElement.EnumerateArray().ToList();
-                var enrollments = JsonDocument.Parse(enrollmentsJson).RootElement.EnumerateArray().ToList();
-
-                var instructors = users
-                    .Where(u => GetIntValue(u, "role") == 1)
-                    .Select(i => 
+                    if (payment.TryGetProperty("amount", out var amount))
                     {
-                        var instructorId = GetIntValue(i, "id");
-                        var instructorSessions = sessions.Where(s => GetIntValue(s, "instructorId") == instructorId).ToList();
-                        var sessionCount = instructorSessions.Count;
-                        var totalTrainees = instructorSessions
-                            .Sum(s => enrollments.Count(e => GetIntValue(e, "sessionId") == GetIntValue(s, "id")));
-                        
-                        // Calculate total hours: estimate 2 hours per session
-                        var totalHours = sessionCount * 2;
-                        var utilization = sessionCount > 0 ? Math.Min(100, (sessionCount * 10)) : 0;
+                        totalRevenue += amount.GetDecimal();
+                    }
+                    
+                    if (payment.TryGetProperty("status", out var status))
+                    {
+                        string statusStr = status.GetString() ?? "";
+                        if (statusStr.ToLower().Contains("completed") || statusStr.ToLower().Contains("paid"))
+                            completedPayments++;
+                        else if (statusStr.ToLower().Contains("pending"))
+                            pendingPayments++;
+                    }
+                }
 
-                        return new
-                        {
-                            name = GetStringValue(i, "firstName") + " " + GetStringValue(i, "lastName"),
-                            sessions = sessionCount,
-                            hours = totalHours,
-                            trainees = totalTrainees,
-                            utilization = utilization
-                        };
-                    })
-                    .ToList();
-
-                return JsonSerializer.Serialize(instructors);
-            }
-            catch
-            {
-                return JsonSerializer.Serialize(new List<object>());
-            }
-        }
-
-        private string TransformCertificationData(string usersJson, string assessmentsJson)
-        {
-            try
-            {
-                var assessments = JsonDocument.Parse(assessmentsJson).RootElement.EnumerateArray().ToList();
-
-                // Group assessments by track (we'll need to infer from course data if available)
-                // For now, categorize by assessment status
-                var passedAssessments = assessments.Count(a => GetIntValue(a, "status") == 2);
-                var allAssessments = assessments.Count;
-
-                var certData = new List<object> 
-                { 
-                    new { name = "Certified Trainees", completed = passedAssessments, eligible = allAssessments }
-                };
-                return JsonSerializer.Serialize(certData);
-            }
-            catch
-            {
-                return JsonSerializer.Serialize(new List<object>());
-            }
-        }
-
-        private string TransformRevenueData(string balancesJson)
-        {
-            try
-            {
-                var balances = JsonDocument.Parse(balancesJson).RootElement.EnumerateArray().ToList();
-                var totalRevenue = balances.Sum(b => GetIntValue(b, "amountDue"));
-                var outstanding = totalRevenue;
-
-                var data = new
+                result.Add(new RevenueReport
                 {
-                    totalRevenue = totalRevenue,
-                    collected = 0,
-                    outstanding = outstanding,
-                    overdue = outstanding / 2
-                };
-
-                return JsonSerializer.Serialize(data);
+                    TotalRevenue = totalRevenue,
+                    CompletedPayments = completedPayments,
+                    PendingPayments = pendingPayments
+                });
             }
-            catch
+            catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new { totalRevenue = 0, collected = 0, outstanding = 0, overdue = 0 });
-            }
-        }
-
-        private string TransformAssessmentsByCourse(string assessmentsJson, string enrollmentsJson, string coursesJson)
-        {
-            try
-            {
-                var courses = JsonDocument.Parse(coursesJson).RootElement.EnumerateArray().ToList();
-                var assessments = JsonDocument.Parse(assessmentsJson).RootElement.EnumerateArray().ToList();
-
-                var courseAssessments = courses.Select(c => new
+                _logger.LogError(ex, "Error building revenue report");
+                result.Add(new RevenueReport
                 {
-                    course = GetStringValue(c, "title"),
-                    pass = assessments.Count(a => GetIntValue(a, "status") == 2),
-                    fail = assessments.Count(a => GetIntValue(a, "status") == 0)
-                }).ToList();
+                    TotalRevenue = 0,
+                    CompletedPayments = 0,
+                    PendingPayments = 0
+                });
+            }
 
-                return JsonSerializer.Serialize(courseAssessments);
-            }
-            catch
-            {
-                return JsonSerializer.Serialize(new List<object>());
-            }
+            return result;
         }
 
-        private string TransformAssessmentsByInstructor(string assessmentsJson, string usersJson, string sessionsJson)
+        private List<SessionMetricsReport> BuildSessionMetrics(JsonElement sessions)
         {
+            var result = new List<SessionMetricsReport>();
+            
             try
             {
-                var users = JsonDocument.Parse(usersJson).RootElement.EnumerateArray().ToList();
-                var assessments = JsonDocument.Parse(assessmentsJson).RootElement.EnumerateArray().ToList();
-                var sessions = JsonDocument.Parse(sessionsJson).RootElement.EnumerateArray().ToList();
+                int activeSessions = sessions.EnumerateArray().Count();
 
-                var instructorAssessments = users
-                    .Where(u => GetIntValue(u, "role") == 1)
-                    .Select(i => 
-                    {
-                        var instructorId = GetIntValue(i, "id");
-                        var instructorSessionIds = sessions
-                            .Where(s => GetIntValue(s, "instructorId") == instructorId)
-                            .Select(s => GetIntValue(s, "id"))
-                            .ToList();
-                        
-                        var instructorAssessments = assessments
-                            .Where(a => instructorSessionIds.Contains(GetIntValue(a, "sessionId")))
-                            .ToList();
-                        
-                        var passCount = instructorAssessments.Count(a => GetIntValue(a, "status") == 2);
-                        var totalCount = instructorAssessments.Count;
-                        var passRate = totalCount > 0 ? (passCount * 100) / totalCount : 0;
-
-                        return new
-                        {
-                            name = GetStringValue(i, "firstName") + " " + GetStringValue(i, "lastName"),
-                            passRate = passRate
-                        };
-                    })
-                    .ToList();
-
-                return JsonSerializer.Serialize(instructorAssessments);
-            }
-            catch
-            {
-                return JsonSerializer.Serialize(new List<object>());
-            }
-        }
-
-        private string TransformRoomUtilization(string sessionsJson, string classroomsJson, string coursesJson)
-        {
-            try
-            {
-                var sessions = JsonDocument.Parse(sessionsJson).RootElement.EnumerateArray().ToList();
-                var classrooms = JsonDocument.Parse(classroomsJson).RootElement.EnumerateArray().ToList();
-
-                var roomUtil = classrooms.Select(r => 
+                result.Add(new SessionMetricsReport
                 {
-                    var roomId = GetIntValue(r, "id");
-                    var bookedSessions = sessions.Count(s => GetIntValue(s, "classroomId") == roomId);
-                    var totalSlots = 40; // Assuming 40 available slots per room
-                    var fillRate = totalSlots > 0 ? (bookedSessions * 100) / totalSlots : 0;
-
-                    return new
-                    {
-                        room = GetStringValue(r, "name"),
-                        booked = bookedSessions,
-                        totalSlots = totalSlots,
-                        fillRate = Math.Min(100, fillRate)
-                    };
-                }).ToList();
-
-                return JsonSerializer.Serialize(roomUtil);
+                    TotalSessions = activeSessions,
+                    TotalEnrollments = activeSessions,
+                    AverageEnrollmentsPerSession = 1
+                });
             }
-            catch
+            catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new List<object>());
+                _logger.LogError(ex, "Error building session metrics report");
             }
-        }
 
-        private string TransformLowEnrollmentSessions(string sessionsJson, string coursesJson, string enrollmentsJson, string classroomsJson)
-        {
-            try
-            {
-                var sessions = JsonDocument.Parse(sessionsJson).RootElement.EnumerateArray().ToList();
-                var courses = JsonDocument.Parse(coursesJson).RootElement.EnumerateArray().ToList();
-                var enrollments = JsonDocument.Parse(enrollmentsJson).RootElement.EnumerateArray().ToList();
-                var classrooms = JsonDocument.Parse(classroomsJson).RootElement.EnumerateArray().ToList();
-
-                var lowEnroll = sessions
-                    .Select(s => new
-                    {
-                        course = courses.FirstOrDefault(c => GetIntValue(c, "id") == GetIntValue(s, "courseId")),
-                        session = s,
-                        enrolled = enrollments.Count(e => GetIntValue(e, "sessionId") == GetIntValue(s, "id")),
-                        classroom = classrooms.FirstOrDefault(c => GetIntValue(c, "id") == GetIntValue(s, "classroomId"))
-                    })
-                    .Where(x => x.course.ValueKind != JsonValueKind.Undefined && x.enrolled < (GetIntValue(x.course, "capacity") / 2))
-                    .Select(x => new
-                    {
-                        course = GetStringValue(x.course, "title"),
-                        room = x.classroom.ValueKind != JsonValueKind.Undefined ? GetStringValue(x.classroom, "name") : "Unknown",
-                        date = GetStringValue(x.session, "sessionDate"),
-                        enrolled = x.enrolled,
-                        capacity = GetIntValue(x.course, "capacity")
-                    })
-                    .ToList();
-
-                return JsonSerializer.Serialize(lowEnroll);
-            }
-            catch
-            {
-                return JsonSerializer.Serialize(new List<object>());
-            }
-        }
-
-        
-        private int GetIntValue(JsonElement element, string propertyName)
-        {
-            if (element.TryGetProperty(propertyName, out var property) && property.TryGetInt32(out var value))
-                return value;
-            return 0;
-        }
-
-        private string GetStringValue(JsonElement element, string propertyName)
-        {
-            if (element.TryGetProperty(propertyName, out var property))
-                return property.GetString() ?? "";
-            return "";
+            return result;
         }
     }
 
-    public class ReportingData
+    
+    public class ReportingViewModel
     {
-        public string DashboardSummary { get; set; } = "null";
-        public string EnrollmentTrends { get; set; } = "null";
-        public string EnrollmentsByCategory { get; set; } = "null";
-        public string EnrollmentsByCourse { get; set; } = "null";
-        public string EnrollmentStatusBreakdown { get; set; } = "null";
-        public string InstructorWorkload { get; set; } = "null";
-        public string CertificationData { get; set; } = "null";
-        public string RevenueData { get; set; } = "null";
-        public string AssessmentsByCourse { get; set; } = "null";
-        public string AssessmentsByInstructor { get; set; } = "null";
-        public string RoomUtilization { get; set; } = "null";
-        public string LowEnrollmentSessions { get; set; } = "null";
+        public List<EnrollmentByCourseReport> EnrollmentByCourse { get; set; } = new();
+        public List<InstructorWorkloadReport> InstructorWorkload { get; set; } = new();
+        public List<CertificationRateReport> CertificationRates { get; set; } = new();
+        public List<RevenueReport> RevenueReport { get; set; } = new();
+        public List<SessionMetricsReport> SessionMetrics { get; set; } = new();
+    }
+
+    public class EnrollmentByCourseReport
+    {
+        public string CourseName { get; set; } = "";
+        public int EnrollmentCount { get; set; }
+    }
+
+    public class InstructorWorkloadReport
+    {
+        public int InstructorId { get; set; }
+        public int SessionCount { get; set; }
+        public int AssignedStudents { get; set; }
+    }
+
+    public class CertificationRateReport
+    {
+        public int TotalCertifications { get; set; }
+        public int TotalEnrollments { get; set; }
+        public double CompletionRate { get; set; }
+    }
+
+    public class RevenueReport
+    {
+        public decimal TotalRevenue { get; set; }
+        public int CompletedPayments { get; set; }
+        public int PendingPayments { get; set; }
+    }
+
+    public class SessionMetricsReport
+    {
+        public int TotalSessions { get; set; }
+        public int TotalEnrollments { get; set; }
+        public int AverageEnrollmentsPerSession { get; set; }
     }
 }

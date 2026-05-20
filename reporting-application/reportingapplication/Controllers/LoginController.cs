@@ -49,21 +49,21 @@ namespace reportingApplication.Controllers
                     {
                         var root = doc.RootElement;
                         
-                        // Extract token from response
+                        
                         string? token = null;
                         if (root.TryGetProperty("token", out var tokenElement))
                         {
                             token = tokenElement.GetString();
                         }
 
-                        // Extract userId from response
+                        
                         string? userId = null;
                         if (root.TryGetProperty("userId", out var userIdElement))
                         {
                             userId = userIdElement.GetInt32().ToString();
                         }
 
-                        // Extract role from response
+                        
                         string? role = null;
                         if (root.TryGetProperty("role", out var roleElement))
                         {
@@ -82,13 +82,13 @@ namespace reportingApplication.Controllers
                             new Claim("Token", token)
                         };
 
-                        // Add userId claim if available
+                        
                         if (!string.IsNullOrEmpty(userId))
                         {
                             claims.Add(new Claim(ClaimTypes.NameIdentifier, userId));
                         }
 
-                        // Add role claim if available - this is critical for authorization!
+                        
                         if (!string.IsNullOrEmpty(role))
                         {
                             claims.Add(new Claim(ClaimTypes.Role, role));
