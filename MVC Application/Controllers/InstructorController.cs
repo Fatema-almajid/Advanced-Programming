@@ -39,22 +39,30 @@ namespace MVC_Application.Controllers
                 .OrderBy(s => s.SessionDate)
                 .ThenBy(s => s.StartTime)
                 .Take(5)
-                .Select(s => new InstructorSessionViewModel
-                {
-                    SessionId = s.Id,
-                    CourseId = s.CourseId,
-                    CourseTitle = s.Course.Title,
-                    CourseDescription = s.Course.Description,
-                    Category = s.Course.Category.ToString(),
-                    ClassroomName = s.Classroom.Name,
-                    SessionDate = s.SessionDate,
-                    StartTime = s.StartTime,
-                    EndTime = s.EndTime,
-                    Capacity = s.Course.Capacity,
-                    EnrolledCount = _context.Enrollments.Count(e => e.SessionId == s.Id),
-                    PendingAssessments = _context.Assessments.Count(a =>
-                        a.Enrollment.SessionId == s.Id &&
-                        a.Status == AssessmentStatus.PENDING)
+            .Select(s => new InstructorSessionViewModel
+            {
+                SessionId = s.Id,
+                CourseId = s.CourseId,
+                CourseTitle = s.Course.Title,
+                CourseDescription = s.Course.Description,
+                Category = s.Course.Category.ToString(),
+                ClassroomName = s.Classroom.Name,
+                SessionDate = s.SessionDate,
+                StartTime = s.StartTime,
+                EndTime = s.EndTime,
+
+                Capacity = s.Course.Capacity,
+
+                EnrolledCount = _context.Enrollments.Count(e =>
+                    e.SessionId == s.Id &&
+                    e.Status != EnrollmentStatus.COMPLETED &&
+                    e.Status != EnrollmentStatus.DROPPED),
+
+                PendingAssessments = _context.Assessments.Count(a =>
+                    a.Enrollment.SessionId == s.Id &&
+                    a.Status == AssessmentStatus.PENDING),
+
+                SessionType = s.SessionDate >= today ? "Upcoming" : "Past"
                 })
                 .ToListAsync();
 
@@ -130,7 +138,10 @@ namespace MVC_Application.Controllers
                     StartTime = s.StartTime,
                     EndTime = s.EndTime,
                     Capacity = s.Course.Capacity,
-                    EnrolledCount = _context.Enrollments.Count(e => e.SessionId == s.Id),
+                    EnrolledCount = _context.Enrollments.Count(e =>
+                        e.SessionId == s.Id &&
+                        e.Status != EnrollmentStatus.COMPLETED &&
+                        e.Status != EnrollmentStatus.DROPPED),
                     PendingAssessments = _context.Assessments.Count(a =>
                         a.Enrollment.SessionId == s.Id &&
                         a.Status == AssessmentStatus.PENDING),
@@ -239,6 +250,29 @@ namespace MVC_Application.Controllers
             return RedirectToAction(nameof(CourseDetails), new { id = enrollment.SessionId });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkAttendance(int enrollmentId)
+        {
+            var enrollment = await _context.Enrollments
+                .FirstOrDefaultAsync(e => e.Id == enrollmentId);
+
+            if (enrollment == null)
+                return NotFound();
+
+            if (enrollment.Status == EnrollmentStatus.CONFIRMED)
+            {
+                enrollment.Status = EnrollmentStatus.ATTENDING;
+
+                await _context.SaveChangesAsync();
+            }
+
+            TempData["SuccessMessage"] = "Attendance marked successfully.";
+
+            return RedirectToAction(nameof(CourseDetails),
+                new { id = enrollment.SessionId });
+        }
+
         public async Task<IActionResult> Schedule()
         {
             var instructorId = GetInstructorId();
@@ -262,7 +296,10 @@ namespace MVC_Application.Controllers
                     StartTime = s.StartTime,
                     EndTime = s.EndTime,
                     Capacity = s.Course.Capacity,
-                    EnrolledCount = _context.Enrollments.Count(e => e.SessionId == s.Id),
+                    EnrolledCount = _context.Enrollments.Count(e =>
+                    e.SessionId == s.Id &&
+                    e.Status != EnrollmentStatus.COMPLETED &&
+                    e.Status != EnrollmentStatus.DROPPED),
                     SessionType = s.SessionDate >= today ? "Upcoming" : "Past"
                 })
                 .ToListAsync();

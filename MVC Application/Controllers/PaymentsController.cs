@@ -213,6 +213,21 @@ namespace MVC_Application.Controllers
                 return RedirectToAction(nameof(Create), new { courseId, enrollmentId, returnUrl });
             }
 
+
+            
+            var paidEnrollment = await _context.Enrollments
+            .Include(e => e.Balance)
+            .FirstOrDefaultAsync(e => e.Id == enrollmentId);
+
+            if (paidEnrollment != null &&
+                paidEnrollment.Balance.AmountDue <= 0)
+            {
+                paidEnrollment.Status = EnrollmentStatus.CONFIRMED;
+
+                await _context.SaveChangesAsync();
+            }
+
+
             TempData["SuccessMessage"] = "Payment recorded successfully";
 
             // Notify the trainee if the payment was made by the coordinator

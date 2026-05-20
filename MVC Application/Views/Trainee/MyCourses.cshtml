@@ -53,22 +53,34 @@ else
 
                             <div class="mb-2">
 
-                                @if (course.Status == "DROPPED")
+                                @if (course.Status == "ENROLLED")
                                 {
-                                    <span class="badge bg-danger">
-                                        Dropped
+                                    <span class="badge bg-secondary">
+                                        Enrolled
+                                    </span>
+                                }
+                                else if (course.Status == "CONFIRMED")
+                                {
+                                    <span class="badge bg-primary">
+                                        Confirmed
+                                    </span>
+                                }
+                                else if (course.Status == "ATTENDING")
+                                {
+                                    <span class="badge bg-info text-dark">
+                                        Attending
                                     </span>
                                 }
                                 else if (course.Status == "COMPLETED")
                                 {
-                                    <span class="badge bg-primary">
+                                    <span class="badge bg-success">
                                         Completed
                                     </span>
                                 }
-                                else
+                                else if (course.Status == "DROPPED")
                                 {
-                                    <span class="badge bg-success">
-                                        Active
+                                    <span class="badge bg-danger">
+                                        Dropped
                                     </span>
                                 }
 

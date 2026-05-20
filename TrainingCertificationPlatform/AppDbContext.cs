@@ -87,12 +87,15 @@ namespace TrainingCertificationPlatform
                 .Property(b => b.AmountDue)
                 .HasPrecision(10, 2);
 
-            // SeedData (Data to test)
+            // SEED DATA
 
             var fixedDate = new DateTime(2026, 4, 4);
 
-            // USER
+            // USERS
+
             modelBuilder.Entity<User>().HasData(
+
+                // TRAINEES
                 new User
                 {
                     Id = 1,
@@ -105,30 +108,7 @@ namespace TrainingCertificationPlatform
                     Phone = "99999991",
                     RegistrationDate = fixedDate
                 },
-                new User
-                {
-                    Id = 2,
-                    FirstName = "Sara",
-                    LastName = "Mohamed",
-                    CPR = "987654321",
-                    Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
-                    Role = UserRole.INSTRUCTOR,
-                    Email = "sara@mail.com",
-                    Phone = "99999992",
-                    RegistrationDate = fixedDate
-                },
-                new User
-                {
-                    Id = 3,
-                    FirstName = "Dana",
-                    LastName = "Albanki",
-                    CPR = "112233445",
-                    Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
-                    Role = UserRole.TRAINING_COORDINATOR,
-                    Email = "dana@mail.com",
-                    Phone = "99999993",
-                    RegistrationDate = fixedDate
-                },
+
                 new User
                 {
                     Id = 4,
@@ -141,6 +121,34 @@ namespace TrainingCertificationPlatform
                     Phone = "99999994",
                     RegistrationDate = fixedDate
                 },
+
+                new User
+                {
+                    Id = 6,
+                    FirstName = "Mariam",
+                    LastName = "Hasan",
+                    CPR = "444555666",
+                    Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                    Role = UserRole.TRAINEE,
+                    Email = "mariam@mail.com",
+                    Phone = "99999996",
+                    RegistrationDate = fixedDate
+                },
+
+                // INSTRUCTORS
+                new User
+                {
+                    Id = 2,
+                    FirstName = "Sara",
+                    LastName = "Mohamed",
+                    CPR = "987654321",
+                    Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                    Role = UserRole.INSTRUCTOR,
+                    Email = "sara@mail.com",
+                    Phone = "99999992",
+                    RegistrationDate = fixedDate
+                },
+
                 new User
                 {
                     Id = 5,
@@ -152,11 +160,27 @@ namespace TrainingCertificationPlatform
                     Email = "fatima@mail.com",
                     Phone = "99999995",
                     RegistrationDate = fixedDate
+                },
+
+                // COORDINATOR
+                new User
+                {
+                    Id = 3,
+                    FirstName = "Dana",
+                    LastName = "Albanki",
+                    CPR = "112233445",
+                    Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                    Role = UserRole.TRAINING_COORDINATOR,
+                    Email = "dana@mail.com",
+                    Phone = "99999993",
+                    RegistrationDate = fixedDate
                 }
             );
 
-            // COURSE
+            // COURSES
+
             modelBuilder.Entity<Course>().HasData(
+
                 new Course
                 {
                     Id = 1,
@@ -168,6 +192,7 @@ namespace TrainingCertificationPlatform
                     Fee = 120,
                     PrerequisiteId = null
                 },
+
                 new Course
                 {
                     Id = 2,
@@ -179,6 +204,7 @@ namespace TrainingCertificationPlatform
                     Fee = 180,
                     PrerequisiteId = 1
                 },
+
                 new Course
                 {
                     Id = 3,
@@ -190,6 +216,7 @@ namespace TrainingCertificationPlatform
                     Fee = 150,
                     PrerequisiteId = null
                 },
+
                 new Course
                 {
                     Id = 4,
@@ -201,6 +228,7 @@ namespace TrainingCertificationPlatform
                     Fee = 170,
                     PrerequisiteId = 3
                 },
+
                 new Course
                 {
                     Id = 5,
@@ -214,42 +242,36 @@ namespace TrainingCertificationPlatform
                 }
             );
 
-            // TRACK
+            // TRACKS
+
             modelBuilder.Entity<Track>().HasData(
+
                 new Track
                 {
                     Id = 1,
                     Name = "Backend Development",
                     Description = "Backend programming track"
                 },
+
                 new Track
                 {
                     Id = 2,
                     Name = "Database Administration",
                     Description = "Database management track"
                 },
+
                 new Track
                 {
                     Id = 3,
                     Name = "Networking Essentials",
                     Description = "Networking certification track"
-                },
-                new Track
-                {
-                    Id = 4,
-                    Name = "Full Stack Development",
-                    Description = "Complete web development track"
-                },
-                new Track
-                {
-                    Id = 5,
-                    Name = "Software Engineering",
-                    Description = "Software engineering foundations"
                 }
             );
 
-            // CLASSROOM
+            // CLASSROOMS
+
             modelBuilder.Entity<Classroom>().HasData(
+
                 new Classroom { Id = 1, Name = "Room A", Seats = 30 },
                 new Classroom { Id = 2, Name = "Room B", Seats = 25 },
                 new Classroom { Id = 3, Name = "Lab 1", Seats = 20 },
@@ -258,63 +280,72 @@ namespace TrainingCertificationPlatform
             );
 
             // EQUIPMENT
+
             modelBuilder.Entity<Equipment>().HasData(
+
                 new Equipment { Id = 1, Name = "Projector" },
                 new Equipment { Id = 2, Name = "Whiteboard" },
                 new Equipment { Id = 3, Name = "Lab Computers" },
-                new Equipment { Id = 4, Name = "Microphones" },
-                new Equipment { Id = 5, Name = "Networking Kit" }
+                new Equipment { Id = 4, Name = "Networking Kit" }
             );
 
-            // SESSION
+            // SESSIONS
+
             modelBuilder.Entity<Session>().HasData(
+
+                // UPCOMING
                 new Session
                 {
                     Id = 1,
                     CourseId = 1,
                     InstructorId = 2,
                     ClassroomId = 1,
-                    SessionDate = fixedDate,
+                    SessionDate = fixedDate.AddDays(1),
                     StartTime = new TimeOnly(9, 0),
                     EndTime = new TimeOnly(11, 0)
                 },
+
                 new Session
                 {
                     Id = 2,
                     CourseId = 2,
                     InstructorId = 2,
                     ClassroomId = 2,
-                    SessionDate = fixedDate.AddDays(1),
+                    SessionDate = fixedDate.AddDays(2),
                     StartTime = new TimeOnly(12, 0),
                     EndTime = new TimeOnly(14, 0)
                 },
+
                 new Session
                 {
                     Id = 3,
                     CourseId = 3,
                     InstructorId = 5,
                     ClassroomId = 3,
-                    SessionDate = fixedDate.AddDays(2),
+                    SessionDate = fixedDate.AddDays(3),
                     StartTime = new TimeOnly(10, 0),
                     EndTime = new TimeOnly(12, 0)
                 },
+
+                // PAST
                 new Session
                 {
                     Id = 4,
                     CourseId = 4,
                     InstructorId = 5,
                     ClassroomId = 4,
-                    SessionDate = fixedDate.AddDays(3),
+                    SessionDate = fixedDate.AddDays(-5),
                     StartTime = new TimeOnly(13, 0),
                     EndTime = new TimeOnly(15, 0)
                 },
+
                 new Session
                 {
                     Id = 5,
                     CourseId = 5,
                     InstructorId = 2,
                     ClassroomId = 5,
-                    SessionDate = fixedDate.AddDays(4),
+                    SessionDate = fixedDate.AddDays(-3),
                     StartTime = new TimeOnly(14, 0),
                     EndTime = new TimeOnly(16, 0)
                 }
@@ -322,6 +353,8 @@ namespace TrainingCertificationPlatform
 
             // ENROLLMENT
             modelBuilder.Entity<Enrollment>().HasData(
+
+                // Student just enrolled
                 new Enrollment
                 {
                     Id = 1,
@@ -330,6 +363,8 @@ namespace TrainingCertificationPlatform
                     Status = EnrollmentStatus.ENROLLED,
                     EnrollmentDate = fixedDate
                 },
+
+                // Student confirmed
                 new Enrollment
                 {
                     Id = 2,
@@ -338,6 +373,8 @@ namespace TrainingCertificationPlatform
                     Status = EnrollmentStatus.CONFIRMED,
                     EnrollmentDate = fixedDate
                 },
+
+                // Student attending
                 new Enrollment
                 {
                     Id = 3,
@@ -346,34 +383,42 @@ namespace TrainingCertificationPlatform
                     Status = EnrollmentStatus.ATTENDING,
                     EnrollmentDate = fixedDate
                 },
+
+                // Student completed successfully
                 new Enrollment
                 {
                     Id = 4,
                     TraineeId = 4,
                     SessionId = 5,
                     Status = EnrollmentStatus.COMPLETED,
-                    EnrollmentDate = fixedDate
+                    EnrollmentDate = fixedDate,
+                    CompletionDate = fixedDate
                 },
+
                 new Enrollment
                 {
                     Id = 5,
                     TraineeId = 1,
                     SessionId = 2,
-                    Status = EnrollmentStatus.DROPPED,
+                    Status = EnrollmentStatus.CONFIRMED,
                     EnrollmentDate = fixedDate
                 },
+
+                // Dropped course
                 new Enrollment
                 {
                     Id = 6,
-                    TraineeId = 1,
-                    SessionId = 2,
-                    Status = EnrollmentStatus.COMPLETED,
+                    TraineeId = 4,
+                    SessionId = 4,
+                    Status = EnrollmentStatus.DROPPED,
                     EnrollmentDate = fixedDate
                 }
             );
 
-            // PAYMENT
+            // PAYMENTS
+
             modelBuilder.Entity<Payment>().HasData(
+
                 new Payment
                 {
                     Id = 1,
@@ -382,6 +427,7 @@ namespace TrainingCertificationPlatform
                     PaymentDate = fixedDate,
                     Status = PaymentStatus.FULL
                 },
+
                 new Payment
                 {
                     Id = 2,
@@ -390,6 +436,7 @@ namespace TrainingCertificationPlatform
                     PaymentDate = fixedDate,
                     Status = PaymentStatus.PARTIAL
                 },
+
                 new Payment
                 {
                     Id = 3,
@@ -398,26 +445,30 @@ namespace TrainingCertificationPlatform
                     PaymentDate = fixedDate,
                     Status = PaymentStatus.FULL
                 },
+
                 new Payment
                 {
                     Id = 4,
                     EnrollmentId = 4,
-                    Amount = 50,
+                    Amount = 180,
                     PaymentDate = fixedDate,
-                    Status = PaymentStatus.PARTIAL
+                    Status = PaymentStatus.FULL
                 },
+
                 new Payment
                 {
                     Id = 5,
                     EnrollmentId = 5,
-                    Amount = 180,
+                    Amount = 170,
                     PaymentDate = fixedDate,
                     Status = PaymentStatus.FULL
                 }
             );
 
-            // BALANCE
+            // BALANCES
+
             modelBuilder.Entity<Balance>().HasData(
+
                 new Balance
                 {
                     Id = 1,
@@ -425,6 +476,7 @@ namespace TrainingCertificationPlatform
                     AmountDue = 0,
                     DueDate = fixedDate
                 },
+
                 new Balance
                 {
                     Id = 2,
@@ -432,6 +484,7 @@ namespace TrainingCertificationPlatform
                     AmountDue = 60,
                     DueDate = fixedDate.AddDays(7)
                 },
+
                 new Balance
                 {
                     Id = 3,
@@ -439,74 +492,61 @@ namespace TrainingCertificationPlatform
                     AmountDue = 0,
                     DueDate = fixedDate
                 },
+
                 new Balance
                 {
                     Id = 4,
                     EnrollmentId = 4,
-                    AmountDue = 50,
-                    DueDate = fixedDate.AddDays(5)
-                },
-                new Balance
-                {
-                    Id = 5,
-                    EnrollmentId = 5,
                     AmountDue = 0,
                     DueDate = fixedDate
                 }
             );
 
-            // ASSESSMENT
+            // ASSESSMENTS
             modelBuilder.Entity<Assessment>().HasData(
+
+                // Confirmed student (pending)
                 new Assessment
                 {
                     Id = 1,
-                    EnrollmentId = 1,
-                    Status = AssessmentStatus.PASS,
-                    DueDate = fixedDate.AddDays(5),
-                    CompletedBy = fixedDate.AddDays(6)
-                },
-                new Assessment
-                {
-                    Id = 2,
                     EnrollmentId = 2,
                     Status = AssessmentStatus.PENDING,
                     DueDate = fixedDate.AddDays(5)
                 },
+
+                // Attending student (pending)
                 new Assessment
                 {
-                    Id = 3,
+                    Id = 2,
                     EnrollmentId = 3,
-                    Status = AssessmentStatus.PASS,
-                    DueDate = fixedDate.AddDays(5),
-                    CompletedBy = fixedDate.AddDays(6)
-                },
-                new Assessment
-                {
-                    Id = 4,
-                    EnrollmentId = 4,
-                    Status = AssessmentStatus.PASS,
-                    DueDate = fixedDate.AddDays(5),
-                    CompletedBy = fixedDate.AddDays(6)
-                },
-                new Assessment
-                {
-                    Id = 5,
-                    EnrollmentId = 5,
                     Status = AssessmentStatus.PENDING,
                     DueDate = fixedDate.AddDays(5)
                 },
+
+                // Completed student (pass)
                 new Assessment
                 {
-                    Id = 6,
-                    EnrollmentId = 6,
+                    Id = 3,
+                    EnrollmentId = 4,
                     Status = AssessmentStatus.PASS,
-                    DueDate = fixedDate.AddDays(5),
-                    CompletedBy = fixedDate.AddDays(6)
+                    DueDate = fixedDate.AddDays(-1),
+                    CompletedBy = fixedDate
+                },
+
+                // Confirmed student (pending)
+                new Assessment
+                {
+                    Id = 4,
+                    EnrollmentId = 5,
+                    Status = AssessmentStatus.PENDING,
+                    DueDate = fixedDate.AddDays(5)
                 }
             );
 
-            // NOTIFICATION
+            // NOTIFICATIONS
+
             modelBuilder.Entity<Notification>().HasData(
+
                 new Notification
                 {
                     Id = 1,
@@ -515,6 +555,7 @@ namespace TrainingCertificationPlatform
                     CreatedDate = fixedDate,
                     Status = NotificationStatus.UNREAD
                 },
+
                 new Notification
                 {
                     Id = 2,
@@ -523,34 +564,21 @@ namespace TrainingCertificationPlatform
                     CreatedDate = fixedDate,
                     Status = NotificationStatus.READ
                 },
+
                 new Notification
                 {
                     Id = 3,
-                    UserId = 3,
-                    Message = "New enrollment received",
-                    CreatedDate = fixedDate,
-                    Status = NotificationStatus.UNREAD
-                },
-                new Notification
-                {
-                    Id = 4,
                     UserId = 4,
                     Message = "Payment reminder",
                     CreatedDate = fixedDate,
                     Status = NotificationStatus.UNREAD
-                },
-                new Notification
-                {
-                    Id = 5,
-                    UserId = 5,
-                    Message = "Schedule updated",
-                    CreatedDate = fixedDate,
-                    Status = NotificationStatus.READ
                 }
             );
 
             // INSTRUCTOR AVAILABILITY
+
             modelBuilder.Entity<InstructorAvailability>().HasData(
+
                 new InstructorAvailability
                 {
                     Id = 1,
@@ -560,6 +588,7 @@ namespace TrainingCertificationPlatform
                     StartTime = new TimeOnly(8, 0),
                     EndTime = new TimeOnly(16, 0)
                 },
+
                 new InstructorAvailability
                 {
                     Id = 2,
@@ -571,17 +600,19 @@ namespace TrainingCertificationPlatform
                 }
             );
 
-            // TRAINEE CERTIFICATION
+            // TRAINEE CERTIFICATIONS
+
             modelBuilder.Entity<TraineeCertification>().HasData(
+
                 new TraineeCertification
                 {
                     Id = 1,
                     TraineeId = 1,
                     TrackId = 1,
-                    // for public certification lookup
                     CertificateReferenceNumber = "CERT-1001",
                     Status = TraineeCertificationStatus.SUCCESS
                 },
+
                 new TraineeCertification
                 {
                     Id = 2,
@@ -590,55 +621,55 @@ namespace TrainingCertificationPlatform
                     CertificateReferenceNumber = "CERT-1002",
                     Status = TraineeCertificationStatus.SUCCESS
                 },
+
                 new TraineeCertification
                 {
                     Id = 3,
-                    TraineeId = 1,
+                    TraineeId = 6,
                     TrackId = 3,
                     Status = TraineeCertificationStatus.FAILED
-                },
-                new TraineeCertification
-                {
-                    Id = 4,
-                    TraineeId = 4,
-                    TrackId = 4,
-                    Status = TraineeCertificationStatus.FAILED
-                },
-                new TraineeCertification
-                {
-                    Id = 5,
-                    TraineeId = 1,
-                    TrackId = 5,
-                    CertificateReferenceNumber = "CERT-1005",
-                    Status = TraineeCertificationStatus.SUCCESS
                 }
             );
 
             // COURSE TRACK
+
             modelBuilder.Entity("CourseTrack").HasData(
+
                 new { CoursesId = 1, TracksId = 1 },
                 new { CoursesId = 2, TracksId = 1 },
+
                 new { CoursesId = 3, TracksId = 2 },
                 new { CoursesId = 4, TracksId = 2 },
+
                 new { CoursesId = 5, TracksId = 3 }
             );
 
             // CLASSROOM EQUIPMENT
+
             modelBuilder.Entity("ClassroomEquipment").HasData(
+
                 new { ClassroomsId = 1, EquipmentsId = 1 },
-                new { ClassroomsId = 2, EquipmentsId = 2 },
+                new { ClassroomsId = 1, EquipmentsId = 2 },
+
+                new { ClassroomsId = 2, EquipmentsId = 1 },
+
                 new { ClassroomsId = 3, EquipmentsId = 3 },
+
                 new { ClassroomsId = 4, EquipmentsId = 3 },
+
                 new { ClassroomsId = 5, EquipmentsId = 4 }
             );
 
             // INSTRUCTOR EXPERTISE
+
             modelBuilder.Entity<InstructorExpertise>().HasData(
+
                 new { InstructorId = 2, CourseId = 1 },
                 new { InstructorId = 2, CourseId = 2 },
+                new { InstructorId = 2, CourseId = 5 },
+
                 new { InstructorId = 5, CourseId = 3 },
-                new { InstructorId = 5, CourseId = 4 },
-                new { InstructorId = 2, CourseId = 5 }
+                new { InstructorId = 5, CourseId = 4 }
             );
         }
     }

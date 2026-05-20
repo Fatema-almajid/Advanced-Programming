@@ -45,7 +45,9 @@
                     <strong>Trainees</strong>
                     <p>
                         <span data-session-enrolled-count-for="@Model.SessionId">
-                            @Model.Trainees.Count
+                            @Model.Trainees.Count(t =>
+                            t.EnrollmentStatus != EnrollmentStatus.COMPLETED &&
+                            t.EnrollmentStatus != EnrollmentStatus.DROPPED)
                         </span>
                     </p>
                 </div>
@@ -71,6 +73,7 @@
                                 <th>Email</th>
                                 <th>Enrollment Status</th>
                                 <th>Assessment Status</th>
+                                <th class="text-center">Attendance</th>
                                 <th class="text-center">Update Result</th>
                             </tr>
                         </thead>
@@ -83,9 +86,36 @@
                                     <td>@trainee.TraineeEmail</td>
 
                                     <td>
-                                        <span class="badge bg-secondary">
-                                            @trainee.EnrollmentStatus
-                                        </span>
+                                        @if (trainee.EnrollmentStatus == EnrollmentStatus.ENROLLED)
+                                        {
+                                            <span class="badge bg-secondary">
+                                                Enrolled
+                                            </span>
+                                        }
+                                        else if (trainee.EnrollmentStatus == EnrollmentStatus.CONFIRMED)
+                                        {
+                                            <span class="badge bg-primary">
+                                                Confirmed
+                                            </span>
+                                        }
+                                        else if (trainee.EnrollmentStatus == EnrollmentStatus.ATTENDING)
+                                        {
+                                            <span class="badge bg-info text-dark">
+                                                Attending
+                                            </span>
+                                        }
+                                        else if (trainee.EnrollmentStatus == EnrollmentStatus.COMPLETED)
+                                        {
+                                            <span class="badge bg-success">
+                                                Completed
+                                            </span>
+                                        }
+                                        else if (trainee.EnrollmentStatus == EnrollmentStatus.DROPPED)
+                                        {
+                                            <span class="badge bg-danger">
+                                                Dropped
+                                            </span>
+                                        }
                                     </td>
 
                                     <td>
@@ -101,6 +131,35 @@
                                         {
                                             <span class="badge bg-warning text-dark">PENDING</span>
                                         }
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        @if (trainee.EnrollmentStatus == EnrollmentStatus.CONFIRMED)
+                                        {
+                                            <form asp-action="MarkAttendance"
+                                                  method="post">
+
+                                                <input type="hidden"
+                                                       name="enrollmentId"
+                                                       value="@trainee.EnrollmentId" />
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-primary">
+
+                                                    <i class="bi bi-check2-square"></i>
+                                                    Mark Attendance
+
+                                                </button>
+                                            </form>
+                                        }
+                                        else if (trainee.EnrollmentStatus == EnrollmentStatus.ATTENDING)
+                                        {
+                                            <span class="badge bg-info">
+                                                Attendance Marked
+                                            </span>
+                                        }
+
                                     </td>
 
                                     <td class="text-center">
