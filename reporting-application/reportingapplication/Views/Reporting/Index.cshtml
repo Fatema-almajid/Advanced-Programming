@@ -1,0 +1,184 @@
+@using reportingApplication.Controllers
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Operational Reports";
+}
+
+@model ReportingViewModel
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-5">Operational Reports</h1>
+            <p class="text-muted">Real-time operational metrics for management decision-making</p>
+        </div>
+        <div class="col-md-4 d-flex align-items-center justify-content-end gap-2">
+            <a href="@Url.Action("ExportPdf", "Reporting")" class="btn btn-danger" title="Export as PDF">
+                <i class="bi bi-file-pdf"></i> Download PDF
+            </a>
+            <a href="@Url.Action("Logout", "Login")" class="btn btn-secondary" title="Logout">
+                Logout
+            </a>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Error))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    
+    @if (Model.SessionMetrics.Any())
+    {
+        var metrics = Model.SessionMetrics.First();
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <h3 class="mb-4">Session Metrics</h3>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted text-uppercase fw-bold">Total Sessions</h6>
+                        <p class="card-text display-6">@metrics.TotalSessions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted text-uppercase fw-bold">Total Enrollments</h6>
+                        <p class="card-text display-6">@metrics.TotalEnrollments</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted text-uppercase fw-bold">Avg Enrollments/Session</h6>
+                        <p class="card-text display-6">@metrics.AverageEnrollmentsPerSession</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h3 class="mb-4">Enrollment Statistics by Course</h3>
+        </div>
+        <div class="col-md-12">
+            @if (Model.EnrollmentByCourse.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Enrollment Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var enrollment in Model.EnrollmentByCourse)
+                            {
+                                <tr>
+                                    <td>@enrollment.CourseName</td>
+                                    <td><span class="badge bg-primary">@enrollment.EnrollmentCount</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">No enrollment data available.</div>
+            }
+        </div>
+    </div>
+
+    
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h3 class="mb-4">Instructor Workload Distribution</h3>
+        </div>
+        <div class="col-md-12">
+            @if (Model.InstructorWorkload.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Instructor ID</th>
+                                <th>Sessions Assigned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var instructor in Model.InstructorWorkload)
+                            {
+                                <tr>
+                                    <td>@instructor.InstructorId</td>
+                                    <td>@instructor.SessionCount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">No instructor data available.</div>
+            }
+        </div>
+    </div>
+
+    
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h3 class="mb-4">Certification Completion Rates</h3>
+        </div>
+        @if (Model.CertificationRates.Any())
+        {
+            var cert = Model.CertificationRates.First();
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted text-uppercase fw-bold">Total Certifications</h6>
+                        <p class="card-text display-6">@cert.TotalCertifications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted text-uppercase fw-bold">Total Enrollments</h6>
+                        <p class="card-text display-6">@cert.TotalEnrollments</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted text-uppercase fw-bold">Completion Rate</h6>
+                        <p class="card-text display-6">@cert.CompletionRate%</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+</style>

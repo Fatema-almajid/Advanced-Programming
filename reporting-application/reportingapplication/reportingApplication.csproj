@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\NewFolder1\**" />
+    <Compile Remove="Models\NewFolder\**" />
+    <Content Remove="Models\NewFolder1\**" />
+    <Content Remove="Models\NewFolder\**" />
+    <EmbeddedResource Remove="Models\NewFolder1\**" />
+    <EmbeddedResource Remove="Models\NewFolder\**" />
+    <None Remove="Models\NewFolder1\**" />
+    <None Remove="Models\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+  </ItemGroup>
+
+</Project>
