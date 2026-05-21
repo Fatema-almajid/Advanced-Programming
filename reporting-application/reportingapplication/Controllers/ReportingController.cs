@@ -10,7 +10,7 @@ namespace reportingApplication.Controllers
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly ILogger<ReportingController> _logger;
-        private const string ApiBaseUrl = "https://localhost:7102";
+        private const string ApiBaseUrl = "https://apitrainingcertification-c7geeadpdvd4gvfb.westeurope-01.azurewebsites.net/";
 
         public ReportingController(HttpClient httpClient, IConfiguration configuration, ILogger<ReportingController> logger)
         {
