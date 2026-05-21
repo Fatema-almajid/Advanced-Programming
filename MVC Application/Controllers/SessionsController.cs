@@ -209,7 +209,7 @@ namespace MVC_Application.Controllers
             session.EndTime = model.EndTime;
 
             await _context.SaveChangesAsync();
-
+            await _context.Entry(session).Reference(s => s.Course).LoadAsync();
             //Send notif to instructor about session update
             var message = $"The session for the course '{session.Course.Title}' scheduled on {session.SessionDate:MMMM dd, yyyy} has been updated.";
             var instructorId = session.InstructorId;

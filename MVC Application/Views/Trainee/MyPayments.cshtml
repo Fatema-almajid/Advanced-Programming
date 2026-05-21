@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<TrainingCertificationPlatform.Models.Enrollment>
 @using TrainingCertificationPlatform.Models
+@using System.Linq
 
 @{
     ViewData["Title"] = "My Payment";
@@ -35,9 +36,26 @@
                     var totalPaid = enrollment.Payments.Sum(p => p.Amount);
                     var amountDue = enrollment.Balance?.AmountDue ?? 0;
 
+                    var courseFee = enrollment.Session.Course.Fee;
+                    var calculatedPercent = courseFee == 0
+                    ? 0
+                    : (int)((totalPaid / (decimal)courseFee) * 100);
+
+                    var paidPercent = Math.Min(calculatedPercent, 100);
+
                     <tr>
                         <td class="fw-semibold">@enrollment.Session.Course.Title</td>
-                        <td>BHD @totalPaid</td>
+                        <td>
+                            BHD @totalPaid
+
+                            <div class="progress mt-2" style="height:20px;">
+                                <div class="progress-bar"
+                                     role="progressbar"
+                                     style="width:@(paidPercent)%">
+                                    @paidPercent%
+                                </div>
+                            </div>
+                        </td>
                         <td>BHD @amountDue</td>
                         <td>
                             @(enrollment.Balance != null ? enrollment.Balance.DueDate.ToString("dd MMM yyyy") 

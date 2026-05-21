@@ -143,6 +143,8 @@ namespace MVC_Application.Controllers
         {
             var query = _context.Courses
                 .Include(c => c.Prerequisite)
+                .Include(c => c.Tracks)
+                .Where(c => _context.Sessions.Any(s => s.CourseId == c.Id))
                 .AsNoTracking()
                 .AsQueryable();
 
@@ -174,7 +176,15 @@ namespace MVC_Application.Controllers
                 })
                 .ToList();
 
-            var courses = await query.OrderBy(c => c.Title).ToListAsync();
+            var courses = await query
+                .Include(c => c.Tracks)
+                .OrderBy(c => c.Title)
+                .ToListAsync();
+
+            ViewBag.AvailableCourseIds = await _context.Sessions
+                .Select(s => s.CourseId)
+                .Distinct()
+                .ToListAsync();
             return View(courses);
         }
 
@@ -232,6 +242,45 @@ namespace MVC_Application.Controllers
             {
                 TempData["ErrorMessage"] = "You are already enrolled in this course.";
                 return RedirectToAction(nameof(CourseDetails), new { id = courseId });
+            }
+
+            // Capacity validation
+            var currentEnrollments = await _context.Enrollments
+                .Where(e =>
+                    e.SessionId == session.Id &&
+                    e.Status != EnrollmentStatus.DROPPED)
+                .CountAsync();
+
+            if (currentEnrollments >= session.Course.Capacity)
+            {
+                TempData["ErrorMessage"] =
+                    "This course session is full.";
+
+                return RedirectToAction(
+                    nameof(CourseDetails),
+                    new { id = courseId });
+            }
+
+            // Schedule conflict validation
+            var hasConflict = await _context.Enrollments
+                .Include(e => e.Session)
+                .AnyAsync(e =>
+                    e.TraineeId == traineeId &&
+                    e.Status != EnrollmentStatus.DROPPED &&
+                    e.Session.SessionDate.Date == session.SessionDate.Date &&
+
+                    session.StartTime < e.Session.EndTime &&
+                    session.EndTime > e.Session.StartTime
+                );
+
+            if (hasConflict)
+            {
+                TempData["ErrorMessage"] =
+                    "You already have another session at this time.";
+
+                return RedirectToAction(
+                    nameof(CourseDetails),
+                    new { id = courseId });
             }
 
             var prerequisiteId = session.Course.PrerequisiteId;

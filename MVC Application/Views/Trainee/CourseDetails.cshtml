@@ -44,6 +44,26 @@
                     /
                     @Model.Capacity
                 </p>
+
+                @if (remainingSeats <= 0)
+                {
+                    <span class="badge bg-danger">
+                        Full
+                    </span>
+                }
+                else if (remainingSeats <= 5)
+                {
+                    <span class="badge bg-warning text-dark">
+                        Almost Full
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-success">
+                        Available
+                    </span>
+                }
+
             </div>
 
             <div class="col-md-3">
