@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -34,7 +33,7 @@ namespace reportingApplication.Controllers
 
             try
             {
-                var authApiUrl = _configuration["AuthApi:Url"] ?? "https://localhost:7102/api/auth/login";
+                var authApiUrl = _configuration["AuthApi:Url"] ?? "https://apitrainingcertification-c7geeadpdvd4gvfb.westeurope-01.azurewebsites.net/";
 
                 var response = await _httpClient.PostAsJsonAsync(authApiUrl, new
                 {
