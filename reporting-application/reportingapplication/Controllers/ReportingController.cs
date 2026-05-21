@@ -10,13 +10,14 @@ namespace reportingApplication.Controllers
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly ILogger<ReportingController> _logger;
-        private const string ApiBaseUrl = "https://apitrainingcertification-c7geeadpdvd4gvfb.westeurope-01.azurewebsites.net/";
+        private readonly string _apiBaseUrl;
 
         public ReportingController(HttpClient httpClient, IConfiguration configuration, ILogger<ReportingController> logger)
         {
             _httpClient = httpClient;
             _configuration = configuration;
             _logger = logger;
+            _apiBaseUrl = configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7102";
         }
 
         public async Task<IActionResult> Index()
@@ -361,7 +362,7 @@ namespace reportingApplication.Controllers
         {
             try
             {
-                var url = ApiBaseUrl + endpoint;
+                var url = _apiBaseUrl + endpoint;
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
                 
                 if (!string.IsNullOrEmpty(token))
