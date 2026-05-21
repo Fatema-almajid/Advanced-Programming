@@ -29,87 +29,96 @@
 
         <p class="text-muted">@Model.Description</p>
 
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <strong>Duration</strong>
-                <p>@Model.Duration hrs</p>
-            </div>
+        <div class="table-responsive mt-4">
+            <table class="table table-hover align-middle">
 
-            <div class="col-md-3">
-                <strong>Capacity</strong>
-                <p>
-                    <span data-enrolled-count-for="@Model.Id">
-                        @enrolledCount
-                    </span>
-                    /
-                    @Model.Capacity
-                </p>
+                <thead class="table-light">
+                    <tr>
+                        <th>Duration</th>
+                        <th>Capacity</th>
+                        <th>Fee</th>
+                        <th>Prerequisite</th>
 
-                @if (remainingSeats <= 0)
-                {
-                    <span class="badge bg-danger">
-                        Full
-                    </span>
-                }
-                else if (remainingSeats <= 5)
-                {
-                    <span class="badge bg-warning text-dark">
-                        Almost Full
-                    </span>
-                }
-                else
-                {
-                    <span class="badge bg-success">
-                        Available
-                    </span>
-                }
+                        @if (session != null)
+                        {
+                            <th>Session Date</th>
+                            <th>Time</th>
+                            <th>Instructor</th>
+                            <th>Room</th>
+                        }
+                    </tr>
+                </thead>
 
-            </div>
+                <tbody>
+                    <tr>
 
-            <div class="col-md-3">
-                <strong>Fee</strong>
-                <p>@Model.Fee.ToString() BHD</p>
-            </div>
+                        <td class="fw-semibold">
+                            @Model.Duration hrs
+                        </td>
 
-            <div class="col-md-3">
-                <strong>Prerequisite</strong>
-                <p>@(Model.Prerequisite?.Title ?? "None")</p>
-            </div>
+                        <td>
+                            <div class="fw-semibold">
+                                <span data-enrolled-count-for="@Model.Id">
+                                    @enrolledCount
+                                </span>
+                                /
+                                @Model.Capacity
+                            </div>
+
+                            @if (remainingSeats <= 0)
+                            {
+                                <span class="badge bg-danger mt-1">
+                                    Full
+                                </span>
+                            }
+                            else if (remainingSeats <= 5)
+                            {
+                                <span class="badge bg-warning text-dark mt-1">
+                                    Almost Full
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success mt-1">
+                                    Available
+                                </span>
+                            }
+                        </td>
+
+                        <td class="fw-semibold">
+                            @Model.Fee.ToString("0.00") BHD
+                        </td>
+
+                        <td>
+                            @(Model.Prerequisite?.Title ?? "None")
+                        </td>
+
+                        @if (session != null)
+                        {
+                            <td>
+                                @session.SessionDate.ToString("dd MMM yyyy")
+                            </td>
+
+                            <td>
+                                @session.StartTime.ToString("HH:mm")
+                                -
+                                @session.EndTime.ToString("HH:mm")
+                            </td>
+
+                            <td>
+                                @session.Instructor.FirstName
+                                @session.Instructor.LastName
+                            </td>
+
+                            <td>
+                                @session.Classroom.Name
+                            </td>
+                        }
+
+                    </tr>
+                </tbody>
+
+            </table>
         </div>
-
-        @if (session != null)
-        {
-            <hr />
-            <h5>Next Session</h5>
-            <p>
-                @session.SessionDate.ToString("dd MMM yyyy")
-                from @session.StartTime.ToString("hh\\:mm")
-                to @session.EndTime.ToString("hh\\:mm")
-            </p>
-            <p>Instructor: @session.Instructor.FirstName @session.Instructor.LastName</p>
-            <p>Room: @session.Classroom.Name</p>
-        }
-
-        @if (isEnrolled)
-        {
-            <button class="view-course-btn" disabled>
-                <i class="bi bi-check-circle"></i> Already Enrolled
-            </button>
-        }
-        else if (remainingSeats <= 0)
-        {
-            <button class="view-course-btn" disabled data-enroll-button-for="@Model.Id">
-                <i class="bi bi-x-circle"></i> Full
-            </button>
-        }
-        else
-        {
-            <form asp-action="Enroll" method="post">
-                <input type="hidden" name="courseId" value="@Model.Id" />
-                <button type="submit" class="view-course-btn" data-enroll-button-for="@Model.Id">
-                    <i class="bi bi-credit-card"></i> Enroll and Pay
-                </button>
-            </form>
-        }
     </div>
 </div>
