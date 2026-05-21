@@ -18,21 +18,13 @@ namespace TrainingCertificationPlatform.Controllers
         }
 
         [HttpGet("verify")]
-<<<<<<< HEAD
         public async Task<IActionResult> Verify(string cpr, string referenceNumber)
-=======
-        public async Task<IActionResult> Verify(int traineeId, string referenceNumber)
->>>>>>> fd2e9fb (making it up-to-date)
         {
             var certification = await _context.TraineeCertifications
                 .Include(tc => tc.Trainee)
                 .Include(tc => tc.Track)
                 .FirstOrDefaultAsync(tc =>
-<<<<<<< HEAD
                     tc.Trainee.CPR == cpr &&
-=======
-                    tc.TraineeId == traineeId &&
->>>>>>> fd2e9fb (making it up-to-date)
                     tc.CertificateReferenceNumber == referenceNumber);
 
             if (certification == null)
@@ -45,11 +37,7 @@ namespace TrainingCertificationPlatform.Controllers
 
             var completedCourses = await _context.Assessments
                 .Where(a =>
-<<<<<<< HEAD
                     a.Enrollment.Trainee.CPR == cpr &&
-=======
-                    a.Enrollment.TraineeId == traineeId &&
->>>>>>> fd2e9fb (making it up-to-date)
                     a.Status == AssessmentStatus.PASS)
                 .Select(a => a.Enrollment.Session.Course.Title)
                 .Distinct()
