@@ -17,4 +17,7 @@
     <None Remove="Models\NewFolder\**" />
   </ItemGroup>
 
+  <ItemGroup>
+  </ItemGroup>
+
 </Project>

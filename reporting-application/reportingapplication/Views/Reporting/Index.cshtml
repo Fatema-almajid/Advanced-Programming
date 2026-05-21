@@ -8,9 +8,17 @@
 
 <div class="container-fluid mt-4">
     <div class="row mb-4">
-        <div class="col-md-12">
+        <div class="col-md-8">
             <h1 class="display-5">Operational Reports</h1>
             <p class="text-muted">Real-time operational metrics for management decision-making</p>
+        </div>
+        <div class="col-md-4 d-flex align-items-center justify-content-end gap-2">
+            <a href="@Url.Action("ExportPdf", "Reporting")" class="btn btn-danger" title="Export as PDF">
+                <i class="bi bi-file-pdf"></i> Download PDF
+            </a>
+            <a href="@Url.Action("Logout", "Login")" class="btn btn-secondary" title="Logout">
+                Logout
+            </a>
         </div>
     </div>
 
@@ -158,47 +166,6 @@
                         <p class="card-text display-6">@cert.CompletionRate%</p>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-
-    
-    <div class="row mb-5">
-        <div class="col-md-12">
-            <h3 class="mb-4">Revenue Status</h3>
-        </div>
-        @if (Model.RevenueReport.Any())
-        {
-            var revenue = Model.RevenueReport.First();
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <h6 class="card-title text-muted text-uppercase fw-bold">Total Revenue</h6>
-                        <p class="card-text display-6">$@revenue.TotalRevenue.ToString("F2")</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <h6 class="card-title text-muted text-uppercase fw-bold">Completed Payments</h6>
-                        <p class="card-text display-6 text-success">@revenue.CompletedPayments</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <h6 class="card-title text-muted text-uppercase fw-bold">Pending Payments</h6>
-                        <p class="card-text display-6 text-warning">@revenue.PendingPayments</p>
-                    </div>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="col-md-12">
-                <div class="alert alert-info">No revenue data available.</div>
             </div>
         }
     </div>
