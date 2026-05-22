@@ -5,6 +5,7 @@
 
     var courses = ViewBag.Courses as List<TrainingCertificationPlatform.Models.Course>;
     var balanceStatuses = ViewBag.BalanceStatuses as List<TrainingCertificationPlatform.Models.BalanceStatus>;
+    var enrollmentDroppedStatus = ViewBag.EnrollmentDroppedStatus as TrainingCertificationPlatform.Models.EnrollmentStatus?;
 
     int? selectedCourseId = ViewBag.SelectedCourseId as int?;
     var selectedBalanceStatuses = ViewBag.SelectedBalanceStatuses as List<string> ?? new List<string>();
@@ -134,7 +135,32 @@
                         </td>
 
                         <td>
-                            @(payment.Enrollment.Balance != null ? payment.Enrollment.Balance.Status : "No balance")
+                            @if (payment.Enrollment.Balance == null)
+                            {
+                                <span class="badge bg-secondary">No Balance</span>
+                            }
+                            else if (payment.Enrollment.Status == enrollmentDroppedStatus)
+                            {
+                                <span class="badge bg-danger">
+                                    Dropped
+                                </span>
+                            }
+                            else
+                            {
+                                if (@payment.Enrollment.Balance.Status.ToString() == "OVERDUE")
+                                {
+                                     <span class="badge bg-danger">
+                                        @payment.Enrollment.Balance.Status
+                                        </span>
+                                }
+                                else
+                                {
+									<span class="badge bg-info">
+										@payment.Enrollment.Balance.Status
+									</span>
+                                }
+                                
+                            }
                         </td>
                     </tr>
                 }

@@ -51,7 +51,7 @@ namespace MVC_Application.Controllers
 
             var model = new TraineeDashboardViewModel
             {
-                CoursesEnrolled = await _context.Enrollments.CountAsync(e => e.TraineeId == traineeId),
+                CoursesEnrolled = await _context.Enrollments.CountAsync(e => e.TraineeId == traineeId && e.Status != EnrollmentStatus.DROPPED && e.Status != EnrollmentStatus.COMPLETED),
                 CoursesCompleted = await _context.Enrollments.CountAsync(e => e.TraineeId == traineeId && e.Status == EnrollmentStatus.COMPLETED),
                 ActivitiesCompleted = await _context.Assessments.CountAsync(a => a.Enrollment.TraineeId == traineeId && a.Status == AssessmentStatus.PASS),
                 ActivitiesDue = await _context.Assessments.CountAsync(a => a.Enrollment.TraineeId == traineeId && a.Status == AssessmentStatus.PENDING),
@@ -202,7 +202,7 @@ namespace MVC_Application.Controllers
 
             // Checks if the logged-in trainee is already enrolled in this course.
             ViewBag.IsEnrolled = await _context.Enrollments
-                .AnyAsync(e => e.TraineeId == traineeId && e.Session.CourseId == id);
+                .AnyAsync(e => e.TraineeId == traineeId && e.Session.CourseId == id && e.Status != EnrollmentStatus.DROPPED);
 
             // Gets the next available session for this course.
             ViewBag.NextSession = await _context.Sessions
@@ -214,7 +214,7 @@ namespace MVC_Application.Controllers
 
             // Counts how many trainees are enrolled in this course.
             ViewBag.EnrolledCount = await _context.Enrollments
-                .CountAsync(e => e.Session.CourseId == id);
+                .CountAsync(e => e.Session.CourseId == id && e.Status != EnrollmentStatus.DROPPED && e.Status != EnrollmentStatus.COMPLETED);
 
             return View(course);
         }
@@ -236,7 +236,7 @@ namespace MVC_Application.Controllers
             }
 
             var alreadyEnrolled = await _context.Enrollments
-                .AnyAsync(e => e.TraineeId == traineeId && e.Session.CourseId == courseId);
+                .AnyAsync(e => e.TraineeId == traineeId && e.Session.CourseId == courseId && e.Status != EnrollmentStatus.DROPPED);
 
             if (alreadyEnrolled)
             {
@@ -248,7 +248,7 @@ namespace MVC_Application.Controllers
             var currentEnrollments = await _context.Enrollments
                 .Where(e =>
                     e.SessionId == session.Id &&
-                    e.Status != EnrollmentStatus.DROPPED)
+                    e.Status != EnrollmentStatus.DROPPED && e.Status != EnrollmentStatus.COMPLETED)
                 .CountAsync();
 
             if (currentEnrollments >= session.Course.Capacity)
@@ -266,7 +266,7 @@ namespace MVC_Application.Controllers
                 .Include(e => e.Session)
                 .AnyAsync(e =>
                     e.TraineeId == traineeId &&
-                    e.Status != EnrollmentStatus.DROPPED &&
+                    e.Status != EnrollmentStatus.DROPPED && e.Status != EnrollmentStatus.COMPLETED &&
                     e.Session.SessionDate.Date == session.SessionDate.Date &&
 
                     session.StartTime < e.Session.EndTime &&
@@ -330,7 +330,7 @@ namespace MVC_Application.Controllers
             // Notify real-time enrollment count updates
             //1) Get the current enrolled count for the session (excluding dropped)
             var enrolledCount = await _context.Enrollments
-               .Where(e => e.Status != EnrollmentStatus.DROPPED)
+               .Where(e => e.Status != EnrollmentStatus.DROPPED && e.Status != EnrollmentStatus.COMPLETED)
                       .CountAsync(e => e.SessionId == session.Id);
 
             //2) Get the course capacity and calculate remaining seats
@@ -409,7 +409,7 @@ namespace MVC_Application.Controllers
             // Notify real-time enrollment count updates
             //1) Get the current enrolled count for the session (excluding dropped)
             var enrolledCount = await _context.Enrollments
-                .Where(e => e.Status != EnrollmentStatus.DROPPED)
+                .Where(e => e.Status != EnrollmentStatus.DROPPED && e.Status != EnrollmentStatus.COMPLETED)
                        .CountAsync(e => e.SessionId == session.Id);
 
             //2) Get the course capacity and calculate remaining seats

@@ -50,6 +50,8 @@ namespace MVC_Application.Controllers
                 .Cast<BalanceStatus>()
                 .ToList();
 
+            ViewBag.EnrollmentDroppedStatus = EnrollmentStatus.DROPPED;
+
             // Build the query to get payments with related data
             var paymentsQuery = _context.Payments
                 .Include(p => p.Enrollment)
