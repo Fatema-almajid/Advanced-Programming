@@ -487,7 +487,7 @@ namespace reportingApplication.Controllers
         private List<RevenueReport> BuildRevenueReport(JsonElement payments)
         {
             var result = new List<RevenueReport>();
-            
+
             try
             {
                 decimal totalRevenue = 0;
@@ -500,13 +500,31 @@ namespace reportingApplication.Controllers
                     {
                         totalRevenue += amount.GetDecimal();
                     }
-                    
+
                     if (payment.TryGetProperty("status", out var status))
                     {
-                        string statusStr = status.GetString() ?? "";
-                        if (statusStr.ToLower().Contains("completed") || statusStr.ToLower().Contains("paid"))
+                        string statusStr = "";
+
+                        // Check if the status is arriving as a number enum or a string literal
+                        if (status.ValueKind == JsonValueKind.Number)
+                        {
+                            int statusInt = status.GetInt32();
+
+
+                            if (statusInt == 1) // e.g., 1 = Paid / Completed
+                                statusStr = "completed";
+                            else if (statusInt == 0) // e.g., 0 = Pending
+                                statusStr = "pending";
+                        }
+                        else if (status.ValueKind == JsonValueKind.String)
+                        {
+                            statusStr = status.GetString()?.ToLower() ?? "";
+                        }
+
+                        // Perform the string evaluations safely
+                        if (statusStr.Contains("completed") || statusStr.Contains("paid"))
                             completedPayments++;
-                        else if (statusStr.ToLower().Contains("pending"))
+                        else if (statusStr.Contains("pending"))
                             pendingPayments++;
                     }
                 }
