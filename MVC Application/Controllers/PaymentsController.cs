@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
-using TrainingCertificationPlatform.Services;
 using MVC_Application.Services;
 
 namespace MVC_Application.Controllers

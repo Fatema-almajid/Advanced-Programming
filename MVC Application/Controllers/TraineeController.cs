@@ -12,7 +12,6 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
-using TrainingCertificationPlatform.Services;
 using static System.Collections.Specialized.BitVector32;
 using QRCoder;
 
@@ -829,7 +828,7 @@ namespace MVC_Application.Controllers
             var course = await _context.Courses
                 .FirstOrDefaultAsync(c => c.Id == model.CourseId);
             //message content
-            var message = $"You received a new feedback for course {course.Title}.";
+            var message = course?.Title != null ? $"You received a new feedback for course {course.Title}." : "You received a new feedback for a course.";
 
             //create notification for the instructor
             await _notificationService.CreateNotificationAsync(model.InstructorId, message);

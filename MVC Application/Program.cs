@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using MVC_Application.Hubs;
 using MVC_Application.Services;
 using TrainingCertificationPlatform;
-using TrainingCertificationPlatform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +27,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 
 // Register application services
-builder.Services.AddScoped<TrainingCertificationPlatform.Services.SessionSchedulingService>();
-builder.Services.AddScoped<TrainingCertificationPlatform.Services.PaymentTrackingService>();
+builder.Services.AddScoped<SessionSchedulingService>();
+builder.Services.AddScoped<PaymentTrackingService>();
 builder.Services.AddScoped<NotificationService>();
 
 var app = builder.Build();

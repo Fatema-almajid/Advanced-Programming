@@ -6,7 +6,6 @@ using MVC_Application.Models.ViewModels;
 using MVC_Application.Services;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
-using TrainingCertificationPlatform.Services;
 
 namespace MVC_Application.Controllers
 {

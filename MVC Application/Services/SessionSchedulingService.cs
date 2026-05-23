@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
+using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 
-namespace TrainingCertificationPlatform.Services
+namespace MVC_Application.Services
 {
     public class SessionSchedulingService
     {

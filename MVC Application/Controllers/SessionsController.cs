@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using MVC_Application.Models.ViewModels;
 using MVC_Application.Services;
 using TrainingCertificationPlatform;
-using TrainingCertificationPlatform.Services;
 using TrainingCertificationPlatform.Models;
 //using Microsoft.AspNetCore.Authorization;
 

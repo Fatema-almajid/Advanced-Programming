@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
 
-namespace TrainingCertificationPlatform.Services
+namespace MVC_Application.Services
 {
     public class PaymentTrackingService
     {
