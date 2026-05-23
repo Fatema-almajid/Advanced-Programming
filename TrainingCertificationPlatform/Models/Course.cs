@@ -27,6 +27,6 @@ namespace TrainingCertificationPlatform.Models
 
         public List<Track> Tracks { get; set; } = new();
         public List<InstructorExpertise> InstructorExpertises { get; set; } = new();
-
+        public ICollection<Feedback>? Feedbacks { get; set; }
     }
 }

@@ -1,0 +1,176 @@
+﻿@model MVC_Application.Models.ViewModels.FeedbackViewModel
+
+@{
+    ViewData["Title"] = "Course Feedback";
+}
+
+<partial name="_TraineeNav" />
+
+<div class="container py-5">
+
+    <div class="card shadow-lg border-0 rounded-4">
+
+        <div class="card-header bg-primary text-white p-4 rounded-top-4">
+
+            <h2 class="mb-0">
+                <i class="bi bi-star-fill"></i>
+                Course Feedback
+            </h2>
+
+            <p class="mb-0 mt-2">
+                Help us improve the learning experience
+            </p>
+
+        </div>
+
+        <div class="card-body p-5">
+
+            <form asp-action="SubmitFeedback" method="post">
+
+                <input type="hidden" asp-for="CourseId" />
+                <input type="hidden" asp-for="InstructorId" />
+
+                <!-- Overall Rating -->
+
+                <div class="mb-4">
+
+                    <label class="fw-bold mb-2">
+                        Overall Rating
+                    </label>
+
+                    <select asp-for="Rating" class="form-select">
+
+                        <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                        <option value="4">⭐⭐⭐⭐ Very Good</option>
+                        <option value="3">⭐⭐⭐ Good</option>
+                        <option value="2">⭐⭐ Fair</option>
+                        <option value="1">⭐ Poor</option>
+
+                    </select>
+
+                </div>
+
+                <!-- Content Rating -->
+
+                <div class="mb-4">
+
+                    <label class="fw-bold mb-2">
+                        Course Content Quality
+                    </label>
+
+                    <select asp-for="ContentRating" class="form-select">
+
+                        <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                        <option value="4">⭐⭐⭐⭐ Very Good</option>
+                        <option value="3">⭐⭐⭐ Good</option>
+                        <option value="2">⭐⭐ Fair</option>
+                        <option value="1">⭐ Poor</option>
+
+                    </select>
+
+                </div>
+
+                <!-- Instructor Rating -->
+
+                <div class="mb-4">
+
+                    <label class="fw-bold mb-2">
+                        Instructor Performance
+                    </label>
+
+                    <select asp-for="InstructorRating" class="form-select">
+
+                        <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                        <option value="4">⭐⭐⭐⭐ Very Good</option>
+                        <option value="3">⭐⭐⭐ Good</option>
+                        <option value="2">⭐⭐ Fair</option>
+                        <option value="1">⭐ Poor</option>
+
+                    </select>
+
+                </div>
+
+                <!-- Organization Rating -->
+
+                <div class="mb-4">
+
+                    <label class="fw-bold mb-2">
+                        Course Organization
+                    </label>
+
+                    <select asp-for="OrganizationRating" class="form-select">
+
+                        <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                        <option value="4">⭐⭐⭐⭐ Very Good</option>
+                        <option value="3">⭐⭐⭐ Good</option>
+                        <option value="2">⭐⭐ Fair</option>
+                        <option value="1">⭐ Poor</option>
+
+                    </select>
+
+                </div>
+
+                <!-- Recommend -->
+
+                <div class="mb-4">
+
+                    <label class="fw-bold mb-3">
+                        Would you recommend this course?
+                    </label>
+
+                    <div class="form-check">
+
+                        <input class="form-check-input"
+                               type="radio"
+                               asp-for="RecommendCourse"
+                               value="true" />
+
+                        <label class="form-check-label">
+                            Yes 👍
+                        </label>
+
+                    </div>
+
+                    <div class="form-check">
+
+                        <input class="form-check-input"
+                               type="radio"
+                               asp-for="RecommendCourse"
+                               value="false" />
+
+                        <label class="form-check-label">
+                            No 👎
+                        </label>
+
+                    </div>
+
+                </div>
+
+                <!-- Comment -->
+
+                <div class="mb-4">
+
+                    <label class="fw-bold mb-2">
+                        Additional Comments
+                    </label>
+
+                    <textarea asp-for="Comment"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Share your experience..."></textarea>
+
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary btn-lg w-100">
+
+                    <i class="bi bi-send-fill"></i>
+                    Submit Feedback
+
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+</div>

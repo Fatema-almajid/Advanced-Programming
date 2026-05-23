@@ -755,5 +755,61 @@ namespace MVC_Application.Controllers
                 "application/pdf",
                 "certificate.pdf");
         }
+
+        public async Task<IActionResult> SubmitFeedback(int courseId)
+        {
+            var traineeId = GetTraineeId();
+
+            var enrollment = await _context.Enrollments
+                .Include(e => e.Session)
+                .FirstOrDefaultAsync(e =>
+                    e.TraineeId == traineeId &&
+                    e.Session.CourseId == courseId &&
+                    e.Status == EnrollmentStatus.COMPLETED);
+
+            if (enrollment == null)
+            {
+                return RedirectToAction(nameof(MyCourses));
+            }
+
+            var model = new FeedbackViewModel
+            {
+                CourseId = courseId,
+                InstructorId = enrollment.Session.InstructorId
+            };
+
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitFeedback(FeedbackViewModel model)
+        {
+            var traineeId = GetTraineeId();
+
+            var feedback = new Feedback
+            {
+                TraineeId = traineeId,
+                InstructorId = model.InstructorId,
+                CourseId = model.CourseId,
+
+                Rating = model.Rating,
+                ContentRating = model.ContentRating,
+                InstructorRating = model.InstructorRating,
+                OrganizationRating = model.OrganizationRating,
+
+                RecommendCourse = model.RecommendCourse,
+
+                Comment = model.Comment
+            };
+
+            _context.Feedbacks.Add(feedback);
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] =
+                "Feedback submitted successfully.";
+
+            return RedirectToAction(nameof(MyCourses));
+        }
     }
 }

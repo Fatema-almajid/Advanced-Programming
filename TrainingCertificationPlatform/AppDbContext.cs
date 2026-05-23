@@ -15,7 +15,7 @@ namespace TrainingCertificationPlatform
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Balance> Balances { get; set; }
-
+        public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<InstructorAvailability> InstructorAvailabilities { get; set; }
         public DbSet<TraineeCertification> TraineeCertifications { get; set; }
@@ -86,6 +86,24 @@ namespace TrainingCertificationPlatform
             modelBuilder.Entity<Balance>()
                 .Property(b => b.AmountDue)
                 .HasPrecision(10, 2);
+
+            modelBuilder.Entity<Feedback>()
+                .HasOne(f => f.Trainee)
+                .WithMany(u => u.GivenFeedbacks)
+                .HasForeignKey(f => f.TraineeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Feedback>()
+                .HasOne(f => f.Instructor)
+                .WithMany(u => u.ReceivedFeedbacks)
+                .HasForeignKey(f => f.InstructorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Feedback>()
+                .HasOne(f => f.Course)
+                .WithMany(c => c.Feedbacks)
+                .HasForeignKey(f => f.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // SEED DATA
 

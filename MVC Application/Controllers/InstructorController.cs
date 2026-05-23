@@ -356,5 +356,46 @@ namespace MVC_Application.Controllers
 
             return View(notifications);
         }
+        public async Task<IActionResult> MyFeedbacks()
+        {
+            var instructorId =
+                int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var feedbacks = await _context.Feedbacks
+
+                .Include(f => f.Course)
+                .Include(f => f.Trainee)
+
+                .Where(f => f.InstructorId == instructorId)
+
+                .OrderByDescending(f => f.SubmittedAt)
+
+                .Select(f => new InstructorFeedbackViewModel
+                {
+                    CourseTitle = f.Course.Title,
+
+                    TraineeName =
+                        f.Trainee.FirstName + " " +
+                        f.Trainee.LastName,
+
+                    Rating = f.Rating,
+
+                    ContentRating = f.ContentRating,
+
+                    InstructorRating = f.InstructorRating,
+
+                    OrganizationRating = f.OrganizationRating,
+
+                    RecommendCourse = f.RecommendCourse,
+
+                    Comment = f.Comment,
+
+                    CreatedAt = f.SubmittedAt
+                })
+
+                .ToListAsync();
+
+            return View(feedbacks);
+        }
     }
 }

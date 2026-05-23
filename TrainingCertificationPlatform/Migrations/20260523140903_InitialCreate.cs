@@ -147,6 +147,46 @@ namespace TrainingCertificationPlatform.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Feedbacks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TraineeId = table.Column<int>(type: "int", nullable: false),
+                    InstructorId = table.Column<int>(type: "int", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    SubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ContentRating = table.Column<int>(type: "int", nullable: false),
+                    InstructorRating = table.Column<int>(type: "int", nullable: false),
+                    OrganizationRating = table.Column<int>(type: "int", nullable: false),
+                    RecommendCourse = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Users_InstructorId",
+                        column: x => x.InstructorId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Users_TraineeId",
+                        column: x => x.TraineeId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "InstructorAvailabilities",
                 columns: table => new
                 {
@@ -658,6 +698,21 @@ namespace TrainingCertificationPlatform.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_CourseId",
+                table: "Feedbacks",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_InstructorId",
+                table: "Feedbacks",
+                column: "InstructorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_TraineeId",
+                table: "Feedbacks",
+                column: "TraineeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InstructorAvailabilities_InstructorId",
                 table: "InstructorAvailabilities",
                 column: "InstructorId");
@@ -717,6 +772,9 @@ namespace TrainingCertificationPlatform.Migrations
 
             migrationBuilder.DropTable(
                 name: "CourseTrack");
+
+            migrationBuilder.DropTable(
+                name: "Feedbacks");
 
             migrationBuilder.DropTable(
                 name: "InstructorAvailabilities");

@@ -35,8 +35,10 @@ else
         {
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm h-100
-            @(course.Status == "DROPPED" ? "border-danger opacity-75" : "")">
+                    @(course.Status == "DROPPED" ? "border-danger opacity-75" : "")">
+
                     <div class="card-body d-flex flex-column">
+
                         <span class="course-category">
                             @course.Category
                         </span>
@@ -100,6 +102,18 @@ else
                                    class="btn btn-outline-primary w-100 mb-2">
 
                                     View Course
+                                </a>
+                            }
+
+                            @* FEEDBACK BUTTON *@
+                            @if (course.Status == "COMPLETED")
+                            {
+                                <a asp-action="SubmitFeedback"
+                                   asp-route-courseId="@course.CourseId"
+                                   class="btn btn-warning w-100 mb-2">
+
+                                    <i class="bi bi-star-fill"></i>
+                                    Give Feedback
                                 </a>
                             }
 

@@ -23,5 +23,7 @@ namespace TrainingCertificationPlatform.Models
         public List<InstructorExpertise> InstructorExpertises { get; set; } = new();
         public List<Enrollment> Enrollments { get; set; } = new();
         public List<Notification> Notifications { get; set; } = new();
+        public ICollection<Feedback>? GivenFeedbacks { get; set; }
+        public ICollection<Feedback>? ReceivedFeedbacks { get; set; }
     }
 }

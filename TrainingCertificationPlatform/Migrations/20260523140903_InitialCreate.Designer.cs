@@ -12,7 +12,7 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260520214545_InitialCreate")]
+    [Migration("20260523140903_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -517,6 +517,56 @@ namespace TrainingCertificationPlatform.Migrations
                             Id = 4,
                             Name = "Networking Kit"
                         });
+                });
+
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.Feedback", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ContentRating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InstructorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InstructorRating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrganizationRating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("RecommendCourse")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TraineeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("InstructorId");
+
+                    b.HasIndex("TraineeId");
+
+                    b.ToTable("Feedbacks");
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.InstructorAvailability", b =>
@@ -1122,6 +1172,33 @@ namespace TrainingCertificationPlatform.Migrations
                     b.Navigation("Trainee");
                 });
 
+            modelBuilder.Entity("TrainingCertificationPlatform.Models.Feedback", b =>
+                {
+                    b.HasOne("TrainingCertificationPlatform.Models.Course", "Course")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrainingCertificationPlatform.Models.User", "Instructor")
+                        .WithMany("ReceivedFeedbacks")
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TrainingCertificationPlatform.Models.User", "Trainee")
+                        .WithMany("GivenFeedbacks")
+                        .HasForeignKey("TraineeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Instructor");
+
+                    b.Navigation("Trainee");
+                });
+
             modelBuilder.Entity("TrainingCertificationPlatform.Models.InstructorAvailability", b =>
                 {
                     b.HasOne("TrainingCertificationPlatform.Models.User", "Instructor")
@@ -1222,6 +1299,8 @@ namespace TrainingCertificationPlatform.Migrations
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.Course", b =>
                 {
+                    b.Navigation("Feedbacks");
+
                     b.Navigation("InstructorExpertises");
                 });
 
@@ -1236,9 +1315,13 @@ namespace TrainingCertificationPlatform.Migrations
                 {
                     b.Navigation("Enrollments");
 
+                    b.Navigation("GivenFeedbacks");
+
                     b.Navigation("InstructorExpertises");
 
                     b.Navigation("Notifications");
+
+                    b.Navigation("ReceivedFeedbacks");
                 });
 #pragma warning restore 612, 618
         }
