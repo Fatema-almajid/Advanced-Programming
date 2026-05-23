@@ -62,8 +62,21 @@
                             : "No due date")
                         </td>
                         <td>
-                            @(enrollment.Balance != null ? enrollment.Balance.Status
-                           : "No balance")
+                            @if (enrollment.Balance == null)
+                            {
+                                <span class="badge bg-secondary">No Balance</span>
+                            }
+                            else if (enrollment.Status == EnrollmentStatus.DROPPED)
+                            {
+                                <span class="badge bg-secondary">
+                                    Dropped
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@enrollment.Balance.Status</span>
+                            }
+      
                         </td>
                         <td>
                             @if (enrollment.Balance == null)

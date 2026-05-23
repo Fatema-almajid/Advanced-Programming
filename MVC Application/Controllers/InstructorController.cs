@@ -282,7 +282,7 @@ namespace MVC_Application.Controllers
         public async Task<IActionResult> MarkAttendance(int enrollmentId)
         {
             var enrollment = await _context.Enrollments
-                .FirstOrDefaultAsync(e => e.Id == enrollmentId);
+                .FirstOrDefaultAsync(e => e.Id == enrollmentId && e.Status != EnrollmentStatus.DROPPED && e.Status != EnrollmentStatus.COMPLETED);
 
             if (enrollment == null)
                 return NotFound();
