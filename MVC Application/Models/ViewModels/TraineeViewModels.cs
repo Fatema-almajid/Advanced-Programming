@@ -18,6 +18,8 @@
         public string Category { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
+        public bool HasFeedback { get; set; } = false;
+        public int  DroppedCount { get; set; }
         public DateTime SessionDate { get; set; }
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }

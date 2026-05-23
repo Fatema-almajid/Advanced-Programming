@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "My Courses";
+
+    var chances = 3; // default chances
 }
 
 <partial name="_TraineeNav" />
@@ -33,6 +35,8 @@ else
     <div class="row">
         @foreach (var course in Model)
         {
+           var remainingChances = chances - course.DroppedCount;
+
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm h-100
                     @(course.Status == "DROPPED" ? "border-danger opacity-75" : "")">
@@ -108,19 +112,33 @@ else
                             @* FEEDBACK BUTTON *@
                             @if (course.Status == "COMPLETED")
                             {
-                                <a asp-action="SubmitFeedback"
+                                @* if user has already given feedback for this course, disable the button and show "Feedback Submitted" instead of "Give Feedback" *@
+                                if (course.HasFeedback)
+                                {
+                                    <button class="btn btn-success w-100 mb-2" disabled>
+                                        <i class="bi bi-check-lg"></i>
+                                        Feedback Submitted
+                                    </button>
+                                }
+                                else
+                                {
+                                    <a asp-action="SubmitFeedback"
                                    asp-route-courseId="@course.CourseId"
                                    class="btn btn-warning w-100 mb-2">
 
                                     <i class="bi bi-star-fill"></i>
                                     Give Feedback
-                                </a>
+                                    </a>
+                                }
+                                
                             }
 
                             @if (course.Status != "DROPPED"
                                                 && course.Status != "COMPLETED")
                             {
                                 <form asp-action="DropCourse"
+                                class="drop-course-form"
+                                data-remaining-chances="@remainingChances"
                                       method="post">
 
                                     <input type="hidden"
@@ -143,4 +161,23 @@ else
             </div>
         }
     </div>
+}
+
+@section Scripts {
+    <script>
+        // Double check before dropping a course
+        document.querySelectorAll(".drop-course-form").forEach(function (form) {
+                form.addEventListener("submit", function (e) {
+                    const remainingChances = form.dataset.remainingChances;
+
+                    const confirmed = confirm(
+                        "Are you sure you want to drop this course? Remaining chances: " + remainingChances
+                    );
+
+                    if (!confirmed) {
+                        e.preventDefault();
+                    }
+                });
+            });
+    </script>
 }

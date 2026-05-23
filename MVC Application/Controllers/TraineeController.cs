@@ -118,6 +118,7 @@ namespace MVC_Application.Controllers
                 })
                 .ToList();
 
+                
             // Converts enrollment data into a simpler ViewModel for the view.
             var courses = await query
                 .OrderBy(e => e.Session.Course.Title)
@@ -129,11 +130,14 @@ namespace MVC_Application.Controllers
                     Category = e.Session.Course.Category.ToString(),
                     Description = e.Session.Course.Description,
                     Status = e.Status.ToString(),
+                    HasFeedback = _context.Feedbacks.Any(f => f.TraineeId == traineeId && f.CourseId == e.Session.Course.Id),
+                    DroppedCount = _context.Enrollments.Count(en => en.TraineeId == traineeId && en.Session.CourseId == e.Session.Course.Id && en.Status == EnrollmentStatus.DROPPED),
                     SessionDate = e.Session.SessionDate,
                     StartTime = e.Session.StartTime,
                     EndTime = e.Session.EndTime
                 })
                 .ToListAsync();
+
 
             return View(courses);
         }
@@ -202,7 +206,7 @@ namespace MVC_Application.Controllers
 
             // Checks if the logged-in trainee is already enrolled in this course.
             ViewBag.IsEnrolled = await _context.Enrollments
-                .AnyAsync(e => e.TraineeId == traineeId && e.Session.CourseId == id && e.Status != EnrollmentStatus.DROPPED);
+                .AnyAsync(e => e.TraineeId == traineeId && e.Session.CourseId == id && e.Status != EnrollmentStatus.DROPPED && e.Status != EnrollmentStatus.COMPLETED);
 
             // Gets the next available session for this course.
             ViewBag.NextSession = await _context.Sessions
@@ -215,6 +219,16 @@ namespace MVC_Application.Controllers
             // Counts how many trainees are enrolled in this course.
             ViewBag.EnrolledCount = await _context.Enrollments
                 .CountAsync(e => e.Session.CourseId == id && e.Status != EnrollmentStatus.DROPPED && e.Status != EnrollmentStatus.COMPLETED);
+
+            var droppedEnrollmentCount = await _context.Enrollments
+           .CountAsync(e => e.TraineeId == traineeId && e.Session.CourseId == course.Id && e.Status == EnrollmentStatus.DROPPED);
+
+            ViewBag.DroppedEnrollmentCount = droppedEnrollmentCount;
+
+            var isCompleted = await _context.Enrollments
+                .AnyAsync(e => e.TraineeId == traineeId && e.Session.CourseId == id && e.Status == EnrollmentStatus.COMPLETED);
+            ViewBag.IsCompleted = isCompleted;
+
 
             return View(course);
         }
@@ -808,6 +822,17 @@ namespace MVC_Application.Controllers
 
             TempData["SuccessMessage"] =
                 "Feedback submitted successfully.";
+
+            //Notify Instructor
+
+            //course title
+            var course = await _context.Courses
+                .FirstOrDefaultAsync(c => c.Id == model.CourseId);
+            //message content
+            var message = $"You received a new feedback for course {course.Title}.";
+
+            //create notification for the instructor
+            await _notificationService.CreateNotificationAsync(model.InstructorId, message);
 
             return RedirectToAction(nameof(MyCourses));
         }
