@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace reportingApplication.Controllers
 {
-    [Authorize(Roles = "TRAINING_COORDINATOR,INSTRUCTOR")]
+    [Authorize(Roles = "TRAINING_COORDINATOR")]
     public class ReportingController : Controller
     {
         private readonly HttpClient _httpClient;
@@ -85,7 +85,7 @@ namespace reportingApplication.Controllers
 <html>
 <head>
     <meta charset='utf-8'>
-    <title>Operational Reports</title>
+    <title>Training & Certification Report</title>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'></script>
     <style>
         * {
@@ -231,7 +231,7 @@ namespace reportingApplication.Controllers
 <body>
     <div class='container' id='pdfContent'>
         <div class='header'>
-            <h1>Operational Reports</h1>
+            <h1>Training & Certification Report</h1>
             <p class='generated-date'>Generated on " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + @"</p>
         </div>";
 
@@ -331,6 +331,27 @@ namespace reportingApplication.Controllers
         </div>";
             }
 
+            if (reports.RevenueReport.Any())
+            {
+                var rev = reports.RevenueReport.First();
+                html += @"
+    <h2>Revenue Summary</h2>
+    <div class='metrics-row'>
+        <div class='metric-card'>
+            <div class='metric-label'>Total Revenue</div>
+            <div class='metric-value'>BD " + rev.TotalRevenue.ToString("N2") + @"</div>
+        </div>
+        <div class='metric-card'>
+            <div class='metric-label'>Completed Payments</div>
+            <div class='metric-value'>" + rev.CompletedPayments + @"</div>
+        </div>
+        <div class='metric-card'>
+            <div class='metric-label'>Pending Payments</div>
+            <div class='metric-value'>" + rev.PendingPayments + @"</div>
+        </div>
+    </div>";
+            }
+
             html += @"
         <div class='button-group'>
             <button class='btn-pdf' onclick='downloadPDF()'>Download as PDF</button>
@@ -343,7 +364,7 @@ namespace reportingApplication.Controllers
             const element = document.getElementById('pdfContent');
             const opt = {
                 margin: 10,
-                filename: 'Operational_Report_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + @".pdf',
+                filename: 'Training_Certification_Report_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + @".pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2 },
                 jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
@@ -553,23 +574,39 @@ namespace reportingApplication.Controllers
         private List<SessionMetricsReport> BuildSessionMetrics(JsonElement sessions)
         {
             var result = new List<SessionMetricsReport>();
-            
             try
             {
-                int activeSessions = sessions.EnumerateArray().Count();
+                var sessionList = sessions.EnumerateArray().ToList();
+                int totalSessions = sessionList.Count;
+
+                // Count total trainees across all sessions
+                int totalEnrollments = 0;
+                foreach (var session in sessionList)
+                {
+                    if (session.TryGetProperty("trainees", out var trainees))
+                        totalEnrollments += trainees.GetArrayLength();
+                    else if (session.TryGetProperty("enrolledCount", out var count))
+                        totalEnrollments += count.GetInt32();
+                }
+
+                // If API doesn't return trainee counts, fall back to session count
+                if (totalEnrollments == 0) totalEnrollments = totalSessions;
+
+                double avg = totalSessions > 0
+                    ? Math.Round((double)totalEnrollments / totalSessions, 1)
+                    : 0;
 
                 result.Add(new SessionMetricsReport
                 {
-                    TotalSessions = activeSessions,
-                    TotalEnrollments = activeSessions,
-                    AverageEnrollmentsPerSession = 1
+                    TotalSessions = totalSessions,
+                    TotalEnrollments = totalEnrollments,
+                    AverageEnrollmentsPerSession = avg
                 });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error building session metrics report");
             }
-
             return result;
         }
     }
@@ -615,6 +652,6 @@ namespace reportingApplication.Controllers
     {
         public int TotalSessions { get; set; }
         public int TotalEnrollments { get; set; }
-        public int AverageEnrollmentsPerSession { get; set; }
+        public double AverageEnrollmentsPerSession { get; set; }
     }
 }
