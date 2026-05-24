@@ -13,7 +13,7 @@ namespace TrainingCertificationPlatform.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : Controller
+    public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _config;
