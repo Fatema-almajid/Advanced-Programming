@@ -5,11 +5,11 @@ using MVC_Application.Models.ViewModels;
 using MVC_Application.Services;
 using TrainingCertificationPlatform;
 using TrainingCertificationPlatform.Models;
-//using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVC_Application.Controllers
 {
-   // [Authorize(Roles = "TRAINING_COORDINATOR")]
+   [Authorize(Roles = "TRAINING_COORDINATOR")]
     public class SessionsController : Controller
     {
         private readonly AppDbContext _context;
