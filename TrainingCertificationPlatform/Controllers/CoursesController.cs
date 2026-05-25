@@ -38,5 +38,28 @@ namespace TrainingCertificationPlatform.Controllers
 
             return course;
         }
+        // PUT: api/Courses/5
+        [HttpPut("{id}")]
+        [Authorize(Roles = "TRAINING_COORDINATOR")]
+        public async Task<IActionResult> UpdateCourse(int id, [FromBody] Course course)
+        {
+            if (id != course.Id)
+                return BadRequest("Course ID mismatch.");
+
+            _context.Entry(course).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.Courses.AnyAsync(c => c.Id == id))
+                    return NotFound();
+                throw;
+            }
+
+            return NoContent();
+        }
     }
 }

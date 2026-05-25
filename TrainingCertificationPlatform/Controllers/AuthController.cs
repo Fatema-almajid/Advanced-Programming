@@ -93,5 +93,17 @@ namespace TrainingCertificationPlatform.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        // GET: api/Users/instructors
+        [HttpGet("instructors")]
+        [Authorize(Roles = "INSTRUCTOR,TRAINING_COORDINATOR")]
+        public async Task<IActionResult> GetInstructors()
+        {
+            var instructors = await _context.Users
+                .Where(u => u.Role == UserRole.INSTRUCTOR)
+                .Select(u => new { u.Id, FullName = u.FirstName + " " + u.LastName })
+                .ToListAsync();
+
+            return Ok(instructors);
+        }
     }
 }

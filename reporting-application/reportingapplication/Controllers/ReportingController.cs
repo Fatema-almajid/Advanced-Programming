@@ -32,14 +32,14 @@ namespace reportingApplication.Controllers
                 var sessions = await FetchApiData("/api/Sessions", token);
                 var payments = await FetchApiData("/api/Payments", token);
                 var certifications = await FetchApiData("/api/TraineeCertifications", token);
-                
-                
+                var instructors = await FetchApiData("/api/Users/instructors", token);
+
                 reports.EnrollmentByCourse = BuildEnrollmentByCourse(sessions, courses);
-                reports.InstructorWorkload = BuildInstructorWorkload(sessions);
+                reports.InstructorWorkload = BuildInstructorWorkload(sessions, instructors);
                 reports.CertificationRates = BuildCertificationRates(certifications, sessions);
                 reports.RevenueReport = BuildRevenueReport(payments);
                 reports.SessionMetrics = BuildSessionMetrics(sessions);
-                
+
                 return View(reports);
             }
             catch (Exception ex)
@@ -61,9 +61,10 @@ namespace reportingApplication.Controllers
                 var sessions = await FetchApiData("/api/Sessions", token);
                 var payments = await FetchApiData("/api/Payments", token);
                 var certifications = await FetchApiData("/api/TraineeCertifications", token);
+                var instructors = await FetchApiData("/api/Users/instructors", token);
 
                 reports.EnrollmentByCourse = BuildEnrollmentByCourse(sessions, courses);
-                reports.InstructorWorkload = BuildInstructorWorkload(sessions);
+                reports.InstructorWorkload = BuildInstructorWorkload(sessions, instructors);
                 reports.CertificationRates = BuildCertificationRates(certifications, sessions);
                 reports.RevenueReport = BuildRevenueReport(payments);
                 reports.SessionMetrics = BuildSessionMetrics(sessions);
@@ -291,7 +292,7 @@ namespace reportingApplication.Controllers
         <table>
             <thead>
                 <tr>
-                    <th>Instructor ID</th>
+                    <th>Instructor Name</th>
                     <th>Sessions Assigned</th>
                 </tr>
             </thead>
@@ -300,7 +301,7 @@ namespace reportingApplication.Controllers
                 {
                     html += $@"
                 <tr>
-                    <td>{instructor.InstructorId}</td>
+                    <td>{instructor.InstructorName}</td>
                     <td>{instructor.SessionCount}</td>
                 </tr>";
                 }
@@ -441,31 +442,42 @@ namespace reportingApplication.Controllers
             return result;
         }
 
-        private List<InstructorWorkloadReport> BuildInstructorWorkload(JsonElement sessions)
+        private List<InstructorWorkloadReport> BuildInstructorWorkload(JsonElement sessions, JsonElement instructors)
         {
             var result = new List<InstructorWorkloadReport>();
-            
+
             try
             {
+                var instructorNames = new Dictionary<int, string>();
+                foreach (var instructor in instructors.EnumerateArray())
+                {
+                    if (instructor.TryGetProperty("id", out var id) &&
+                        instructor.TryGetProperty("fullName", out var name))
+                    {
+                        instructorNames[id.GetInt32()] = name.GetString() ?? "Unknown";
+                    }
+                }
+
                 var sessionList = sessions.EnumerateArray().ToList();
                 var instructorSessions = new Dictionary<int, int>();
-                
+
                 foreach (var session in sessionList)
                 {
                     if (session.TryGetProperty("instructorId", out var instructorId))
                     {
-                        int instructorIdValue = instructorId.GetInt32();
-                        if (!instructorSessions.ContainsKey(instructorIdValue))
-                            instructorSessions[instructorIdValue] = 0;
-                        instructorSessions[instructorIdValue]++;
+                        int id = instructorId.GetInt32();
+                        if (!instructorSessions.ContainsKey(id))
+                            instructorSessions[id] = 0;
+                        instructorSessions[id]++;
                     }
                 }
 
                 foreach (var pair in instructorSessions)
                 {
-                    result.Add(new InstructorWorkloadReport 
-                    { 
+                    result.Add(new InstructorWorkloadReport
+                    {
                         InstructorId = pair.Key,
+                        InstructorName = instructorNames.TryGetValue(pair.Key, out var name) ? name : $"Instructor #{pair.Key}",
                         SessionCount = pair.Value,
                         AssignedStudents = 0
                     });
@@ -630,6 +642,7 @@ namespace reportingApplication.Controllers
     public class InstructorWorkloadReport
     {
         public int InstructorId { get; set; }
+        public string InstructorName { get; set; } = "";
         public int SessionCount { get; set; }
         public int AssignedStudents { get; set; }
     }

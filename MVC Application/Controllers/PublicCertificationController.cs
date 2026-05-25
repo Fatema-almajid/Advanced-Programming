@@ -4,14 +4,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Application.Models.ViewModels;
 
-/* 
- * This controller establishes an unauthenticated public portal for real-time third-party certification validation.
- * It serves as an integration gateway between the web application client layer and an isolated internal RESTful microservice API (`CertificationApi`),
- * executing asynchronous out-of-process HTTP communications (`HttpClient`) via parametric query payloads safely decoupled from the core dataset.
- * The endpoint implements transactional boundary defense through automated status-code checks, processes structured API data stream interactions
- * utilizing modern metadata extraction patterns via DOM-based JSON document object models (`JsonDocument`), and binds dynamic, schema-less downstream records
- * to statically-typed domain presentation entities (`CertificationLookupViewModel`) for unified front-end render operations.
- */
+/// Handles public-facing certification verification requests by querying the external training API.
 
 namespace MVC_Application.Controllers
 {

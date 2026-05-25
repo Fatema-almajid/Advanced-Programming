@@ -216,7 +216,7 @@
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Instructor ID</th>
+                                        <th>Instructor Name</th>
                                         <th class="text-center">Sessions</th>
                                     </tr>
                                 </thead>
@@ -224,7 +224,7 @@
                                     @foreach (var inst in Model.InstructorWorkload.OrderByDescending(x => x.SessionCount))
                                     {
                                         <tr>
-                                            <td>#@inst.InstructorId</td>
+                                            <td>@inst.InstructorName</td>
                                             <td class="text-center">@inst.SessionCount</td>
                                         </tr>
                                     }
@@ -278,8 +278,8 @@
                 new Chart(instrCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: [@Html.Raw(string.Join(",", Model.InstructorWorkload.Select(i => $"'Instructor #{i.InstructorId}'")))],
-                        datasets: [{
+        labels: [@Html.Raw(string.Join(",", Model.InstructorWorkload.Select(i => $"'{i.InstructorName}'")))],
+                                datasets: [{
                             data: [@string.Join(",", Model.InstructorWorkload.Select(i => i.SessionCount))],
                             backgroundColor: colors.slice(0, @Model.InstructorWorkload.Count),
                             borderWidth: 2

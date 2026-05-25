@@ -38,5 +38,18 @@ namespace TrainingCertificationPlatform.Controllers
 
             return session;
         }
+        // POST: api/Sessions
+        [HttpPost]
+        [Authorize(Roles = "TRAINING_COORDINATOR")]
+        public async Task<ActionResult<Session>> CreateSession([FromBody] Session session)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _context.Sessions.Add(session);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetSession), new { id = session.Id }, session);
+        }
     }
 }
