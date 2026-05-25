@@ -201,10 +201,9 @@ namespace MVC_Application.Controllers
             instructor.Email = model.Email.Trim();
             instructor.Phone = model.Phone.Trim();
             instructor.RegistrationDate = model.RegistrationDate;
-
             if (!string.IsNullOrWhiteSpace(model.Password))
             {
-                instructor.Password = model.Password;
+                instructor.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
             }
 
             var availability = await _context.InstructorAvailabilities

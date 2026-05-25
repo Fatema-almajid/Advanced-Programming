@@ -32,7 +32,7 @@ namespace reportingApplication.Controllers
                 var sessions = await FetchApiData("/api/Sessions", token);
                 var payments = await FetchApiData("/api/Payments", token);
                 var certifications = await FetchApiData("/api/TraineeCertifications", token);
-                var instructors = await FetchApiData("/api/Users/instructors", token);
+                var instructors = await FetchApiData("/api/Auth/instructors", token);
 
                 reports.EnrollmentByCourse = BuildEnrollmentByCourse(sessions, courses);
                 reports.InstructorWorkload = BuildInstructorWorkload(sessions, instructors);
@@ -61,7 +61,7 @@ namespace reportingApplication.Controllers
                 var sessions = await FetchApiData("/api/Sessions", token);
                 var payments = await FetchApiData("/api/Payments", token);
                 var certifications = await FetchApiData("/api/TraineeCertifications", token);
-                var instructors = await FetchApiData("/api/Users/instructors", token);
+                var instructors = await FetchApiData("/api/Auth/instructors", token);
 
                 reports.EnrollmentByCourse = BuildEnrollmentByCourse(sessions, courses);
                 reports.InstructorWorkload = BuildInstructorWorkload(sessions, instructors);
