@@ -95,7 +95,7 @@ namespace MVC_Application.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "TRAINING_COORDINATOR, TRAINEE")]
+        [Authorize(Roles = "TRAINING_COORDINATOR,TRAINEE")]
         public async Task<IActionResult> Create(int? courseId, int? enrollmentId, string? returnUrl)
         {
             // Get the current user's ID and role from claims
@@ -161,7 +161,7 @@ namespace MVC_Application.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "TRAINING_COORDINATOR, TRAINEE")]
+        [Authorize(Roles = "TRAINING_COORDINATOR,TRAINEE")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int courseId, int enrollmentId, decimal amount, string? returnUrl)
         {
