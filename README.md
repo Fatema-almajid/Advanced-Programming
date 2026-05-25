@@ -46,18 +46,15 @@ Build and run the solution.
 
 ## 🎓 Trainee
 - 📧 Email: `ali@mail.com`  
-  🔑 Password: `123456`
-
-- 📧 Email: `omar@mail.com`  
-  🔑 Password: `123456`
+  🔑 Password: `Poly_123`
 
 ## 👩‍🏫 Instructor
 - 📧 Email: `sara@mail.com`  
-  🔑 Password: `123456`
+  🔑 Password: `Poly_123`
 
 ## 🗂️ Training Coordinator
 - 📧 Email: `dana@mail.com`  
-  🔑 Password: `123456`
+  🔑 Password: `Poly_123`
 
 ---
 
