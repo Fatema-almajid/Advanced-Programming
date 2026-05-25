@@ -41,7 +41,6 @@ namespace TrainingCertificationPlatform.Controllers
         }
         //public certification refrence
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GenerateCertificate(int trackId)
         {
             var traineeEmail = User.Identity!.Name;
