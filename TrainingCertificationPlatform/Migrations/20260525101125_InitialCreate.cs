@@ -491,6 +491,11 @@ namespace TrainingCertificationPlatform.Migrations
                 values: new object[] { 2, 2, 1, "Advanced concepts in C#", 30, 180.0, 1, "Advanced C#" });
 
             migrationBuilder.InsertData(
+                table: "Feedbacks",
+                columns: new[] { "Id", "Comment", "ContentRating", "CourseId", "InstructorId", "InstructorRating", "OrganizationRating", "Rating", "RecommendCourse", "SubmittedAt", "TraineeId" },
+                values: new object[] { 1, "Excellent instructor and very clear explanations", 5, 1, 2, 5, 4, 5, true, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 });
+
+            migrationBuilder.InsertData(
                 table: "InstructorAvailabilities",
                 columns: new[] { "Id", "DayEnd", "DayStart", "EndTime", "InstructorId", "StartTime" },
                 values: new object[] { 1, 4, 0, new TimeOnly(16, 0, 0), 2, new TimeOnly(8, 0, 0) });
@@ -519,18 +524,14 @@ namespace TrainingCertificationPlatform.Migrations
                 values: new object[,]
                 {
                     { 1, 1, 1, new TimeOnly(11, 0, 0), 2, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeOnly(9, 0, 0) },
-                    { 3, 1, 3, new TimeOnly(14, 0, 0), 2, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeOnly(12, 0, 0) },
-                    { 4, 2, 1, new TimeOnly(12, 0, 0), 2, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeOnly(10, 0, 0) }
+                    { 2, 2, 3, new TimeOnly(11, 0, 0), 2, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeOnly(9, 0, 0) },
+                    { 4, 2, 1, new TimeOnly(12, 0, 0), 2, new DateTime(2026, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeOnly(10, 0, 0) }
                 });
 
             migrationBuilder.InsertData(
                 table: "TraineeCertifications",
                 columns: new[] { "Id", "CertificateReferenceNumber", "Status", "TrackId", "TraineeId" },
-                values: new object[,]
-                {
-                    { 1, "CERT-1001", 1, 1, 1 },
-                    { 2, "CERT-1002", 0, 2, 1 }
-                });
+                values: new object[] { 1, "CERT-1001", 1, 1, 1 });
 
             migrationBuilder.InsertData(
                 table: "CourseTrack",
@@ -540,7 +541,11 @@ namespace TrainingCertificationPlatform.Migrations
             migrationBuilder.InsertData(
                 table: "Enrollments",
                 columns: new[] { "Id", "CompletionDate", "EnrollmentDate", "PaymentDueDate", "SessionId", "Status", "TraineeId", "UserId" },
-                values: new object[] { 1, null, new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 1, 1, 1, null });
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 1, 3, 1, null },
+                    { 3, null, new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 2, 4, 1, null }
+                });
 
             migrationBuilder.InsertData(
                 table: "InstructorExpertises",
@@ -550,42 +555,45 @@ namespace TrainingCertificationPlatform.Migrations
             migrationBuilder.InsertData(
                 table: "Sessions",
                 columns: new[] { "Id", "ClassroomId", "CourseId", "EndTime", "InstructorId", "SessionDate", "StartTime" },
-                values: new object[] { 2, 2, 2, new TimeOnly(11, 0, 0), 2, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeOnly(9, 0, 0) });
+                values: new object[] { 3, 1, 2, new TimeOnly(14, 0, 0), 2, new DateTime(2026, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeOnly(12, 0, 0) });
 
             migrationBuilder.InsertData(
                 table: "Assessments",
                 columns: new[] { "Id", "CompletedBy", "DueDate", "EnrollmentId", "Status" },
-                values: new object[] { 1, new DateTime(2026, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 1 });
+                values: new object[] { 1, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 1 });
 
             migrationBuilder.InsertData(
                 table: "Balances",
                 columns: new[] { "Id", "AmountDue", "DueDate", "EnrollmentId", "Status" },
-                values: new object[] { 1, 0m, new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 0 });
+                values: new object[,]
+                {
+                    { 1, 0m, new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 0 },
+                    { 3, 90m, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, 0 }
+                });
 
             migrationBuilder.InsertData(
                 table: "Enrollments",
                 columns: new[] { "Id", "CompletionDate", "EnrollmentDate", "PaymentDueDate", "SessionId", "Status", "TraineeId", "UserId" },
-                values: new object[] { 2, null, new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 2, 4, 1, null });
+                values: new object[] { 2, null, new DateTime(2026, 6, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 3, 1, 1, null });
 
             migrationBuilder.InsertData(
                 table: "Payments",
                 columns: new[] { "Id", "Amount", "EnrollmentId", "PaymentDate", "Status" },
-                values: new object[] { 1, 120m, 1, new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 });
-
-            migrationBuilder.InsertData(
-                table: "Assessments",
-                columns: new[] { "Id", "CompletedBy", "DueDate", "EnrollmentId", "Status" },
-                values: new object[] { 2, new DateTime(2026, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 2 });
+                values: new object[,]
+                {
+                    { 1, 120m, 1, new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 },
+                    { 3, 60m, 3, new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 0 }
+                });
 
             migrationBuilder.InsertData(
                 table: "Balances",
                 columns: new[] { "Id", "AmountDue", "DueDate", "EnrollmentId", "Status" },
-                values: new object[] { 2, 120m, new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 0 });
+                values: new object[] { 2, 0m, new DateTime(2026, 6, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 0 });
 
             migrationBuilder.InsertData(
                 table: "Payments",
                 columns: new[] { "Id", "Amount", "EnrollmentId", "PaymentDate", "Status" },
-                values: new object[] { 2, 60m, 2, new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 0 });
+                values: new object[] { 2, 180m, 2, new DateTime(2026, 6, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Assessments_EnrollmentId",

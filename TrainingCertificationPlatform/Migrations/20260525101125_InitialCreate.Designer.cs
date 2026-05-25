@@ -12,7 +12,7 @@ using TrainingCertificationPlatform;
 namespace TrainingCertificationPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260523214143_InitialCreate")]
+    [Migration("20260525101125_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -115,18 +115,10 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
-                            CompletedBy = new DateTime(2026, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CompletedBy = new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DueDate = new DateTime(2026, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 1,
                             Status = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CompletedBy = new DateTime(2026, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DueDate = new DateTime(2026, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EnrollmentId = 2,
-                            Status = 2
                         });
                 });
 
@@ -170,9 +162,17 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 2,
-                            AmountDue = 120m,
-                            DueDate = new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AmountDue = 0m,
+                            DueDate = new DateTime(2026, 6, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AmountDue = 90m,
+                            DueDate = new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EnrollmentId = 3,
                             Status = 0
                         });
                 });
@@ -325,14 +325,23 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 1,
+                            CompletionDate = new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EnrollmentDate = new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SessionId = 1,
-                            Status = 1,
+                            Status = 3,
                             TraineeId = 1
                         },
                         new
                         {
                             Id = 2,
+                            EnrollmentDate = new DateTime(2026, 6, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SessionId = 3,
+                            Status = 1,
+                            TraineeId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
                             EnrollmentDate = new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SessionId = 2,
                             Status = 4,
@@ -417,6 +426,22 @@ namespace TrainingCertificationPlatform.Migrations
                     b.HasIndex("TraineeId");
 
                     b.ToTable("Feedbacks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Comment = "Excellent instructor and very clear explanations",
+                            ContentRating = 5,
+                            CourseId = 1,
+                            InstructorId = 2,
+                            InstructorRating = 5,
+                            OrganizationRating = 4,
+                            Rating = 5,
+                            RecommendCourse = true,
+                            SubmittedAt = new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TraineeId = 1
+                        });
                 });
 
             modelBuilder.Entity("TrainingCertificationPlatform.Models.InstructorAvailability", b =>
@@ -577,8 +602,16 @@ namespace TrainingCertificationPlatform.Migrations
                         new
                         {
                             Id = 2,
-                            Amount = 60m,
+                            Amount = 180m,
                             EnrollmentId = 2,
+                            PaymentDate = new DateTime(2026, 6, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Amount = 60m,
+                            EnrollmentId = 3,
                             PaymentDate = new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 0
                         });
@@ -635,7 +668,7 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             Id = 2,
                             ClassroomId = 2,
-                            CourseId = 2,
+                            CourseId = 3,
                             EndTime = new TimeOnly(11, 0, 0),
                             InstructorId = 2,
                             SessionDate = new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -645,10 +678,10 @@ namespace TrainingCertificationPlatform.Migrations
                         {
                             Id = 3,
                             ClassroomId = 1,
-                            CourseId = 3,
+                            CourseId = 2,
                             EndTime = new TimeOnly(14, 0, 0),
                             InstructorId = 2,
-                            SessionDate = new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SessionDate = new DateTime(2026, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartTime = new TimeOnly(12, 0, 0)
                         },
                         new
@@ -658,7 +691,7 @@ namespace TrainingCertificationPlatform.Migrations
                             CourseId = 1,
                             EndTime = new TimeOnly(12, 0, 0),
                             InstructorId = 2,
-                            SessionDate = new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SessionDate = new DateTime(2026, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartTime = new TimeOnly(10, 0, 0)
                         });
                 });
@@ -734,14 +767,6 @@ namespace TrainingCertificationPlatform.Migrations
                             CertificateReferenceNumber = "CERT-1001",
                             Status = 1,
                             TrackId = 1,
-                            TraineeId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CertificateReferenceNumber = "CERT-1002",
-                            Status = 0,
-                            TrackId = 2,
                             TraineeId = 1
                         });
                 });

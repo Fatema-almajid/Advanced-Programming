@@ -76,7 +76,7 @@ namespace MVC_Application.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            TempData["SuccessMessage"] = "Login successful.";
+            //TempData["SuccessMessage"] = "Login successful."; //To be removed 
             return RedirectToAction(nameof(RedirectByRole));
         }
 
