@@ -233,7 +233,7 @@ namespace TrainingCertificationPlatform
 
             modelBuilder.Entity<Session>().HasData(
 
-                // NORMAL SESSION
+                // C# BASICS SESSION
                 new Session
                 {
                     Id = 1,
@@ -245,7 +245,7 @@ namespace TrainingCertificationPlatform
                     EndTime = new TimeOnly(11, 0)
                 },
 
-                // CONFLICT SESSION (same instructor + same time)
+                // SQL SESSION, NO INSTRUCTOR OR CLASSROOM CONFLICT
                 new Session
                 {
                     Id = 2,
@@ -253,11 +253,11 @@ namespace TrainingCertificationPlatform
                     InstructorId = 2,
                     ClassroomId = 2,
                     SessionDate = new DateTime(2026, 6, 22),
-                    StartTime = new TimeOnly(9, 0),
-                    EndTime = new TimeOnly(11, 0)
+                    StartTime = new TimeOnly(12, 0),
+                    EndTime = new TimeOnly(14, 0)
                 },
 
-                // ADVANCED C# AFTER PASSING BASICS
+                // ADVANCED C# AFTER BASICS
                 new Session
                 {
                     Id = 3,
@@ -269,7 +269,7 @@ namespace TrainingCertificationPlatform
                     EndTime = new TimeOnly(14, 0)
                 },
 
-                // ANOTHER SESSION SAME DAY
+                // ANOTHER C# BASICS SESSION, NO CONFLICT
                 new Session
                 {
                     Id = 4,
@@ -277,8 +277,8 @@ namespace TrainingCertificationPlatform
                     InstructorId = 2,
                     ClassroomId = 2,
                     SessionDate = new DateTime(2026, 6, 25),
-                    StartTime = new TimeOnly(10, 0),
-                    EndTime = new TimeOnly(12, 0)
+                    StartTime = new TimeOnly(14, 0),
+                    EndTime = new TimeOnly(16, 0)
                 }
             );
 
@@ -286,7 +286,7 @@ namespace TrainingCertificationPlatform
 
             modelBuilder.Entity<Enrollment>().HasData(
 
-                // COMPLETED BASICS
+                // COMPLETED C# BASICS
                 new Enrollment
                 {
                     Id = 1,
@@ -297,17 +297,18 @@ namespace TrainingCertificationPlatform
                     CompletionDate = fixedDate.AddDays(7)
                 },
 
-                // ENROLLED IN ADVANCED AFTER COMPLETING BASICS
+                // COMPLETED ADVANCED C# AFTER COMPLETING BASICS
                 new Enrollment
                 {
                     Id = 2,
                     TraineeId = 1,
                     SessionId = 3,
-                    Status = EnrollmentStatus.CONFIRMED,
-                    EnrollmentDate = fixedDate.AddDays(8)
+                    Status = EnrollmentStatus.COMPLETED,
+                    EnrollmentDate = fixedDate.AddDays(8),
+                    CompletionDate = fixedDate.AddDays(14)
                 },
 
-                // DROPPED SQL COURSE
+                // DROPPED SQL COURSE WITH PARTIAL PAYMENT
                 new Enrollment
                 {
                     Id = 3,
@@ -383,7 +384,7 @@ namespace TrainingCertificationPlatform
 
             modelBuilder.Entity<Assessment>().HasData(
 
-                // PASSED BASICS
+                // PASSED C# BASICS
                 new Assessment
                 {
                     Id = 1,
@@ -391,16 +392,26 @@ namespace TrainingCertificationPlatform
                     Status = AssessmentStatus.PASS,
                     DueDate = fixedDate.AddDays(5),
                     CompletedBy = fixedDate.AddDays(7)
+                },
+
+                // PASSED ADVANCED C#
+                new Assessment
+                {
+                    Id = 2,
+                    EnrollmentId = 2,
+                    Status = AssessmentStatus.PASS,
+                    DueDate = fixedDate.AddDays(12),
+                    CompletedBy = fixedDate.AddDays(14)
                 }
 
-            // NO ASSESSMENT FOR ACTIVE/DROPPED COURSES
+            // NO ASSESSMENT FOR DROPPED COURSE
             );
 
             // FEEDBACKS
 
             modelBuilder.Entity<Feedback>().HasData(
 
-                // FEEDBACK ONLY FOR COMPLETED COURSE
+                // FEEDBACK FOR COMPLETED C# BASICS
                 new Feedback
                 {
                     Id = 1,
@@ -411,6 +422,22 @@ namespace TrainingCertificationPlatform
                     Comment = "Excellent instructor and very clear explanations",
                     SubmittedAt = fixedDate.AddDays(7),
                     ContentRating = 5,
+                    InstructorRating = 5,
+                    OrganizationRating = 4,
+                    RecommendCourse = true
+                },
+
+                // FEEDBACK FOR COMPLETED ADVANCED C#
+                new Feedback
+                {
+                    Id = 2,
+                    TraineeId = 1,
+                    InstructorId = 2,
+                    CourseId = 2,
+                    Rating = 4,
+                    Comment = "Challenging course but very useful",
+                    SubmittedAt = fixedDate.AddDays(14),
+                    ContentRating = 4,
                     InstructorRating = 5,
                     OrganizationRating = 4,
                     RecommendCourse = true
@@ -434,8 +461,17 @@ namespace TrainingCertificationPlatform
                 {
                     Id = 2,
                     UserId = 2,
-                    Message = "You have a scheduling conflict",
+                    Message = "You have upcoming assigned sessions",
                     CreatedDate = fixedDate,
+                    Status = NotificationStatus.UNREAD
+                },
+
+                new Notification
+                {
+                    Id = 3,
+                    UserId = 1,
+                    Message = "Congratulations, you have completed the Backend Development track",
+                    CreatedDate = fixedDate.AddDays(14),
                     Status = NotificationStatus.UNREAD
                 }
             );
@@ -459,7 +495,7 @@ namespace TrainingCertificationPlatform
 
             modelBuilder.Entity<TraineeCertification>().HasData(
 
-                // ONLY AFTER COMPLETING TRACK
+                // CERTIFICATION AFTER COMPLETING ALL COURSES IN BACKEND DEVELOPMENT TRACK
                 new TraineeCertification
                 {
                     Id = 1,

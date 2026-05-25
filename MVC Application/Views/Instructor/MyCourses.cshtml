@@ -89,9 +89,9 @@
                             <td>@session.StartTime - @session.EndTime</td>
                             <td>@session.ClassroomName</td>
                             <td>
-                                <span data-session-enrollment-text-for="@session.SessionId">
-                                    @session.EnrolledCount / @session.Capacity
-                                </span>
+                                <span data-session-enrolled-count-for="@session.SessionId">
+                                    @session.EnrolledCount </span> / @session.Capacity
+                               
                             </td>
                             <td>
                                 <span class="badge @(session.SessionType == "Upcoming" ? "bg-success" : "bg-secondary")">
@@ -140,9 +140,9 @@
                                 <li><strong>Room:</strong> @session.ClassroomName</li>
                                 <li>
                                     <strong>Enrolled:</strong>
-                                    <span data-session-enrollment-text-for="@session.SessionId">
-                                        @session.EnrolledCount / @session.Capacity
-                                    </span>
+                                    <span data-session-enrolled-count-for="@session.SessionId">
+                                        @session.EnrolledCount </span> / @session.Capacity
+                                   
                                 </li>
                             </ul>
                         </div>

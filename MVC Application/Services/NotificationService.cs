@@ -58,7 +58,8 @@ namespace MVC_Application.Services
                 .Where(b =>
                     b.Enrollment.TraineeId == traineeId &&
                     b.AmountDue > 0 &&
-                    b.Status == BalanceStatus.OVERDUE)
+                    b.Status == BalanceStatus.OVERDUE &&
+                    b.Enrollment.Status != EnrollmentStatus.DROPPED)
                 .ToListAsync();
 
             // For each overdue balance, check if a notification has already been sent today for that course
