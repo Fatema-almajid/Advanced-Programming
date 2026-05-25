@@ -119,7 +119,7 @@ namespace TrainingCertificationPlatform
                     FirstName = "Ali",
                     LastName = "Ahmad",
                     CPR = "123456789",
-                    Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                    Password = "$2a$12$Ys7YXxI9M7EqQY60T8aNFe31SwSs8IGXjfAYsFNp55NcGyzL4cIym",
                     Role = UserRole.TRAINEE,
                     Email = "ali@mail.com",
                     Phone = "99999991",
@@ -132,7 +132,7 @@ namespace TrainingCertificationPlatform
                     FirstName = "Sara",
                     LastName = "Mohamed",
                     CPR = "987654321",
-                    Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                    Password = "$2a$12$Ys7YXxI9M7EqQY60T8aNFe31SwSs8IGXjfAYsFNp55NcGyzL4cIym",
                     Role = UserRole.INSTRUCTOR,
                     Email = "sara@mail.com",
                     Phone = "99999992",
@@ -145,7 +145,7 @@ namespace TrainingCertificationPlatform
                     FirstName = "Dana",
                     LastName = "Albanki",
                     CPR = "112233445",
-                    Password = "$2a$12$ZPzIhfjkDv3uc/4fEkhAfuAM/hYixvISLMEhyBYk7dxrsGJdw15Rq",
+                    Password = "$2a$12$Ys7YXxI9M7EqQY60T8aNFe31SwSs8IGXjfAYsFNp55NcGyzL4cIym",
                     Role = UserRole.TRAINING_COORDINATOR,
                     Email = "dana@mail.com",
                     Phone = "99999993",
@@ -164,7 +164,7 @@ namespace TrainingCertificationPlatform
                     Title = "C# Basics",
                     Description = "Introduction to C# programming",
                     Duration = 20,
-                    Capacity = 2,
+                    Capacity = 10,
                     Fee = 120,
                     PrerequisiteId = null
                 },
@@ -176,7 +176,7 @@ namespace TrainingCertificationPlatform
                     Title = "Advanced C#",
                     Description = "Advanced concepts in C#",
                     Duration = 30,
-                    Capacity = 2,
+                    Capacity = 15,
                     Fee = 180,
                     PrerequisiteId = 1
                 },
@@ -188,7 +188,7 @@ namespace TrainingCertificationPlatform
                     Title = "SQL Fundamentals",
                     Description = "Introduction to SQL Server",
                     Duration = 25,
-                    Capacity = 2,
+                    Capacity = 12,
                     Fee = 150,
                     PrerequisiteId = null
                 }

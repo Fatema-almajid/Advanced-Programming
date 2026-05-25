@@ -27,7 +27,11 @@ namespace MVC_Application.Models.ViewModels
         public string CPR { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters.")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters long.")]
+        [RegularExpression(
+            @"^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$",
+            ErrorMessage = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one special character."
+        )]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
