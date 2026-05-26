@@ -135,6 +135,11 @@ Build and run the solution.
 * Classroom
 * Equipment
 * Notification
+* CourseTrack
+* Classroom Equipment
+* InstructorAvailability
+* InstructorExpertise
+* Feedback
 
 ---
 
