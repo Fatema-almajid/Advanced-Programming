@@ -45,7 +45,7 @@ Build and run the solution.
 # 👥 Test Users
 
 ## 🎓 Trainee
-- 📧 Email: `ali@mail.com`  
+- 📧 Email: `ahmed@mail.com`  
   🔑 Password: `Poly_123`
 
 ## 👩‍🏫 Instructor
